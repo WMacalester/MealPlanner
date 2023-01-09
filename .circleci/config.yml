@@ -19,7 +19,7 @@ jobs:
           path: ~/project
       - node/install-packages:
           cache-version: v2
-      - run: npm run check-format-strict:planner-ui
+      - run: npm run check-format-strict:ui
 
   ui_test:
     working_directory: planner-ui
