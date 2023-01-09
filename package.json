@@ -1,0 +1,8 @@
+{
+    "name" : "meal-planner",
+    "scripts": {
+        "check-format:prettier": "npx prettier --check ui/src",
+        "check-format:eslint": "npx eslint ui/src",
+        "check-format-strict:ui": "npm run check-format:prettier && npm run check-format:eslint"
+    }
+}
