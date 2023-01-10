@@ -3,6 +3,9 @@
     "scripts": {
         "check-format:prettier": "npx prettier --check planner-ui/src",
         "check-format:eslint": "npx eslint planner-ui/src",
-        "check-format-strict:ui": "npm run check-format:prettier && npm run check-format:eslint"
+        "check-format-strict:ui": "npm run check-format:prettier && npm run check-format:eslint",
+        "apply-format:prettier": "npx prettier --write planner-ui/src",
+        "apply-format:eslint": "npx eslint --fix planner-ui/src",
+        "apply-format:all": "npm run apply-format:prettier && npm run apply-format:eslint"
     }
 }
