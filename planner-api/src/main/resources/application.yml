@@ -3,6 +3,10 @@ server:
   servlet:
     context-path: /api
 
+springdoc:
+  swagger-ui:
+    path: /swagger.html
+
 spring:
   datasource:
     url: jdbc:h2:mem:mealplannerdb
