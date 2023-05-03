@@ -18,8 +18,8 @@ class RecipeServiceTest {
   @InjectMocks private RecipeService recipeService;
   @Mock private RecipeRepository recipeRepository;
 
-  private final Recipe recipe1 = new Recipe(UUID.randomUUID(), "recipe 1");
-  private final Recipe recipe2 = new Recipe(UUID.randomUUID(), "recipe 2");
+  private final Recipe recipe1 = new Recipe(UUID.randomUUID(), "recipe 1", null);
+  private final Recipe recipe2 = new Recipe(UUID.randomUUID(), "recipe 2", null);
 
   private final List<Recipe> recipes = List.of(recipe1, recipe2);
 
