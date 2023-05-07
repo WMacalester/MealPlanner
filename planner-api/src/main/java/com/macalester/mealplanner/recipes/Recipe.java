@@ -26,4 +26,20 @@ public class Recipe {
 
   @ManyToMany(mappedBy = "recipes")
   private List<Ingredient> ingredients;
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof Recipe other)) {
+      return false;
+    }
+    return name.equals(other.name);
+  }
+
+  @Override
+  public int hashCode() {
+    return 113 + (this.name == null ? 37 : this.name.hashCode());
+  }
 }
