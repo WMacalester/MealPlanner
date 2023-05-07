@@ -35,7 +35,7 @@ class RecipeControllerTest {
   void getRecipes() throws Exception {
     when(recipeService.getAllRecipes()).thenReturn(recipes);
     mockMvc
-        .perform(MockMvcRequestBuilders.get("/recipes/"))
+        .perform(MockMvcRequestBuilders.get("/recipes"))
         .andExpect(status().isOk())
         .andExpect(
             MockMvcResultMatchers.content()
