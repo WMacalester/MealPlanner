@@ -1,11 +1,15 @@
 package com.macalester.mealplanner.recipes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,5 +32,29 @@ class RecipeServiceTest {
   void getAllRecipes() {
     doReturn(recipes).when(recipeRepository).findAll();
     assertEquals(recipes, recipeService.getAllRecipes());
+  }
+
+  @Nested
+  @DisplayName("Add Recipe")
+  class AddRecipe {
+    @Test
+    @DisplayName("Saves valid recipe that has unique name")
+    void addRecipe_givenRecipeAndUniqueName_savesIngredient() {
+      doReturn(false).when(recipeRepository).existsByName(recipe1.getName());
+      doReturn(recipe1).when(recipeRepository).save(recipe1);
+
+      assertEquals(recipe1, recipeService.addRecipe(recipe1));
+    }
+
+    @Test
+    @DisplayName(
+        "Valid recipe that does not have a unique name throws UniqueConstrainViolationException")
+    void saveIngredient_givenRecipeAndNameAlreadyExists_throwsUniqueConstraintViolationException() {
+      doReturn(true).when(recipeRepository).existsByName(recipe1.getName());
+
+      assertThrows(
+          UniqueConstraintViolationException.class, () -> recipeService.addRecipe(recipe1));
+      verifyNoMoreInteractions(recipeRepository);
+    }
   }
 }

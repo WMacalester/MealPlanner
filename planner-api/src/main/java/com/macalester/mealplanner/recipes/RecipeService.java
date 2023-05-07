@@ -1,5 +1,6 @@
 package com.macalester.mealplanner.recipes;
 
+import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,5 +17,13 @@ public class RecipeService {
 
   public List<Recipe> getAllRecipes() {
     return recipeRepository.findAll();
+  }
+
+  public Recipe addRecipe(Recipe recipe) {
+    if (recipeRepository.existsByName(recipe.getName())) {
+      throw new UniqueConstraintViolationException(
+          String.format("Recipe with name %s already exists", recipe.getName()));
+    }
+    return recipeRepository.save(recipe);
   }
 }
