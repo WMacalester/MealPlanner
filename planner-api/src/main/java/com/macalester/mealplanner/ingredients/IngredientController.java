@@ -6,6 +6,7 @@ import com.macalester.mealplanner.ingredients.dto.IngredientDto;
 import com.macalester.mealplanner.ingredients.dto.IngredientMapper;
 import jakarta.validation.Valid;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,15 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/ingredients")
 public class IngredientController {
 
   private final IngredientService ingredientService;
   private final IngredientMapper mapper = Mappers.getMapper(IngredientMapper.class);
-
-  public IngredientController(IngredientService ingredientService) {
-    this.ingredientService = ingredientService;
-  }
 
   @GetMapping
   public List<IngredientDto> getAllIngredients() {
