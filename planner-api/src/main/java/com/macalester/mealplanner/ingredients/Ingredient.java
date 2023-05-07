@@ -29,7 +29,8 @@ public class Ingredient {
   @Column(unique = true)
   private String name;
 
-  @ManyToMany private List<Recipe> recipes;
+  @ManyToMany(mappedBy = "ingredients")
+  private List<Recipe> recipes;
 
   @Override
   public boolean equals(Object o) {

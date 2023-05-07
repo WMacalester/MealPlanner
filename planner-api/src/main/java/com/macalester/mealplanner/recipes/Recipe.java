@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
@@ -24,7 +26,11 @@ public class Recipe {
 
   @NotBlank private String name;
 
-  @ManyToMany(mappedBy = "recipes")
+  @ManyToMany
+  @JoinTable(
+      name = "Recipe_Ingredients",
+      joinColumns = {@JoinColumn(name = "recipe_id")},
+      inverseJoinColumns = {@JoinColumn(name = "ingredient_id")})
   private List<Ingredient> ingredients;
 
   @Override
