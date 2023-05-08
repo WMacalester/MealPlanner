@@ -1,8 +1,8 @@
 package com.macalester.mealplanner.ingredients;
 
+import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +14,11 @@ public class IngredientService {
     this.ingredientRepository = ingredientRepository;
   }
 
-  public Optional<Ingredient> findById(UUID id) {
-    return ingredientRepository.findById(id);
+  public Ingredient findById(UUID id) {
+    return ingredientRepository
+        .findById(id)
+        .orElseThrow(
+            () -> new NotFoundException(String.format("Ingredient with id %s was not found", id)));
   }
 
   public List<Ingredient> findAll() {

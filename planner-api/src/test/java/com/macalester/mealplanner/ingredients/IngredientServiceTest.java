@@ -3,8 +3,10 @@ package com.macalester.mealplanner.ingredients;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
@@ -33,10 +35,19 @@ class IngredientServiceTest {
   @DisplayName("Find ingredient by Id")
   class FindIngredientById {
     @Test
+    @DisplayName("Ingredient id in db, returns ingredient")
     void findIngredientById_givenValidId_idInDb_returnsIngredient() {
       doReturn(Optional.of(ingredient1)).when(ingredientRepository).findById(uuid1);
 
-      assertEquals(Optional.of(ingredient1), ingredientService.findById(uuid1));
+      assertEquals(ingredient1, ingredientService.findById(uuid1));
+    }
+
+    @Test
+    @DisplayName("Ingredient id not in db, throws NotFoundException")
+    void findIngredientById_givenValidId_idNotInDb_throwsNotFoundException() {
+      doThrow(NotFoundException.class).when(ingredientRepository).findById(uuid1);
+
+      assertThrows(NotFoundException.class, () -> ingredientService.findById(uuid1));
     }
   }
 
