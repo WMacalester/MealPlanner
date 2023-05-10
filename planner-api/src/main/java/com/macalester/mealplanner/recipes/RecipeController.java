@@ -5,11 +5,10 @@ import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import com.macalester.mealplanner.recipes.dto.RecipeCreateDto;
 import com.macalester.mealplanner.recipes.dto.RecipeCreateDtoMapper;
 import com.macalester.mealplanner.recipes.dto.RecipeDto;
-import com.macalester.mealplanner.recipes.dto.RecipeMapper;
+import com.macalester.mealplanner.recipes.dto.RecipeDtoMapper;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class RecipeController {
 
   private final RecipeService recipeService;
-  private final RecipeMapper recipeMapper = Mappers.getMapper(RecipeMapper.class);
+  private final RecipeDtoMapper recipeDtoMapper;
   private final RecipeCreateDtoMapper recipeCreateDtoMapper;
 
   @GetMapping
@@ -36,7 +35,7 @@ public class RecipeController {
   public RecipeDto addRecipe(@Valid @RequestBody RecipeCreateDto recipeCreateDto) {
     try {
       Recipe newRecipe = recipeCreateDtoMapper.apply(recipeCreateDto);
-      return recipeMapper.recipeToDto(recipeService.addRecipe(newRecipe));
+      return recipeDtoMapper.apply(recipeService.addRecipe(newRecipe));
     } catch (UniqueConstraintViolationException | NotFoundException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }

@@ -13,6 +13,7 @@ import com.macalester.mealplanner.ingredients.dto.IngredientDto;
 import com.macalester.mealplanner.recipes.dto.RecipeCreateDto;
 import com.macalester.mealplanner.recipes.dto.RecipeCreateDtoMapper;
 import com.macalester.mealplanner.recipes.dto.RecipeDto;
+import com.macalester.mealplanner.recipes.dto.RecipeDtoMapper;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -31,8 +33,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 class RecipeControllerTest {
 
   @Autowired private MockMvc mockMvc;
-  @MockBean private RecipeCreateDtoMapper recipeCreateDtoMapper;
+  @SpyBean private RecipeCreateDtoMapper recipeCreateDtoMapper;
+  @SpyBean private RecipeDtoMapper recipeDtoMapper;
   @MockBean private RecipeService recipeService;
+  @Autowired private ObjectMapper objectMapper;
 
   private static final String name1 = "recipe 1";
   private static final String name2 = "recipe 2";
@@ -43,7 +47,7 @@ class RecipeControllerTest {
   private final Ingredient ingredient1 = new Ingredient(uuid3, "ingredient 1", null);
   private final IngredientDto ingredientDto1 = new IngredientDto(uuid3, "ingredient 1");
   private final Recipe recipe1 = new Recipe(uuid1, name1, null);
-  private final RecipeDto recipeDto1 = new RecipeDto(uuid1, name1, null);
+  private final RecipeDto recipeDto1 = new RecipeDto(uuid1, name1, List.of());
   private final RecipeCreateDto recipeCreateDto1 = new RecipeCreateDto(name1, null);
   private final Recipe recipe1_nullId = new Recipe(null, name1, null);
 
@@ -53,8 +57,6 @@ class RecipeControllerTest {
   private final Recipe recipe2_nullId = new Recipe(null, name2, Set.of(ingredient1));
 
   private final List<Recipe> recipes = List.of(recipe1, recipe2);
-
-  private final ObjectMapper objectMapper = new ObjectMapper();
 
   @Test
   @DisplayName("Returns all recipes")
