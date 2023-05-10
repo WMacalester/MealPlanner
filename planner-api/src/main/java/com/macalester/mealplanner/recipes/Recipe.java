@@ -9,7 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotBlank;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,7 +31,7 @@ public class Recipe {
       name = "Recipe_Ingredients",
       joinColumns = {@JoinColumn(name = "recipe_id")},
       inverseJoinColumns = {@JoinColumn(name = "ingredient_id")})
-  private List<Ingredient> ingredients;
+  private Set<Ingredient> ingredients;
 
   @Override
   public boolean equals(Object o) {
