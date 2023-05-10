@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import com.macalester.mealplanner.ingredients.Ingredient;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 
 public class RecipeTest {
 
-  List<Ingredient> ingredients1 = List.of(new Ingredient(UUID.randomUUID(), "ingredient 1", null));
-  List<Ingredient> ingredients2 = List.of(new Ingredient(UUID.randomUUID(), "ingredient 2", null));
+  Set<Ingredient> ingredients1 = Set.of(new Ingredient(UUID.randomUUID(), "ingredient 1", null));
+  Set<Ingredient> ingredients2 = Set.of(new Ingredient(UUID.randomUUID(), "ingredient 2", null));
   private final Recipe recipe1a = new Recipe(UUID.randomUUID(), "test 1", ingredients1);
   private final Recipe recipe1b = new Recipe(UUID.randomUUID(), "test 1", ingredients2);
   private final Recipe recipe2 = new Recipe(UUID.randomUUID(), "test 2", ingredients1);

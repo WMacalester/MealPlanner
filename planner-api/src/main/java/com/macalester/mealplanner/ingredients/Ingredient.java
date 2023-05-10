@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotBlank;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +30,7 @@ public class Ingredient {
   private String name;
 
   @ManyToMany(mappedBy = "ingredients")
-  private List<Recipe> recipes;
+  private Set<Recipe> recipes;
 
   @Override
   public boolean equals(Object o) {

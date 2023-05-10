@@ -14,6 +14,7 @@ import com.macalester.mealplanner.recipes.dto.RecipeCreateDto;
 import com.macalester.mealplanner.recipes.dto.RecipeCreateDtoMapper;
 import com.macalester.mealplanner.recipes.dto.RecipeDto;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -46,10 +47,10 @@ class RecipeControllerTest {
   private final RecipeCreateDto recipeCreateDto1 = new RecipeCreateDto(name1, null);
   private final Recipe recipe1_nullId = new Recipe(null, name1, null);
 
-  private final Recipe recipe2 = new Recipe(uuid2, name2, List.of(ingredient1));
+  private final Recipe recipe2 = new Recipe(uuid2, name2, Set.of(ingredient1));
   private final RecipeDto recipeDto2 = new RecipeDto(uuid2, name2, List.of(ingredientDto1));
   private final RecipeCreateDto recipeCreateDto2 = new RecipeCreateDto(name2, List.of(uuid3));
-  private final Recipe recipe2_nullId = new Recipe(null, name2, List.of(ingredient1));
+  private final Recipe recipe2_nullId = new Recipe(null, name2, Set.of(ingredient1));
 
   private final List<Recipe> recipes = List.of(recipe1, recipe2);
 

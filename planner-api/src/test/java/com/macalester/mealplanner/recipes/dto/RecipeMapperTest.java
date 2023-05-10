@@ -6,6 +6,7 @@ import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.dto.IngredientDto;
 import com.macalester.mealplanner.recipes.Recipe;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,8 +24,8 @@ public class RecipeMapperTest {
   private final Ingredient ingredient2 = new Ingredient(uuid4, "ingredient 2", null);
   private final IngredientDto ingredientDto1 = new IngredientDto(uuid3, "ingredient 1");
   private final IngredientDto ingredientDto2 = new IngredientDto(uuid4, "ingredient 2");
-  private final Recipe recipe1 = new Recipe(uuid1, name1, List.of(ingredient1, ingredient2));
-  private final Recipe recipe2 = new Recipe(uuid2, name2, List.of(ingredient1));
+  private final Recipe recipe1 = new Recipe(uuid1, name1, Set.of(ingredient1, ingredient2));
+  private final Recipe recipe2 = new Recipe(uuid2, name2, Set.of(ingredient1));
   private final RecipeDto recipeDto1 =
       new RecipeDto(uuid1, name1, List.of(ingredientDto1, ingredientDto2));
   private final RecipeDto recipeDto2 = new RecipeDto(uuid2, name2, List.of(ingredientDto1));

@@ -10,6 +10,7 @@ import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.IngredientService;
 import com.macalester.mealplanner.recipes.Recipe;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,8 +31,8 @@ public class RecipeCreateDtoMapperTest {
   private final String name1 = "recipe 1";
   private final Ingredient ingredient1 = new Ingredient(uuid2, "ingredient 1", null);
   private final Ingredient ingredient2 = new Ingredient(uuid3, "ingredient 2", null);
-  private final Recipe recipe1 = new Recipe(uuid1, name1, List.of(ingredient1, ingredient2));
-  private final Recipe recipe2 = new Recipe(uuid1, name1, List.of());
+  private final Recipe recipe1 = new Recipe(uuid1, name1, Set.of(ingredient1, ingredient2));
+  private final Recipe recipe2 = new Recipe(uuid1, name1, Set.of());
   private final RecipeCreateDto recipeCreateDto1 =
       new RecipeCreateDto(name1, List.of(uuid2, uuid3));
   private final RecipeCreateDto recipeCreateDto2 = new RecipeCreateDto(name1, List.of());
