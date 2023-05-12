@@ -27,8 +27,8 @@ public class RecipeController {
   private final RecipeCreateDtoMapper recipeCreateDtoMapper;
 
   @GetMapping
-  public List<Recipe> getAllRecipes() {
-    return recipeService.getAllRecipes();
+  public List<RecipeDto> getAllRecipes() {
+    return recipeService.getAllRecipes().stream().map(recipeDtoMapper).toList();
   }
 
   @PostMapping
