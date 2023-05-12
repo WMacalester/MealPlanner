@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import com.macalester.mealplanner.ingredients.Ingredient;
+import com.macalester.mealplanner.ingredients.IngredientService;
 import com.macalester.mealplanner.ingredients.dto.IngredientDto;
 import com.macalester.mealplanner.recipes.dto.RecipeCreateDto;
 import com.macalester.mealplanner.recipes.dto.RecipeCreateDtoMapper;
@@ -33,9 +34,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 class RecipeControllerTest {
 
   @Autowired private MockMvc mockMvc;
-  @SpyBean private RecipeCreateDtoMapper recipeCreateDtoMapper;
   @SpyBean private RecipeDtoMapper recipeDtoMapper;
+  @SpyBean private RecipeCreateDtoMapper recipeCreateDtoMapper;
   @MockBean private RecipeService recipeService;
+  @MockBean private IngredientService ingredientService;
   @Autowired private ObjectMapper objectMapper;
 
   private static final String name1 = "recipe 1";
@@ -44,12 +46,12 @@ class RecipeControllerTest {
   private static final UUID uuid2 = UUID.randomUUID();
   private static final UUID uuid3 = UUID.randomUUID();
 
-  private final Ingredient ingredient1 = new Ingredient(uuid3, "ingredient 1", null);
+  private final Ingredient ingredient1 = new Ingredient(uuid3, "ingredient 1", Set.of());
   private final IngredientDto ingredientDto1 = new IngredientDto(uuid3, "ingredient 1");
   private final Recipe recipe1 = new Recipe(uuid1, name1, null);
   private final RecipeDto recipeDto1 = new RecipeDto(uuid1, name1, List.of());
-  private final RecipeCreateDto recipeCreateDto1 = new RecipeCreateDto(name1, null);
-  private final Recipe recipe1_nullId = new Recipe(null, name1, null);
+  private final RecipeCreateDto recipeCreateDto1 = new RecipeCreateDto(name1, List.of());
+  private final Recipe recipe1_nullId = new Recipe(null, name1, Set.of());
 
   private final Recipe recipe2 = new Recipe(uuid2, name2, Set.of(ingredient1));
   private final RecipeDto recipeDto2 = new RecipeDto(uuid2, name2, List.of(ingredientDto1));
@@ -57,6 +59,7 @@ class RecipeControllerTest {
   private final Recipe recipe2_nullId = new Recipe(null, name2, Set.of(ingredient1));
 
   private final List<Recipe> recipes = List.of(recipe1, recipe2);
+  private final List<RecipeDto> recipesDtos = List.of(recipeDto1, recipeDto2);
 
   @Test
   @DisplayName("Returns all recipes")
@@ -67,7 +70,7 @@ class RecipeControllerTest {
         .andExpect(status().isOk())
         .andExpect(
             MockMvcResultMatchers.content()
-                .string(equalTo(objectMapper.writeValueAsString(recipes))));
+                .string(equalTo(objectMapper.writeValueAsString(recipesDtos))));
   }
 
   @Nested
