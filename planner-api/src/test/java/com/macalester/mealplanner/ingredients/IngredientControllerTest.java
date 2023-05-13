@@ -6,6 +6,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import com.macalester.mealplanner.ingredients.dto.IngredientCreateDto;
 import com.macalester.mealplanner.ingredients.dto.IngredientDto;
@@ -31,8 +32,10 @@ class IngredientControllerTest {
   @MockBean private IngredientService ingredientService;
   private final IngredientMapper ingredientMapper = Mappers.getMapper(IngredientMapper.class);
 
-  private final Ingredient ingredient1 = new Ingredient(UUID.randomUUID(), "ingredient 1", null);
-  private final Ingredient ingredient2 = new Ingredient(UUID.randomUUID(), "ingredient 2", null);
+  private static final UUID uuid1 = UUID.randomUUID();
+  private static final UUID uuid2 = UUID.randomUUID();
+  private final Ingredient ingredient1 = new Ingredient(uuid1, "ingredient 1", null);
+  private final Ingredient ingredient2 = new Ingredient(uuid2, "ingredient 2", null);
   private final Ingredient ingredient1_NullId = new Ingredient(null, "ingredient 1", null);
   private final IngredientCreateDto ingredientCreateDto1 = new IngredientCreateDto("ingredient 1");
   private final List<Ingredient> ingredients = List.of(ingredient1, ingredient2);
@@ -52,6 +55,33 @@ class IngredientControllerTest {
           .andExpect(
               MockMvcResultMatchers.content()
                   .string(equalTo(objectMapper.writeValueAsString(ingredientDtos))));
+    }
+  }
+
+  @Nested
+  @DisplayName("Get ingredient by Id")
+  class GetIngredientById {
+    @Test
+    @DisplayName("Returns ingredientDto with id in db")
+    void getIngredientById_givenIngredientWithIdInDb_returnsIngredient() throws Exception {
+      doReturn(ingredient1).when(ingredientService).findById(uuid1);
+
+      mockMvc
+          .perform(MockMvcRequestBuilders.get("/ingredients/" + uuid1))
+          .andExpect(status().isOk())
+          .andExpect(
+              MockMvcResultMatchers.content()
+                  .string(equalTo(objectMapper.writeValueAsString(ingredientDto1))));
+    }
+
+    @Test
+    @DisplayName("Returns 404 for ingredient with id not in db")
+    void getIngredientById_givenIngredientWithIdNotInDb_returns404() throws Exception {
+      doThrow(NotFoundException.class).when(ingredientService).findById(uuid1);
+
+      mockMvc
+          .perform(MockMvcRequestBuilders.get("/ingredients/" + uuid1))
+          .andExpect(status().isNotFound());
     }
   }
 
