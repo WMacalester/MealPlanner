@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,8 +24,11 @@ class RecipeServiceTest {
   @InjectMocks private RecipeService recipeService;
   @Mock private RecipeRepository recipeRepository;
 
-  private final Recipe recipe1 = new Recipe(UUID.randomUUID(), "recipe 1", null);
-  private final Recipe recipe2 = new Recipe(UUID.randomUUID(), "recipe 2", null);
+  private static final UUID uuid1 = UUID.randomUUID();
+  private static final UUID uuid2 = UUID.randomUUID();
+
+  private final Recipe recipe1 = new Recipe(uuid1, "recipe 1", null);
+  private final Recipe recipe2 = new Recipe(uuid2, "recipe 2", null);
 
   private final List<Recipe> recipes = List.of(recipe1, recipe2);
 
@@ -35,7 +40,27 @@ class RecipeServiceTest {
   }
 
   @Nested
-  @DisplayName("Add Recipe")
+  @DisplayName("Get recipe by id")
+  class GetRecipeById {
+    @Test
+    @DisplayName("Return recipe with given id that is in database")
+    void getRecipeById_recipeWithIdInDatabase_returnsRecipe() {
+      doReturn(Optional.of(recipe1)).when(recipeRepository).findById(uuid1);
+
+      assertEquals(recipe1, recipeService.findById(uuid1));
+    }
+
+    @Test
+    @DisplayName("Throw NotFoundException if no recipe with given id is in database")
+    void getRecipeById_recipeWithIdNotInDatabase_throwsNotFoundException() {
+      doReturn(Optional.empty()).when(recipeRepository).findById(uuid1);
+
+      assertThrows(NotFoundException.class, () -> recipeService.findById(uuid1));
+    }
+  }
+
+  @Nested
+  @DisplayName("Add recipe")
   class AddRecipe {
     @Test
     @DisplayName("Saves valid recipe that has unique name")
