@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.macalester.mealplanner.exceptions.NotFoundException;
@@ -85,5 +86,13 @@ class IngredientServiceTest {
           UniqueConstraintViolationException.class, () -> ingredientService.save(ingredient1));
       verifyNoMoreInteractions(ingredientRepository);
     }
+  }
+
+  @Test
+  @DisplayName("Delete ingredient by id calls correct repository method")
+  void deleteIngredientById_whenMethodCalled_callsRepositoryMethod() {
+    ingredientService.deleteById(uuid1);
+    verify(ingredientRepository).deleteById(uuid1);
+    verifyNoMoreInteractions(ingredientRepository);
   }
 }
