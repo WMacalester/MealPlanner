@@ -3,6 +3,7 @@ package com.macalester.mealplanner.recipes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.macalester.mealplanner.exceptions.NotFoundException;
@@ -57,6 +58,14 @@ class RecipeServiceTest {
 
       assertThrows(NotFoundException.class, () -> recipeService.findById(uuid1));
     }
+  }
+
+  @Test
+  @DisplayName("Delete recipe by id calls correct repository method")
+  void deleteRecipeById_whenMethodCalled_callsRepositoryMethod() {
+    recipeService.deleteById(uuid1);
+    verify(recipeRepository).deleteById(uuid1);
+    verifyNoMoreInteractions(recipeRepository);
   }
 
   @Nested

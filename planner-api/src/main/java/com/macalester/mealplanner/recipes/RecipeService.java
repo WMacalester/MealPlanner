@@ -35,4 +35,8 @@ public class RecipeService {
     }
     return recipeRepository.save(recipe);
   }
+
+  public void deleteById(UUID id) {
+    recipeRepository.deleteById(id);
+  }
 }
