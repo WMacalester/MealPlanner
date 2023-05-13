@@ -8,9 +8,11 @@ import com.macalester.mealplanner.recipes.dto.RecipeDto;
 import com.macalester.mealplanner.recipes.dto.RecipeDtoMapper;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +31,15 @@ public class RecipeController {
   @GetMapping
   public List<RecipeDto> getAllRecipes() {
     return recipeService.getAllRecipes().stream().map(recipeDtoMapper).toList();
+  }
+
+  @GetMapping("/{id}")
+  public RecipeDto getRecipeById(@PathVariable UUID id) {
+    try {
+      return recipeDtoMapper.apply(recipeService.findById(id));
+    } catch (NotFoundException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
   }
 
   @PostMapping
