@@ -1,15 +1,18 @@
 package com.macalester.mealplanner.ingredients;
 
+import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import com.macalester.mealplanner.ingredients.dto.IngredientCreateDto;
 import com.macalester.mealplanner.ingredients.dto.IngredientDto;
 import com.macalester.mealplanner.ingredients.dto.IngredientMapper;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +30,15 @@ public class IngredientController {
   @GetMapping
   public List<IngredientDto> getAllIngredients() {
     return mapper.ingredientToDto(ingredientService.findAll());
+  }
+
+  @GetMapping("/{id}")
+  public IngredientDto getIngredientById(@PathVariable UUID id) {
+    try {
+      return mapper.ingredientToDto(ingredientService.findById(id));
+    } catch (NotFoundException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
   }
 
   @PostMapping
