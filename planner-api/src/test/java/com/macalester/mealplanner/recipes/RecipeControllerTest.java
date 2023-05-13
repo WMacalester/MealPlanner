@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.IngredientService;
@@ -74,7 +75,34 @@ class RecipeControllerTest {
   }
 
   @Nested
-  @DisplayName("Add Recipe")
+  @DisplayName("Get recipe by id")
+  class GetRecipeById {
+    @Test
+    @DisplayName("Return recipe with given id that is in database")
+    void getRecipeById_recipeWithIdInDatabase_returnsRecipe() throws Exception {
+      doReturn(recipe1).when(recipeService).findById(uuid1);
+
+      mockMvc
+          .perform(MockMvcRequestBuilders.get("/recipes/" + uuid1))
+          .andExpect(status().isOk())
+          .andExpect(
+              MockMvcResultMatchers.content()
+                  .string(equalTo(objectMapper.writeValueAsString(recipeDto1))));
+    }
+
+    @Test
+    @DisplayName("Throw NotFoundException if no recipe with given id is in database")
+    void getRecipeById_recipeWithIdNotInDatabase_throwsNotFoundException() throws Exception {
+      doThrow(NotFoundException.class).when(recipeService).findById(uuid1);
+
+      mockMvc
+          .perform(MockMvcRequestBuilders.get("/recipes/" + uuid1))
+          .andExpect(status().isNotFound());
+    }
+  }
+
+  @Nested
+  @DisplayName("Add recipe")
   class AddRecipe {
     @Nested
     @DisplayName("No ingredients")
