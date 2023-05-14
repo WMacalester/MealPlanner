@@ -60,6 +60,9 @@ class RecipeControllerTest {
   private final RecipeCreateDto recipeCreateDto2 = new RecipeCreateDto(name2, List.of(uuid3));
   private final Recipe recipe2_nullId = new Recipe(null, name2, Set.of(ingredient1));
 
+  private final Recipe recipe_nullName = new Recipe(null, null, Set.of(ingredient1));
+  private final Recipe recipe_blankName = new Recipe(null, "   \n ", Set.of(ingredient1));
+
   private final List<Recipe> recipes = List.of(recipe1, recipe2);
   private final List<RecipeDto> recipesDtos = List.of(recipeDto1, recipeDto2);
 
@@ -138,6 +141,28 @@ class RecipeControllerTest {
                 MockMvcRequestBuilders.post("/recipes")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(recipeCreateDto1)))
+            .andExpect(status().isBadRequest());
+      }
+
+      @Test
+      @DisplayName("Invalid recipe, name is null")
+      void addRecipeNoIngredients_invalidRecipeNullName_returns400() throws Exception {
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.post("/recipes")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(recipe_nullName)))
+            .andExpect(status().isBadRequest());
+      }
+
+      @Test
+      @DisplayName("Invalid recipe, name is blank")
+      void addRecipeNoIngredients_invalidRecipeBlankName_returns400() throws Exception {
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.post("/recipes")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(recipe_blankName)))
             .andExpect(status().isBadRequest());
       }
     }
