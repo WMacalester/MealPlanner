@@ -1,6 +1,7 @@
 package com.macalester.mealplanner.recipes;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -177,5 +178,14 @@ class RecipeControllerTest {
             .andExpect(status().isBadRequest());
       }
     }
+  }
+
+  @Test
+  @DisplayName("Delete recipe by id")
+  void deleteRecipeById_givenUUID_returns204() throws Exception {
+    doNothing().when(recipeService).deleteById(uuid1);
+    mockMvc
+        .perform(MockMvcRequestBuilders.delete("/recipes/" + uuid1))
+        .andExpect(status().isNoContent());
   }
 }
