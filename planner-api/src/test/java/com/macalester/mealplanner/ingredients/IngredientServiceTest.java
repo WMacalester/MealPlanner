@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
+import com.macalester.mealplanner.ingredients.dto.IngredientEditDto;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +32,7 @@ class IngredientServiceTest {
 
   private final Ingredient ingredient1 = new Ingredient(uuid1, "test ingredient 1", null);
   private final Ingredient ingredient2 = new Ingredient(uuid2, "test ingredient 1", null);
+  private final IngredientEditDto ingredientEditDto1 = new IngredientEditDto("name edit");
 
   @Nested
   @DisplayName("Find ingredient by Id")
@@ -94,5 +96,42 @@ class IngredientServiceTest {
     ingredientService.deleteById(uuid1);
     verify(ingredientRepository).deleteById(uuid1);
     verifyNoMoreInteractions(ingredientRepository);
+  }
+
+  @Nested
+  @DisplayName("Edit ingredient")
+  class EditIngredient {
+    @Test
+    @DisplayName("Valid request returns saved ingredient")
+    void editIngredient_ingredientInDbAndAllValidFields_ingredientSaved() {
+      String newName = "new ingredient name";
+      Ingredient ingredient1_edited = new Ingredient(uuid1, newName, null);
+      doReturn(Optional.of(ingredient1)).when(ingredientRepository).findById(uuid1);
+      doReturn(ingredient1_edited).when(ingredientRepository).save(ingredient1_edited);
+
+      assertEquals(
+          ingredient1_edited,
+          ingredientService.editIngredientById(uuid1, new IngredientEditDto(newName)));
+    }
+
+    @Test
+    @DisplayName("Null name is not saved")
+    void editIngredient_ingredientInDbAndNameNull_nameNotChanged() {
+      doReturn(Optional.of(ingredient1)).when(ingredientRepository).findById(uuid1);
+      doReturn(ingredient1).when(ingredientRepository).save(ingredient1);
+
+      assertEquals(
+          ingredient1, ingredientService.editIngredientById(uuid1, new IngredientEditDto(null)));
+    }
+
+    @Test
+    @DisplayName("No ingredient for UUID in database throws NotFoundException")
+    void editIngredient_ingredientNotInDb_throwsNotFoundException() {
+      doReturn(Optional.empty()).when(ingredientRepository).findById(uuid1);
+
+      assertThrows(
+          NotFoundException.class,
+          () -> ingredientService.editIngredientById(uuid1, ingredientEditDto1));
+    }
   }
 }
