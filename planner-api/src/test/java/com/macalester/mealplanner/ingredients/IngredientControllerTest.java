@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import com.macalester.mealplanner.ingredients.dto.IngredientCreateDto;
 import com.macalester.mealplanner.ingredients.dto.IngredientDto;
+import com.macalester.mealplanner.ingredients.dto.IngredientEditDto;
 import com.macalester.mealplanner.ingredients.dto.IngredientMapper;
 import java.util.List;
 import java.util.UUID;
@@ -129,12 +131,78 @@ class IngredientControllerTest {
     }
   }
 
+  @Nested
+  @DisplayName("Edit ingredient by id")
+  class EditIngredientById {
+
+    private final IngredientEditDto ingredientEditDto = new IngredientEditDto("abc");
+    private final IngredientEditDto ingredientEditDto_blankName =
+        new IngredientEditDto("        \n  ");
+
     @Test
-    @DisplayName("Delete ingredient by id")
-    void deleteIngredientById_givenUUID_returns204() throws Exception {
-        doNothing().when(ingredientService).deleteById(uuid1);
-        mockMvc
-                .perform(MockMvcRequestBuilders.delete("/ingredients/" + uuid1))
-                .andExpect(status().isNoContent());
+    @DisplayName("Name in request is unique, returns ingredient with updated name")
+    void editIngredientById_givenUniqueName_returnsIngredientWithUpdatedName() throws Exception {
+      doReturn(ingredient1).when(ingredientService).editIngredientById(uuid1, ingredientEditDto);
+
+      mockMvc
+          .perform(
+              MockMvcRequestBuilders.patch("/ingredients/" + uuid1)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(objectMapper.writeValueAsString(ingredientEditDto)))
+          .andExpect(status().isOk())
+          .andExpect(content().string(equalTo(objectMapper.writeValueAsString(ingredientDto1))));
     }
+
+    @Test
+    @DisplayName("Name in request is not unique, returns 400")
+    void editIngredientById_givenNameAndIsNotUnique_returns400() throws Exception {
+      doThrow(UniqueConstraintViolationException.class)
+          .when(ingredientService)
+          .editIngredientById(uuid1, ingredientEditDto);
+
+      mockMvc
+          .perform(
+              MockMvcRequestBuilders.patch("/ingredients/" + uuid1)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(objectMapper.writeValueAsString(ingredientEditDto)))
+          .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Request ingredient id not in db returns 404")
+    void editIngredientById_givenIngredientWithIdNotInDb_returns404() throws Exception {
+      IngredientEditDto ingredientEditDto = new IngredientEditDto("abc");
+      doThrow(NotFoundException.class)
+          .when(ingredientService)
+          .editIngredientById(uuid1, ingredientEditDto);
+
+      mockMvc
+          .perform(
+              MockMvcRequestBuilders.patch("/ingredients/" + uuid1)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(objectMapper.writeValueAsString(ingredientEditDto)))
+          .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Name in request is blank, returns 400")
+    void editIngredientById_givenBlankName_returns400() throws Exception {
+
+      mockMvc
+          .perform(
+              MockMvcRequestBuilders.patch("/ingredients/" + uuid1)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(objectMapper.writeValueAsString(ingredientEditDto_blankName)))
+          .andExpect(status().isBadRequest());
+    }
+  }
+
+  @Test
+  @DisplayName("Delete ingredient by id")
+  void deleteIngredientById_givenUUID_returns204() throws Exception {
+    doNothing().when(ingredientService).deleteById(uuid1);
+    mockMvc
+        .perform(MockMvcRequestBuilders.delete("/ingredients/" + uuid1))
+        .andExpect(status().isNoContent());
+  }
 }

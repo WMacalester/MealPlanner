@@ -4,6 +4,7 @@ import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import com.macalester.mealplanner.ingredients.dto.IngredientCreateDto;
 import com.macalester.mealplanner.ingredients.dto.IngredientDto;
+import com.macalester.mealplanner.ingredients.dto.IngredientEditDto;
 import com.macalester.mealplanner.ingredients.dto.IngredientMapper;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,9 +55,21 @@ public class IngredientController {
     }
   }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteIngredientById(@PathVariable UUID id) {
-        ingredientService.deleteById(id);
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteIngredientById(@PathVariable UUID id) {
+    ingredientService.deleteById(id);
+  }
+
+  @PatchMapping("/{id}")
+  public IngredientDto editIngredientById(
+      @PathVariable UUID id, @RequestBody @Valid IngredientEditDto editIngredientDto) {
+    try {
+      return mapper.ingredientToDto(ingredientService.editIngredientById(id, editIngredientDto));
+    } catch (NotFoundException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    } catch (UniqueConstraintViolationException e) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }
+  }
 }
