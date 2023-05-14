@@ -2,6 +2,7 @@ package com.macalester.mealplanner.ingredients;
 
 import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
+import com.macalester.mealplanner.ingredients.dto.IngredientEditDto;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,16 @@ public class IngredientService {
           String.format("Ingredient with name %s already exists", ingredient.getName()));
     }
     return ingredientRepository.save(ingredient);
+  }
+
+  public Ingredient editIngredientById(UUID id, IngredientEditDto editIngredientDto) {
+    Ingredient ingredient = findById(id);
+
+    if (editIngredientDto.name() != null) {
+      ingredient.setName(editIngredientDto.name());
+    }
+
+    return save(ingredient);
   }
 
   public void deleteById(UUID id) {
