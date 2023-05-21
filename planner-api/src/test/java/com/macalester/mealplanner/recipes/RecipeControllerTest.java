@@ -213,4 +213,67 @@ class RecipeControllerTest {
         .perform(MockMvcRequestBuilders.delete("/recipes/" + uuid1))
         .andExpect(status().isNoContent());
   }
+
+  @Nested
+  @DisplayName("Edit recipe by id")
+  class EditRecipeById {
+    @Test
+    @DisplayName("Recipe with given uuid not found, returns 404")
+    void editRecipeById_recipeUuidNotInDb_returns404() throws Exception {
+      doThrow(new NotFoundException("recipe")).when(recipeService).editRecipeById(uuid1, recipe1);
+
+      mockMvc
+          .perform(
+              MockMvcRequestBuilders.put("/recipes/" + uuid1)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(objectMapper.writeValueAsString(recipeCreateDto1)))
+          .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Recipe update throws UniqueConstraintViolation, returns 400")
+    void editRecipeById_recipeServiceThrowsUniqueConstraintViolation_returns400() throws Exception {
+      doThrow(UniqueConstraintViolationException.class)
+          .when(recipeService)
+          .editRecipeById(uuid1, recipe1);
+
+      mockMvc
+          .perform(
+              MockMvcRequestBuilders.put("/recipes/" + uuid1)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(objectMapper.writeValueAsString(recipeCreateDto1)))
+          .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Recipe update contains fields with id which are not in database, returns 400")
+    void editRecipeById_recipeUpdateContainsFieldsWithIdNotInDb_returns400() throws Exception {
+      doThrow(new NotFoundException("ingredient"))
+          .when(recipeService)
+          .editRecipeById(uuid1, recipe1);
+
+      mockMvc
+          .perform(
+              MockMvcRequestBuilders.put("/recipes/" + uuid1)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(objectMapper.writeValueAsString(recipeCreateDto1)))
+          .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Recipe update is valid, returns updated recipe")
+    void editRecipeById_recipeUpdateIsValid_returnsUpdatedRecipe() throws Exception {
+      doReturn(recipe1).when(recipeService).editRecipeById(uuid1, recipe1);
+
+      mockMvc
+          .perform(
+              MockMvcRequestBuilders.put("/recipes/" + uuid1)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(objectMapper.writeValueAsString(recipeCreateDto1)))
+          .andExpect(status().isOk())
+          .andExpect(
+              MockMvcResultMatchers.content()
+                  .string(equalTo(objectMapper.writeValueAsString(recipeDto1))));
+    }
+  }
 }
