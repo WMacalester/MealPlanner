@@ -39,4 +39,17 @@ public class RecipeService {
   public void deleteById(UUID id) {
     recipeRepository.deleteById(id);
   }
+
+  public Recipe editRecipeById(UUID id, Recipe updatedRecipe) {
+    Recipe storedRecipe = findById(id);
+
+    if (!storedRecipe.getName().equals(updatedRecipe.getName())
+        && recipeRepository.existsByName(updatedRecipe.getName())) {
+      throw new UniqueConstraintViolationException(
+          String.format("Recipe with name %s already exists", updatedRecipe.getName()));
+    }
+
+    updatedRecipe.setId(storedRecipe.getId());
+    return recipeRepository.save(updatedRecipe);
+  }
 }
