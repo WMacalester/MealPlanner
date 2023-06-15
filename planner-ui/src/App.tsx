@@ -1,11 +1,15 @@
 import Recipes from "./components/recipes/Recipes";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "./theme";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header"></header>
-      <Recipes />
-    </div>
+    <ThemeProvider theme={theme}>
+      <div className="App">
+        <header className="App-header"></header>
+        <Recipes />
+      </div>
+    </ThemeProvider>
   );
 }
 
