@@ -70,5 +70,12 @@ public class RecipeCreateDtoMapperTest {
     void recipeCreateDtoToRecipe_givenValidObjectsAndNullIngredients_mapsToEmptyListIngredients() {
       assertEquals(recipe2, recipeCreateDtoMapper.apply(recipeCreateDto2_null));
     }
+
+    @Test
+      @DisplayName("Name is trimmed and lowercased")
+      void recipeCreateDtoToRecipe_givenValidObjectsAndNameHasCapitalsAndWhitespace_nameIsFormatted(){
+        RecipeCreateDto recipeCreateDto = new RecipeCreateDto("   RECIPE 1 ",List.of(uuid1,uuid2));
+        assertEquals(recipe1, recipeCreateDtoMapper.apply(recipeCreateDto));
+    }
   }
 }
