@@ -2,6 +2,7 @@ import { Card, CardContent } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { FC } from "react";
 import { Recipe } from "../../interfaces/RecipeInterface";
+import { capitalise } from "../../utils";
 import IngredientSection from "./IngredientSection";
 
 const RecipeCard: FC<Recipe> = (recipe) => {
@@ -29,7 +30,7 @@ const RecipeCard: FC<Recipe> = (recipe) => {
             WebkitBoxOrient: "vertical",
           }}
         >
-          {recipe.name}
+          {capitalise(recipe.name)}
         </Typography>
         <Typography></Typography>
       </CardContent>
