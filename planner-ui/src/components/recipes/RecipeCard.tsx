@@ -5,40 +5,40 @@ import { Recipe } from "../../interfaces/RecipeInterface";
 import IngredientSection from "./IngredientSection";
 
 const RecipeCard: FC<Recipe> = (recipe) => {
-    return (
-        <Card
-            sx={{
-                maxWidth: "30%",
-                minWidth: "300px",
-                m: 1,
-                backgroundColor: "primary.main",
-                border: 5,
-                borderColor: "secondary.main",
-                boxShadow: 5,
-            }}
+  return (
+    <Card
+      sx={{
+        maxWidth: "30%",
+        minWidth: "300px",
+        m: 1,
+        backgroundColor: "primary.main",
+        border: 5,
+        borderColor: "secondary.main",
+        boxShadow: 5,
+      }}
+    >
+      <CardContent>
+        <Typography
+          variant={"h4"}
+          color="highlights.main"
+          sx={{
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            display: "-webkit-box",
+            WebkitLineClamp: "2",
+            WebkitBoxOrient: "vertical",
+          }}
         >
-            <CardContent>
-                <Typography
-                    variant={"h4"}
-                    color="highlights.main"
-                    sx={{
-                        textOverflow: "ellipsis",
-                        overflow: "hidden",
-                        display: "-webkit-box",
-                        WebkitLineClamp: "2",
-                        WebkitBoxOrient: "vertical",
-                    }}
-                >
-                    {recipe.name}
-                </Typography>
-                <Typography></Typography>
-            </CardContent>
+          {recipe.name}
+        </Typography>
+        <Typography></Typography>
+      </CardContent>
 
-            {recipe.ingredients.length > 0 && (
-                <IngredientSection ingredients={recipe.ingredients} />
-            )}
-        </Card>
-    );
+      {recipe.ingredients.length > 0 && (
+        <IngredientSection ingredients={recipe.ingredients} />
+      )}
+    </Card>
+  );
 };
 
 export default RecipeCard;
