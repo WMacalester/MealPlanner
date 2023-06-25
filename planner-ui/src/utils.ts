@@ -3,3 +3,7 @@ export const capitalise = (input: string) => {
     letter.toUpperCase()
   );
 };
+
+export const isNameAlpha = (input: string) => {
+  return RegExp(/^[A-Za-z ]*$/).test(input);
+};

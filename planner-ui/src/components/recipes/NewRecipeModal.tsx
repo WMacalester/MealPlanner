@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import { FormControl, TextField, Typography } from "@mui/material";
 import { useCreateNewRecipeMutation } from "../../api/recipes";
 import { RecipeCreateDto } from "../../interfaces/RecipeInterface";
+import { isNameAlpha } from "../../utils";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -18,15 +19,10 @@ const modalStyle = {
   p: 4,
 };
 
-const isAlphaRegex = new RegExp(new RegExp(/^[A-Za-z ]*$/));
 const recipeNameAlreadyExistsRegex = new RegExp(/^Recipe.*already exists/);
 
 const recipeNameInvalidMessage = "Name can only contain letters and spaces";
 const recipeNameAlreadyExistsMessage = "A recipe with that name already exists";
-
-const isNameAlpha = (input: string) => {
-  return isAlphaRegex.test(input.trim());
-};
 
 interface NewRecipeModalProps {
   open: boolean;
@@ -42,7 +38,7 @@ const NewRecipeModal: FC<NewRecipeModalProps> = ({ open, handleClose }) => {
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRecipeNameErrorMessage("");
     setRecipeName(event.target.value);
-    if (!isNameAlpha(event.target.value)) {
+    if (!isNameAlpha(event.target.value.trim())) {
       setRecipeNameErrorMessage(recipeNameInvalidMessage);
     }
   };
@@ -78,7 +74,7 @@ const NewRecipeModal: FC<NewRecipeModalProps> = ({ open, handleClose }) => {
 
   const isRecipeNameError: boolean = recipeNameErrorMessage.length !== 0;
   const isSubmitDisabled: boolean =
-    recipeName.length === 0 || isRecipeNameError;
+    recipeName.trim().length === 0 || isRecipeNameError;
 
   return (
     <div>
