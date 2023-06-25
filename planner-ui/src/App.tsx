@@ -1,4 +1,4 @@
-import Recipes from "./components/recipes/Recipes";
+import Recipes from "./components/recipes/RecipeBoard";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 
