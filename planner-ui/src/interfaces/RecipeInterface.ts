@@ -5,3 +5,8 @@ export interface Recipe {
   name: string;
   ingredients: Ingredient[];
 }
+
+export interface RecipeCreateDto {
+  name: string;
+  ingredients: string[];
+}
