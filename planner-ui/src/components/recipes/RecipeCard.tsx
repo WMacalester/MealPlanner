@@ -2,24 +2,43 @@ import { Card, CardContent } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { FC } from "react";
 import { Recipe } from "../../interfaces/RecipeInterface";
+import IngredientSection from "./IngredientSection";
 
 const RecipeCard: FC<Recipe> = (recipe) => {
-  return (
-    <Card
-      sx={{
-        maxWidth: "25%",
-        m: 1,
-        backgroundColor: "#000000",
-        boxShadow: 5,
-      }}
-    >
-      <CardContent>
-        <Typography color="#FFFFFF" gutterBottom>
-          {recipe.name}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
+    return (
+        <Card
+            sx={{
+                maxWidth: "30%",
+                minWidth: "300px",
+                m: 1,
+                backgroundColor: "primary.main",
+                border: 5,
+                borderColor: "secondary.main",
+                boxShadow: 5,
+            }}
+        >
+            <CardContent>
+                <Typography
+                    variant={"h4"}
+                    color="highlights.main"
+                    sx={{
+                        textOverflow: "ellipsis",
+                        overflow: "hidden",
+                        display: "-webkit-box",
+                        WebkitLineClamp: "2",
+                        WebkitBoxOrient: "vertical",
+                    }}
+                >
+                    {recipe.name}
+                </Typography>
+                <Typography></Typography>
+            </CardContent>
+
+            {recipe.ingredients.length > 0 && (
+                <IngredientSection ingredients={recipe.ingredients} />
+            )}
+        </Card>
+    );
 };
 
 export default RecipeCard;
