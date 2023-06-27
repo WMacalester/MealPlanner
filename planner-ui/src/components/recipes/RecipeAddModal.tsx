@@ -2,10 +2,17 @@ import { FC, useState } from "react";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
-import { FormControl, TextField, Typography } from "@mui/material";
+import {
+  FormControl,
+  SelectChangeEvent,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useCreateNewRecipeMutation } from "../../api/recipes";
 import { RecipeCreateDto } from "../../interfaces/RecipeInterface";
 import { isNameAlpha } from "../../utils";
+import { useGetAllIngredientsQuery } from "../../api/ingredients";
+import { IngredientSelect } from "./IngredientSelect";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -24,15 +31,19 @@ const recipeNameAlreadyExistsRegex = new RegExp(/^Recipe.*already exists/);
 const recipeNameInvalidMessage = "Name can only contain letters and spaces";
 const recipeNameAlreadyExistsMessage = "A recipe with that name already exists";
 
-interface RecipeAddModalProps {
+interface NewRecipeModalProps {
   open: boolean;
   handleClose: () => void;
 }
 
-const RecipeAddModal: FC<RecipeAddModalProps> = ({ open, handleClose }) => {
+const RecipeAddModal: FC<NewRecipeModalProps> = ({ open, handleClose }) => {
   const [recipeName, setRecipeName] = useState("");
   const [recipeNameErrorMessage, setRecipeNameErrorMessage] = useState("");
   const [formErrorMessage, setFormErrorMessage] = useState("");
+  const { data: availableIngredients } = useGetAllIngredientsQuery();
+  const [selectedIngredientIds, setSelectedIngredientIds] = useState<string[]>(
+    []
+  );
   const [submit] = useCreateNewRecipeMutation();
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,11 +54,22 @@ const RecipeAddModal: FC<RecipeAddModalProps> = ({ open, handleClose }) => {
     }
   };
 
+  const handleIngredientSelect = (
+    event: SelectChangeEvent<typeof selectedIngredientIds>
+  ) => {
+    setSelectedIngredientIds(
+      typeof event.target.value === "string"
+        ? event.target.value.split(",")
+        : event.target.value
+    );
+  };
+
   const onClose = () => {
     handleClose();
     setRecipeName("");
     setRecipeNameErrorMessage("");
     setFormErrorMessage("");
+    setSelectedIngredientIds([]);
   };
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -55,7 +77,7 @@ const RecipeAddModal: FC<RecipeAddModalProps> = ({ open, handleClose }) => {
     if (!isSubmitDisabled) {
       const newRecipe: RecipeCreateDto = {
         name: recipeName.trim(),
-        ingredients: [],
+        ingredientIds: selectedIngredientIds.map((e) => e.split(/"(.*?)"/)[3]),
       };
       submit(newRecipe)
         .unwrap()
@@ -98,9 +120,17 @@ const RecipeAddModal: FC<RecipeAddModalProps> = ({ open, handleClose }) => {
               error={isRecipeNameError}
               helperText={`${recipeNameErrorMessage}`}
               sx={{
+                marginBottom: "1rem",
                 ".MuiInputBase-label": { fontSize: "1.25rem" },
               }}
             />
+
+            <IngredientSelect
+              availableIngredients={availableIngredients}
+              selectedIngredientIds={selectedIngredientIds}
+              handleIngredientSelect={handleIngredientSelect}
+            />
+
             <Button
               onClick={handleSubmit}
               disabled={isSubmitDisabled}
