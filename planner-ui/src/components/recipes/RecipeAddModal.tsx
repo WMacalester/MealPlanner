@@ -24,12 +24,12 @@ const recipeNameAlreadyExistsRegex = new RegExp(/^Recipe.*already exists/);
 const recipeNameInvalidMessage = "Name can only contain letters and spaces";
 const recipeNameAlreadyExistsMessage = "A recipe with that name already exists";
 
-interface NewRecipeModalProps {
+interface RecipeAddModalProps {
   open: boolean;
   handleClose: () => void;
 }
 
-const NewRecipeModal: FC<NewRecipeModalProps> = ({ open, handleClose }) => {
+const RecipeAddModal: FC<RecipeAddModalProps> = ({ open, handleClose }) => {
   const [recipeName, setRecipeName] = useState("");
   const [recipeNameErrorMessage, setRecipeNameErrorMessage] = useState("");
   const [formErrorMessage, setFormErrorMessage] = useState("");
@@ -126,4 +126,4 @@ const NewRecipeModal: FC<NewRecipeModalProps> = ({ open, handleClose }) => {
   );
 };
 
-export default NewRecipeModal;
+export default RecipeAddModal;
