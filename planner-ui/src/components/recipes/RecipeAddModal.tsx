@@ -13,6 +13,7 @@ import { RecipeCreateDto } from "../../interfaces/RecipeInterface";
 import { isNameAlpha } from "../../utils";
 import { useGetAllIngredientsQuery } from "../../api/ingredients";
 import { IngredientSelect } from "./IngredientSelect";
+import { AddModalProps } from "../../interfaces/AddModalProps";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -31,12 +32,7 @@ const recipeNameAlreadyExistsRegex = new RegExp(/^Recipe.*already exists/);
 const recipeNameInvalidMessage = "Name can only contain letters and spaces";
 const recipeNameAlreadyExistsMessage = "A recipe with that name already exists";
 
-interface NewRecipeModalProps {
-  open: boolean;
-  handleClose: () => void;
-}
-
-const RecipeAddModal: FC<NewRecipeModalProps> = ({ open, handleClose }) => {
+const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
   const [recipeName, setRecipeName] = useState("");
   const [recipeNameErrorMessage, setRecipeNameErrorMessage] = useState("");
   const [formErrorMessage, setFormErrorMessage] = useState("");

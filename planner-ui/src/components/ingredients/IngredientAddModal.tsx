@@ -6,6 +6,7 @@ import { FormControl, TextField, Typography } from "@mui/material";
 import { useCreateNewIngredientMutation } from "../../api/ingredients";
 import { isNameAlpha } from "../../utils";
 import { IngredientCreateDto } from "../../interfaces/IngredientInterface";
+import { AddModalProps } from "../../interfaces/AddModalProps";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -27,15 +28,7 @@ const ingredientNameInvalidMessage = "Name can only contain letters and spaces";
 const ingredientNameAlreadyExistsMessage =
   "An ingredient with that name already exists";
 
-interface IngredientAddModalProps {
-  open: boolean;
-  handleClose: () => void;
-}
-
-const IngredientAddModal: FC<IngredientAddModalProps> = ({
-  open,
-  handleClose,
-}) => {
+const IngredientAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
   const [ingredientName, setIngredientName] = useState("");
   const [ingredientNameErrorMessage, setIngredientNameErrorMessage] =
     useState("");
@@ -66,7 +59,6 @@ const IngredientAddModal: FC<IngredientAddModalProps> = ({
       submit(newIngredient)
         .unwrap()
         .then((e) => {
-          console.log(e.id);
           onClose();
         })
         .catch((error) => {
