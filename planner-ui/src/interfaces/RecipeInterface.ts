@@ -8,5 +8,5 @@ export interface Recipe {
 
 export interface RecipeCreateDto {
   name: string;
-  ingredients: string[];
+  ingredientIds: string[];
 }
