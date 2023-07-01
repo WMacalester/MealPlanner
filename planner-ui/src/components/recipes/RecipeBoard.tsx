@@ -1,21 +1,35 @@
 import { FC } from "react";
 import { useGetAllRecipesQuery } from "../../api/recipes";
 import RecipeCard from "./RecipeCard";
-import { Box } from "@mui/material";
-import AddButton from "../AddButton";
-import RecipeAddModal from "./RecipeAddModal";
-import IngredientAddModal from "../ingredients/IngredientAddModal";
+import { Box, Grid } from "@mui/material";
 
 const RecipeBoard: FC = () => {
   const { data: recipes } = useGetAllRecipesQuery();
 
   return (
-    <Box>
-      <AddButton Modal={IngredientAddModal} label={"Add Ingredient"} />
-      <AddButton Modal={RecipeAddModal} label={"Add Recipe"} />
-      {recipes?.map((recipe) => (
-        <RecipeCard key={recipe.id} {...recipe} />
-      ))}
+    <Box
+      sx={{
+        backgroundColor: "tertiary.main",
+        overflowY: "auto",
+        padding: "1rem",
+        borderRadius: "1rem",
+        width: "80%",
+        height: "80%",
+        alignItems: "start",
+      }}
+    >
+      <Grid
+        container
+        rowSpacing={1}
+        columnSpacing={{ xs: 1 }}
+        sx={{ justifyContent: "space-evenly" }}
+      >
+        {recipes?.map((recipe) => (
+          <Grid item key={recipe.id}>
+            <RecipeCard {...recipe} />
+          </Grid>
+        ))}
+      </Grid>
     </Box>
   );
 };
