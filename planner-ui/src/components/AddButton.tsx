@@ -21,6 +21,11 @@ const AddButton: FC<AddButtonProps> = ({ label, Modal }) => {
         aria-label={`${label} button`}
         onClick={handleOpen}
         endIcon={<PostAddIcon />}
+        variant="outlined"
+        sx={{
+          color: "highlights.main",
+          marginX: "1rem",
+        }}
       >
         {label}
       </Button>
