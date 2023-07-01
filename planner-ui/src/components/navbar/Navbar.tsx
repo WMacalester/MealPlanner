@@ -2,27 +2,26 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
+import AddButton from "../AddButton";
+import IngredientAddModal from "../ingredients/IngredientAddModal";
+import RecipeAddModal from "../recipes/RecipeAddModal";
 
 export default function Navbar() {
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+    <Box>
+      <AppBar position="static" sx={{ height: "5%" }}>
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
+          <Typography
+            variant="h4"
+            sx={{ flexGrow: 1, color: "highlights.main" }}
           >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Will's Meal Planner
+            Meal Planner
           </Typography>
+
+          <>
+            <AddButton Modal={IngredientAddModal} label={"Add Ingredient"} />
+            <AddButton Modal={RecipeAddModal} label={"Add Recipe"} />
+          </>
         </Toolbar>
       </AppBar>
     </Box>
