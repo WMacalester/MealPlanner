@@ -68,8 +68,13 @@ const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
     setSelectedIngredientIds([]);
   };
 
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const handleEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+    }
+  };
+
+  const handleSubmit = () => {
     if (!isSubmitDisabled) {
       const newRecipe: RecipeCreateDto = {
         name: recipeName.trim(),
@@ -90,6 +95,11 @@ const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
     }
   };
 
+  const handleSubmitClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    handleSubmit();
+  };
+
   const isRecipeNameError: boolean = recipeNameErrorMessage.length !== 0;
   const isSubmitDisabled: boolean =
     recipeName.trim().length === 0 || isRecipeNameError;
@@ -103,7 +113,7 @@ const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
         closeAfterTransition
       >
         <Fade in={open}>
-          <FormControl sx={modalStyle}>
+          <FormControl sx={modalStyle} onKeyDown={handleEnterPress}>
             <Typography variant="h5" alignSelf={"center"} paddingBottom={1.5}>
               Add a New Recipe
             </Typography>
@@ -128,7 +138,7 @@ const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
             />
 
             <Button
-              onClick={handleSubmit}
+              onClick={handleSubmitClick}
               disabled={isSubmitDisabled}
               variant="outlined"
               type="submit"

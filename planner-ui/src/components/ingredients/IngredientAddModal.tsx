@@ -50,8 +50,13 @@ const IngredientAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
     setFormErrorMessage("");
   };
 
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const handleEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+    }
+  };
+
+  const handleSubmit = () => {
     if (!isSubmitDisabled) {
       const newIngredient: IngredientCreateDto = {
         name: ingredientName.trim(),
@@ -73,6 +78,11 @@ const IngredientAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
     }
   };
 
+  const handleSubmitClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    handleSubmit();
+  };
+
   const isIngredientNameError: boolean =
     ingredientNameErrorMessage.length !== 0;
   const isSubmitDisabled: boolean =
@@ -87,7 +97,7 @@ const IngredientAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
         closeAfterTransition
       >
         <Fade in={open}>
-          <FormControl sx={modalStyle}>
+          <FormControl sx={modalStyle} onKeyDown={handleEnterPress}>
             <Typography variant="h5" alignSelf={"center"} paddingBottom={1.5}>
               Add a New Ingredient
             </Typography>
@@ -104,7 +114,7 @@ const IngredientAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
               }}
             />
             <Button
-              onClick={handleSubmit}
+              onClick={handleSubmitClick}
               disabled={isSubmitDisabled}
               variant="outlined"
               type="submit"
