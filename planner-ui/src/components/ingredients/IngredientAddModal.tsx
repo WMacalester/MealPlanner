@@ -2,11 +2,11 @@ import { FC, useState } from "react";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
-import { FormControl, TextField, Typography } from "@mui/material";
+import { FormControl, Typography } from "@mui/material";
 import { useCreateNewIngredientMutation } from "../../api/ingredients";
-import { isNameAlpha } from "../../utils";
 import { IngredientCreateDto } from "../../interfaces/IngredientInterface";
 import { AddModalProps } from "../../interfaces/AddModalProps";
+import NameInputField from "../NameInputField";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -24,7 +24,6 @@ const ingredientNameAlreadyExistsRegex = new RegExp(
   /^Ingredient.*already exists/
 );
 
-const ingredientNameInvalidMessage = "Name can only contain letters and spaces";
 const ingredientNameAlreadyExistsMessage =
   "An ingredient with that name already exists";
 
@@ -34,14 +33,6 @@ const IngredientAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
     useState("");
   const [formErrorMessage, setFormErrorMessage] = useState("");
   const [submit] = useCreateNewIngredientMutation();
-
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIngredientNameErrorMessage("");
-    setIngredientName(event.target.value);
-    if (!isNameAlpha(event.target.value.trim())) {
-      setIngredientNameErrorMessage(ingredientNameInvalidMessage);
-    }
-  };
 
   const onClose = () => {
     handleClose();
@@ -101,18 +92,15 @@ const IngredientAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
             <Typography variant="h5" alignSelf={"center"} paddingBottom={1.5}>
               Add a New Ingredient
             </Typography>
-            <TextField
-              required
-              id="Ingredient name"
-              label="Ingredient name"
+
+            <NameInputField
               name={ingredientName}
-              onChange={handleNameChange}
-              error={isIngredientNameError}
-              helperText={`${ingredientNameErrorMessage}`}
-              sx={{
-                ".MuiInputBase-label": { fontSize: "1.25rem" },
-              }}
+              setName={setIngredientName}
+              setErrorMessage={setIngredientNameErrorMessage}
+              isError={isIngredientNameError}
+              helperText={ingredientNameErrorMessage}
             />
+
             <Button
               onClick={handleSubmitClick}
               disabled={isSubmitDisabled}

@@ -2,18 +2,13 @@ import { FC, useState } from "react";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
-import {
-  FormControl,
-  SelectChangeEvent,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { FormControl, SelectChangeEvent, Typography } from "@mui/material";
 import { useCreateNewRecipeMutation } from "../../api/recipes";
 import { RecipeCreateDto } from "../../interfaces/RecipeInterface";
-import { isNameAlpha } from "../../utils";
 import { useGetAllIngredientsQuery } from "../../api/ingredients";
 import { IngredientSelect } from "./IngredientSelect";
 import { AddModalProps } from "../../interfaces/AddModalProps";
+import NameInputField from "../NameInputField";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -29,7 +24,6 @@ const modalStyle = {
 
 const recipeNameAlreadyExistsRegex = new RegExp(/^Recipe.*already exists/);
 
-const recipeNameInvalidMessage = "Name can only contain letters and spaces";
 const recipeNameAlreadyExistsMessage = "A recipe with that name already exists";
 
 const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
@@ -41,14 +35,6 @@ const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
     []
   );
   const [submit] = useCreateNewRecipeMutation();
-
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRecipeNameErrorMessage("");
-    setRecipeName(event.target.value);
-    if (!isNameAlpha(event.target.value.trim())) {
-      setRecipeNameErrorMessage(recipeNameInvalidMessage);
-    }
-  };
 
   const handleIngredientSelect = (
     event: SelectChangeEvent<typeof selectedIngredientIds>
@@ -117,18 +103,13 @@ const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
             <Typography variant="h5" alignSelf={"center"} paddingBottom={1.5}>
               Add a New Recipe
             </Typography>
-            <TextField
-              required
-              id="Recipe name"
-              label="Recipe name"
+
+            <NameInputField
               name={recipeName}
-              onChange={handleNameChange}
-              error={isRecipeNameError}
-              helperText={`${recipeNameErrorMessage}`}
-              sx={{
-                marginBottom: "1rem",
-                ".MuiInputBase-label": { fontSize: "1.25rem" },
-              }}
+              isError={isRecipeNameError}
+              helperText={recipeNameErrorMessage}
+              setName={setRecipeName}
+              setErrorMessage={setRecipeNameErrorMessage}
             />
 
             <IngredientSelect
