@@ -1,4 +1,8 @@
-import { Recipe, RecipeCreateDto } from "../interfaces/RecipeInterface";
+import {
+  Recipe,
+  RecipeCreateDto,
+  RecipeEditDto,
+} from "../interfaces/RecipeInterface";
 import { apiSlice } from "./api";
 
 const BASE_URL = "/recipes";
@@ -19,7 +23,22 @@ export const recipesApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Recipe"],
     }),
+    editRecipe: builder.mutation<
+      Recipe,
+      { payload: RecipeEditDto; id: string }
+    >({
+      query: (arg) => ({
+        url: BASE_URL + "/" + arg.id,
+        method: "PUT",
+        body: arg.payload,
+      }),
+      invalidatesTags: ["Recipe"],
+    }),
   }),
 });
 
-export const { useGetAllRecipesQuery, useCreateNewRecipeMutation } = recipesApi;
+export const {
+  useGetAllRecipesQuery,
+  useCreateNewRecipeMutation,
+  useEditRecipeMutation,
+} = recipesApi;

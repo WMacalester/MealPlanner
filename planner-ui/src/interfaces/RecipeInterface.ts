@@ -10,3 +10,8 @@ export interface RecipeCreateDto {
   name: string;
   ingredientIds: string[];
 }
+
+export interface RecipeEditDto {
+  name: string;
+  ingredientIds: string[];
+}
