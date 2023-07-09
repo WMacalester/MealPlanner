@@ -3,6 +3,6 @@ export interface AddModalProps {
   handleClose: () => void;
 }
 
-export interface EditModalProps<T> extends AddModalProps {
+export interface MutationModalProps<T> extends AddModalProps {
   data: T;
 }

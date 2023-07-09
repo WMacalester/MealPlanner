@@ -6,7 +6,7 @@ import { useEditRecipeMutation } from "../../api/recipes";
 import { Recipe, RecipeEditDto } from "../../interfaces/RecipeInterface";
 import { useGetAllIngredientsQuery } from "../../api/ingredients";
 import { IngredientSelect } from "./IngredientSelect";
-import { EditModalProps } from "../../interfaces/AddModalProps";
+import { MutationModalProps } from "../../interfaces/AddModalProps";
 import NameInputField from "../NameInputField";
 import SubmitAndCancelButtons from "../button/SubmitAndCancelButtons";
 import { capitalise } from "../../utils";
@@ -26,7 +26,7 @@ const modalStyle = {
 const recipeNameAlreadyExistsRegex = new RegExp(/^Recipe.*already exists/);
 const recipeNameAlreadyExistsMessage = "A recipe with that name already exists";
 
-const RecipeEditModal: FC<EditModalProps<Recipe>> = ({
+const RecipeEditModal: FC<MutationModalProps<Recipe>> = ({
   open,
   handleClose,
   data: recipe,
