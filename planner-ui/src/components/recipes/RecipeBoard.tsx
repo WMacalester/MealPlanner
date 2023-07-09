@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { useGetAllRecipesQuery } from "../../api/recipes";
-import RecipeCard from "./RecipeCard";
+import RecipeCard from "./recipe-card/RecipeCard";
 import { Box, Grid } from "@mui/material";
 
 const RecipeBoard: FC = () => {
