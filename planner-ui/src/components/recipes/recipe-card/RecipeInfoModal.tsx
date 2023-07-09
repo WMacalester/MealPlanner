@@ -1,8 +1,11 @@
 import { FC } from "react";
 import { Recipe } from "../../../interfaces/RecipeInterface";
 import Typography from "@mui/material/Typography";
-import { Box, Fade, List, ListItem, Modal } from "@mui/material";
+import { Box, Fade, IconButton, List, ListItem, Modal } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import { capitalise } from "../../../utils";
+import RecipeEditModal from "../RecipeEditModal";
+import React from "react";
 
 interface RecipeInfoModalProps {
   recipe: Recipe;
@@ -27,8 +30,13 @@ const RecipeInfoModal: FC<RecipeInfoModalProps> = ({
   open,
   handleClose,
 }) => {
+  const [editModalOpen, setEditModalOpen] = React.useState(false);
   const onClose = () => {
     handleClose();
+  };
+
+  const handleEditModalClose = () => {
+    setEditModalOpen(false);
   };
 
   return (
@@ -41,7 +49,12 @@ const RecipeInfoModal: FC<RecipeInfoModalProps> = ({
       >
         <Fade in={open}>
           <Box sx={modalStyle}>
-            <Typography variant="h4">{capitalise(recipe.name)} </Typography>
+            <Box justifyContent={"space-between"} display={"flex"}>
+              <Typography variant="h4">{capitalise(recipe.name)} </Typography>{" "}
+              <IconButton onClick={() => setEditModalOpen(true)}>
+                <EditIcon />
+              </IconButton>
+            </Box>
             {recipe.ingredients?.length > 0 ? (
               <List>
                 {recipe.ingredients.map((ingredient) => (
@@ -58,6 +71,11 @@ const RecipeInfoModal: FC<RecipeInfoModalProps> = ({
           </Box>
         </Fade>
       </Modal>
+      <RecipeEditModal
+        open={editModalOpen}
+        data={recipe}
+        handleClose={handleEditModalClose}
+      />
     </>
   );
 };
