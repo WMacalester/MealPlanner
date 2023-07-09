@@ -9,6 +9,7 @@ import { useGetAllIngredientsQuery } from "../../api/ingredients";
 import { IngredientSelect } from "./IngredientSelect";
 import { AddModalProps } from "../../interfaces/AddModalProps";
 import NameInputField from "../NameInputField";
+import SubmitAndCancelButtons from "../button/SubmitAndCancelButtons";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -85,6 +86,9 @@ const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
     e.preventDefault();
     handleSubmit();
   };
+  const handleCancelClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    onClose();
+  };
 
   const isRecipeNameError: boolean = recipeNameErrorMessage.length !== 0;
   const isSubmitDisabled: boolean =
@@ -118,23 +122,12 @@ const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
               handleIngredientSelect={handleIngredientSelect}
             />
 
-            <Button
-              onClick={handleSubmitClick}
-              disabled={isSubmitDisabled}
-              variant="outlined"
-              type="submit"
-              sx={{
-                width: "30%",
-                marginTop: "1rem",
-                color: "primary.main",
-                ":hover": {
-                  color: "highlights.main",
-                  bgcolor: "primary.main",
-                },
-              }}
-            >
-              Submit
-            </Button>
+            <SubmitAndCancelButtons
+              handleCancelClick={handleCancelClick}
+              handleSubmitClick={handleSubmitClick}
+              isSubmitDisabled={isSubmitDisabled}
+            />
+
             <Typography>{formErrorMessage}</Typography>
           </FormControl>
         </Fade>
