@@ -2,9 +2,9 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import AddButton from "../AddButton";
 import IngredientAddModal from "../ingredients/IngredientAddModal";
 import RecipeAddModal from "../recipes/RecipeAddModal";
+import AddButton from "../button/AddButton";
 
 export default function Navbar() {
   return (

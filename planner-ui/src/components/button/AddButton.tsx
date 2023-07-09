@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import { useState, FC, ComponentType } from "react";
 import PostAddIcon from "@mui/icons-material/PostAdd";
-import { AddModalProps } from "../interfaces/AddModalProps";
+import { AddModalProps } from "../../interfaces/AddModalProps";
 
 interface AddButtonProps {
   label: string;
