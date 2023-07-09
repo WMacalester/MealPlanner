@@ -20,11 +20,11 @@ const SubmitAndCancelButtons: FC<SubmitAndCancelButtonsProps> = ({
       justifyContent={"space-evenly"}
       sx={{ marginTop: "1rem" }}
     >
+      <CancelButton handleClick={handleCancelClick} />
       <SubmitButton
         handleClick={handleSubmitClick}
         isDisabled={isSubmitDisabled}
       />
-      <CancelButton handleClick={handleCancelClick} />
     </Box>
   );
 };
