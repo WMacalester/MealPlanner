@@ -7,6 +7,7 @@ import { useCreateNewIngredientMutation } from "../../api/ingredients";
 import { IngredientCreateDto } from "../../interfaces/IngredientInterface";
 import { AddModalProps } from "../../interfaces/AddModalProps";
 import NameInputField from "../NameInputField";
+import SubmitAndCancelButtons from "../button/SubmitAndCancelButtons";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -74,6 +75,10 @@ const IngredientAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
     handleSubmit();
   };
 
+  const handleCancelClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    onClose();
+  };
+
   const isIngredientNameError: boolean =
     ingredientNameErrorMessage.length !== 0;
   const isSubmitDisabled: boolean =
@@ -101,23 +106,12 @@ const IngredientAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
               helperText={ingredientNameErrorMessage}
             />
 
-            <Button
-              onClick={handleSubmitClick}
-              disabled={isSubmitDisabled}
-              variant="outlined"
-              type="submit"
-              sx={{
-                width: "30%",
-                marginTop: "1rem",
-                color: "primary.main",
-                ":hover": {
-                  color: "highlights.main",
-                  bgcolor: "primary.main",
-                },
-              }}
-            >
-              Submit
-            </Button>
+            <SubmitAndCancelButtons
+              handleCancelClick={handleCancelClick}
+              handleSubmitClick={handleSubmitClick}
+              isSubmitDisabled={isSubmitDisabled}
+            />
+
             <Typography>{formErrorMessage}</Typography>
           </FormControl>
         </Fade>
