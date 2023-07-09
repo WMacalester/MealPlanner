@@ -3,9 +3,11 @@ import { Recipe } from "../../../interfaces/RecipeInterface";
 import Typography from "@mui/material/Typography";
 import { Box, Fade, IconButton, List, ListItem, Modal } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { capitalise } from "../../../utils";
 import RecipeEditModal from "../RecipeEditModal";
 import React from "react";
+import RecipeDeleteModal from "../../RecipeDeleteModal";
 
 interface RecipeInfoModalProps {
   recipe: Recipe;
@@ -31,12 +33,16 @@ const RecipeInfoModal: FC<RecipeInfoModalProps> = ({
   handleClose,
 }) => {
   const [editModalOpen, setEditModalOpen] = React.useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
   const onClose = () => {
     handleClose();
   };
 
   const handleEditModalClose = () => {
     setEditModalOpen(false);
+  };
+  const handleDeleteModalClose = () => {
+    setDeleteModalOpen(false);
   };
 
   return (
@@ -51,9 +57,14 @@ const RecipeInfoModal: FC<RecipeInfoModalProps> = ({
           <Box sx={modalStyle}>
             <Box justifyContent={"space-between"} display={"flex"}>
               <Typography variant="h4">{capitalise(recipe.name)} </Typography>{" "}
-              <IconButton onClick={() => setEditModalOpen(true)}>
-                <EditIcon />
-              </IconButton>
+              <div>
+                <IconButton onClick={() => setEditModalOpen(true)}>
+                  <EditIcon />
+                </IconButton>
+                <IconButton onClick={() => setDeleteModalOpen(true)}>
+                  <DeleteIcon />
+                </IconButton>
+              </div>
             </Box>
             {recipe.ingredients?.length > 0 ? (
               <List>
@@ -75,6 +86,11 @@ const RecipeInfoModal: FC<RecipeInfoModalProps> = ({
         open={editModalOpen}
         data={recipe}
         handleClose={handleEditModalClose}
+      />
+      <RecipeDeleteModal
+        data={recipe}
+        open={deleteModalOpen}
+        handleClose={handleDeleteModalClose}
       />
     </>
   );
