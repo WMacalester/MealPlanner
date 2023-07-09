@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
-import { Box, FormControl, SelectChangeEvent, Typography } from "@mui/material";
+import { FormControl, SelectChangeEvent, Typography } from "@mui/material";
 import { useEditRecipeMutation } from "../../api/recipes";
 import { Recipe, RecipeEditDto } from "../../interfaces/RecipeInterface";
 import { useGetAllIngredientsQuery } from "../../api/ingredients";
@@ -56,13 +56,17 @@ const RecipeEditModal: FC<EditModalProps<Recipe>> = ({
 
   const onClose = () => {
     handleClose();
+    setRecipeName(recipe.name);
+    setSelectedIngredientIds(recipe.ingredients.map((e) => JSON.stringify(e)));
     setRecipeNameErrorMessage("");
     setFormErrorMessage("");
   };
 
-  const handleEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleSubmit();
+    } else if (e.key === "Escape") {
+      onClose();
     }
   };
 
@@ -93,8 +97,6 @@ const RecipeEditModal: FC<EditModalProps<Recipe>> = ({
   };
 
   const handleCancelClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setRecipeName(recipe.name);
-    setSelectedIngredientIds(recipe.ingredients.map((e) => JSON.stringify(e)));
     onClose();
   };
 
@@ -107,7 +109,7 @@ const RecipeEditModal: FC<EditModalProps<Recipe>> = ({
         closeAfterTransition
       >
         <Fade in={open}>
-          <FormControl sx={modalStyle} onKeyDown={handleEnterPress}>
+          <FormControl sx={modalStyle} onKeyDown={handleKeyDown}>
             <Typography variant="h5" alignSelf={"center"} paddingBottom={1.5}>
               Edit {capitalise(recipe.name)}
             </Typography>
