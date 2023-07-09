@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
 import { FC } from "react";
-import { isNameAlpha } from "../utils";
+import { capitalise, isNameAlpha } from "../utils";
 
 interface NameInputFieldProps {
   name: string;
@@ -32,6 +32,7 @@ const NameInputField: FC<NameInputFieldProps> = ({
       required
       label="Name"
       name={name}
+      defaultValue={capitalise(name)}
       onChange={handleNameChange}
       error={isError}
       helperText={`${helperText}`}
