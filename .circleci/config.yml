@@ -1,8 +1,11 @@
 version: 2.1
 executors:
-  java17:
-    docker:
-      - image: "cimg/openjdk:17.0"
+  machine_executor:
+    machine:
+      image: ubuntu-2204:2022.04.2
+    environment:
+      architecture: "amd64"
+      platform: "linux/amd64"
 
 orbs:
   node: circleci/node@5.0.3
@@ -61,40 +64,22 @@ jobs:
       - maven/with_cache:
           steps:
             - run: mvn spotless:check
-#   api:
-#     working_directory: planner-api
-#     executor: maven/default
-#     resource_class: small
-#     steps:
-#       - checkout:
-#           path: ~/project
-#       - maven/with_cache:
-#           steps:
-#             - run:
-#                 command: mvn test
-#                 executor: java17
-#             - store_artifacts:
-#                 path: target/site/jacoco
-#             - run:
-#                 name: Save test store_test_results
-#                 command:
-#                   mkdir -p ~/test-results/junit/
-#                   find . -type f -regex ".*/target/surefire-reports.*xml" -exec cp {} ~/test-results/junit/ \;
-#             - store_test_results:
-#                 path: ~/test-results/junit/
+  api_build_and_test:
+    working_directory: planner-api
+    executor: machine_executor
+    steps:
+      - checkout:
+          path: ~/project
+      - run: mvn -B clean install
+      - maven/with_cache:
+          steps:
+            - run: mvn test
 
 workflows:
   ui:
     jobs:
-      # - ui_format
-      # - ui_test
       - ui
-        # requires:
-        #   - ui_format
-        #   - ui_test
   api:
     jobs:
       - api_format
-      - maven/test:
-          app_src_directory: planner-api
-          executor: java17
+      - api_build_and_test
