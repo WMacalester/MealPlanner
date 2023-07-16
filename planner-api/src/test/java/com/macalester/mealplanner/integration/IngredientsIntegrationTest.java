@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.macalester.mealplanner.BasePostgresContainer;
 import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.IngredientRepository;
 import com.macalester.mealplanner.ingredients.dto.IngredientCreateDto;
@@ -28,7 +29,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class IngredientsIntegrationTest {
+public class IngredientsIntegrationTest extends BasePostgresContainer {
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
   @Autowired private IngredientRepository ingredientRepository;
@@ -50,7 +51,7 @@ public class IngredientsIntegrationTest {
 
   @Nested
   @DisplayName("Get all ingredients")
-  class GetAllIngredients {
+  class GetAllIngredientsTest {
     @Test
     @DisplayName("Get all ingredients returns all ingredients in database")
     void getAllIngredients_givenIngredientsInDb_returnsAllIngredients() throws Exception {
@@ -87,7 +88,7 @@ public class IngredientsIntegrationTest {
 
   @Nested
   @DisplayName("Adding a new ingredient")
-  class AddNewIngredient {
+  class AddNewIngredientTest {
     @Test
     @DisplayName("Posting valid ingredient with unique name returns saved ingredient")
     void addNewIngredient_validIngredientWithUniqueName_returnsSavedIngredient() throws Exception {
