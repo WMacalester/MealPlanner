@@ -7,8 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.macalester.mealplanner.BasePostgresContainer;
 import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.IngredientRepository;
 import com.macalester.mealplanner.ingredients.dto.IngredientCreateDto;
@@ -20,33 +18,26 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-public class IngredientsIntegrationTest extends BasePostgresContainer {
-  @Autowired private MockMvc mockMvc;
-  @Autowired private ObjectMapper objectMapper;
+public class IngredientsIntegrationTest extends BaseIntegrationTest {
   @Autowired private IngredientRepository ingredientRepository;
 
   private static final String name1 = "Ingredient 1";
   private static final String name2 = "Ingredient 2";
   private static final String name3 = "Ingredient 3";
-  private final Ingredient ingredient1 = new Ingredient(UUID.randomUUID(), name1, null);
-  private final IngredientCreateDto ingredientCreateDto1 = new IngredientCreateDto(name1);
-  private final IngredientCreateDto ingredientCreateDto_invalid = new IngredientCreateDto(null);
+  private static final Ingredient ingredient1 = new Ingredient(UUID.randomUUID(), name1, null);
+  private static final IngredientCreateDto ingredientCreateDto1 = new IngredientCreateDto(name1);
+  private static final IngredientCreateDto ingredientCreateDto_invalid = new IngredientCreateDto(null);
 
-  private final Ingredient ingredient2 = new Ingredient(UUID.randomUUID(), name2, null);
-  private final Ingredient ingredient3 = new Ingredient(UUID.randomUUID(), name3, null);
+  private static final Ingredient ingredient2 = new Ingredient(UUID.randomUUID(), name2, null);
+  private static final Ingredient ingredient3 = new Ingredient(UUID.randomUUID(), name3, null);
 
   @AfterEach
   void teardown() {
-    ingredientRepository.deleteAll();
+      ingredientRepository.deleteAll();
   }
 
   @Nested
