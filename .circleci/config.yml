@@ -88,10 +88,10 @@ workflows:
     jobs:
       # - ui_format
       # - ui_test
-      - ui:
-          # requires:
-          #   - ui_format
-          #   - ui_test
+      - ui
+        # requires:
+        #   - ui_format
+        #   - ui_test
   api:
     jobs:
       - api_format
