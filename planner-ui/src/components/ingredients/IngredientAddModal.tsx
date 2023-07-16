@@ -1,7 +1,6 @@
 import { FC, useState } from "react";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
-import Button from "@mui/material/Button";
 import { FormControl, Typography } from "@mui/material";
 import { useCreateNewIngredientMutation } from "../../api/ingredients";
 import { IngredientCreateDto } from "../../interfaces/IngredientInterface";
