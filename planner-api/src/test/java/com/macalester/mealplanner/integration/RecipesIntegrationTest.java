@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-public class RecipeIntegrationTest extends BaseIntegrationTest {
+public class RecipesIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private RecipeRepository recipeRepository;
     @Autowired
@@ -38,13 +38,13 @@ public class RecipeIntegrationTest extends BaseIntegrationTest {
 
     private static final String BASE_URL = "/recipes";
 
-    private static final String ingredient1name = "ingredient 1";
-    private static final String ingredient2name = "ingredient 2";
+    private static final String ingredient1name = "ingredient a";
+    private static final String ingredient2name = "ingredient b";
     private final Ingredient ingredient1 = new Ingredient();
     private final Ingredient ingredient2 = new Ingredient();
 
-    private static final String recipe1name = "recipe 1";
-    private static final String recipe2name = "recipe 2";
+    private static final String recipe1name = "recipe a";
+    private static final String recipe2name = "recipe b";
     private Recipe recipe1 = new Recipe();
     private Recipe recipe2 = new Recipe();
 
@@ -93,7 +93,7 @@ public class RecipeIntegrationTest extends BaseIntegrationTest {
         @Test
         @DisplayName("Posting valid recipe - returns 200")
         void addNewRecipe_validRecipe_addsRecipe() throws Exception {
-            final String newRecipeName = "recipe     1     ";
+            final String newRecipeName = "recipe     a     ";
             RecipeCreateDto recipeCreateDto = new RecipeCreateDto(newRecipeName, List.of(ingredient1.getId()));
 
             String responseBody =
@@ -212,7 +212,7 @@ public class RecipeIntegrationTest extends BaseIntegrationTest {
         @Test
         @DisplayName("Edit recipe - recipe with given id does not exist")
         void editRecipeById_noRecipeWithId_returns400() throws Exception {
-            String newName = "recipe 3";
+            String newName = "recipe c";
             RecipeCreateDto recipeCreateDto = new RecipeCreateDto(newName, List.of());
 
             mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + UUID.randomUUID())

@@ -1,13 +1,13 @@
 package com.macalester.mealplanner.ingredients;
 
 import com.macalester.mealplanner.recipes.Recipe;
+import com.macalester.mealplanner.validator.NameConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import jakarta.validation.constraints.NotBlank;
 import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ public class Ingredient {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @NotBlank(message = "Name must not be blank")
+  @NameConstraint
   @Column(unique = true)
   private String name;
 

@@ -1,7 +1,7 @@
 package com.macalester.mealplanner.recipes.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import com.macalester.mealplanner.validator.NameConstraint;
 import java.util.List;
 import java.util.UUID;
 
-public record RecipeCreateDto(@NotBlank String name, List<UUID> ingredientIds) {}
+public record RecipeCreateDto(@NameConstraint String name, List<UUID> ingredientIds) {}
