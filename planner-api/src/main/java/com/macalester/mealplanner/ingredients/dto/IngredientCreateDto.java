@@ -1,5 +1,5 @@
 package com.macalester.mealplanner.ingredients.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import com.macalester.mealplanner.validator.NameConstraint;
 
-public record IngredientCreateDto(@NotBlank(message = "Name must not be blank") String name) {}
+public record IngredientCreateDto(@NameConstraint String name) {}

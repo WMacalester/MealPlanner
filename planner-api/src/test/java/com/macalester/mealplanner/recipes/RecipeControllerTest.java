@@ -44,14 +44,14 @@ class RecipeControllerTest {
   @MockBean private IngredientService ingredientService;
   @Autowired private ObjectMapper objectMapper;
 
-  private static final String name1 = "recipe 1";
-  private static final String name2 = "recipe 2";
+  private static final String name1 = "recipe a";
+  private static final String name2 = "recipe b";
   private static final UUID uuid1 = UUID.randomUUID();
   private static final UUID uuid2 = UUID.randomUUID();
   private static final UUID uuid3 = UUID.randomUUID();
 
-  private final Ingredient ingredient1 = new Ingredient(uuid3, "ingredient 1", Set.of());
-  private final IngredientDto ingredientDto1 = new IngredientDto(uuid3, "ingredient 1");
+  private final Ingredient ingredient1 = new Ingredient(uuid3, "ingredient a", Set.of());
+  private final IngredientDto ingredientDto1 = new IngredientDto(uuid3, "ingredient a");
   private final Recipe recipe1 = new Recipe(uuid1, name1, null);
   private final RecipeDto recipeDto1 = new RecipeDto(uuid1, name1, List.of());
   private final RecipeCreateDto recipeCreateDto1 = new RecipeCreateDto(name1, List.of());

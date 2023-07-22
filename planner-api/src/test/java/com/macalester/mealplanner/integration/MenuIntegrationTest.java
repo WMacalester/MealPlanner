@@ -10,6 +10,7 @@ import com.macalester.mealplanner.recipes.RecipeRepository;
 import com.macalester.mealplanner.recipes.dto.RecipeDtoMapper;
 import java.util.Set;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,13 +24,13 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
     private static final String BASE_URL = "/menu";
     private static final String RECIPE_NUMBER_PARAM = "number";
 
-    private static final String ingredient1Name = "Ingredient 1";
-    private static final String ingredient2Name = "Ingredient 2";
-    private static final String ingredient3Name = "Ingredient 3";
+    private static final String ingredient1Name = "ingredient a";
+    private static final String ingredient2Name = "ingredient b";
+    private static final String ingredient3Name = "ingredient c";
 
-    private static final String recipe1Name = "Recipe 1";
-    private static final String recipe2Name = "Recipe 2";
-    private static final String recipe3Name = "Recipe 3";
+    private static final String recipe1Name = "recipe a";
+    private static final String recipe2Name = "recipe b";
+    private static final String recipe3Name = "recipe c";
 
     private static Ingredient ingredient1 = new Ingredient();
     private static Ingredient ingredient2 = new Ingredient();
@@ -60,6 +61,12 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
         recipe1 = recipeRepository.save(recipe1);
         recipe2 = recipeRepository.save(recipe2);
         recipe3 = recipeRepository.save(recipe3);
+    }
+
+    @AfterAll
+    static void teardown(@Autowired IngredientRepository ingredientRepository, @Autowired RecipeRepository recipeRepository){
+        recipeRepository.deleteAll();
+        ingredientRepository.deleteAll();
     }
 
     @Nested

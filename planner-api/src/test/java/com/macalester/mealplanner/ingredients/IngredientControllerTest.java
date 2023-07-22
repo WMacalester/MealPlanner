@@ -40,8 +40,8 @@ class IngredientControllerTest {
 
     private static final UUID uuid1 = UUID.randomUUID();
     private static final UUID uuid2 = UUID.randomUUID();
-    private static final String name1 = "ingredient 1";
-    private static final String name2 = "ingredient 2";
+    private static final String name1 = "ingredient a";
+    private static final String name2 = "ingredient b";
     private final Ingredient ingredient1 = new Ingredient(uuid1, name1, null);
     private final Ingredient ingredient2 = new Ingredient(uuid2, name2, null);
     private final Ingredient ingredient1_NullId = new Ingredient(null, name1, null);

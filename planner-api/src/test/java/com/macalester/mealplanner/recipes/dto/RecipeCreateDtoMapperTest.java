@@ -29,8 +29,8 @@ public class RecipeCreateDtoMapperTest {
   private final UUID uuid2 = UUID.randomUUID();
   private final UUID uuid3 = UUID.randomUUID();
   private final String name1 = "recipe 1";
-  private final Ingredient ingredient1 = new Ingredient(uuid2, "ingredient 1", null);
-  private final Ingredient ingredient2 = new Ingredient(uuid3, "ingredient 2", null);
+  private final Ingredient ingredient1 = new Ingredient(uuid2, "ingredient a", null);
+  private final Ingredient ingredient2 = new Ingredient(uuid3, "ingredient b", null);
   private final Recipe recipe1 = new Recipe(uuid1, name1, Set.of(ingredient1, ingredient2));
   private final Recipe recipe2 = new Recipe(uuid1, name1, Set.of());
   private final RecipeCreateDto recipeCreateDto1 =

@@ -1,6 +1,8 @@
 package com.macalester.mealplanner.recipes;
 
 import com.macalester.mealplanner.ingredients.Ingredient;
+import com.macalester.mealplanner.validator.NameConstraint;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.validation.constraints.NotBlank;
 import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,9 @@ public class Recipe {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @NotBlank private String name;
+  @NameConstraint
+  @Column(unique = true)
+  private String name;
 
   @ManyToMany
   @JoinTable(

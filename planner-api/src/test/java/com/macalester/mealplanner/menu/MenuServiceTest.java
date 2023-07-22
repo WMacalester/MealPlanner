@@ -29,10 +29,10 @@ class MenuServiceTest {
     private static final UUID uuid2 = UUID.randomUUID();
     private static final UUID uuid3 = UUID.randomUUID();
     private static final UUID uuid4 = UUID.randomUUID();
-    private static final String name1 = "recipe 1";
-    private static final String name2 = "recipe 2";
-    private static final String name3 = "recipe 3";
-    private static final String name4 = "recipe 4";
+    private static final String name1 = "recipe a";
+    private static final String name2 = "recipe b";
+    private static final String name3 = "recipe c";
+    private static final String name4 = "recipe d";
 
     private static final Recipe recipe1 = new Recipe(uuid1, name1, Set.of());
     private static final Recipe recipe2 = new Recipe(uuid2, name2, Set.of());
