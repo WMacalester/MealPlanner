@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.dto.IngredientDto;
+import com.macalester.mealplanner.ingredients.dto.IngredientDtoMapper;
 import com.macalester.mealplanner.recipes.Recipe;
 import java.util.List;
 import java.util.Set;
@@ -13,7 +14,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 public class RecipeDtoMapperTest {
-  private final RecipeDtoMapper recipeDtoMapper = new RecipeDtoMapper();
+  private final RecipeDtoMapper recipeDtoMapper = new RecipeDtoMapper(new IngredientDtoMapper());
 
   private final UUID uuid1 = UUID.randomUUID();
   private final UUID uuid2 = UUID.randomUUID();

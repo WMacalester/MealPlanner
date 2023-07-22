@@ -13,6 +13,7 @@ import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.IngredientService;
 import com.macalester.mealplanner.ingredients.dto.IngredientDto;
+import com.macalester.mealplanner.ingredients.dto.IngredientDtoMapper;
 import com.macalester.mealplanner.recipes.dto.RecipeCreateDto;
 import com.macalester.mealplanner.recipes.dto.RecipeCreateDtoMapper;
 import com.macalester.mealplanner.recipes.dto.RecipeDto;
@@ -38,6 +39,7 @@ class RecipeControllerTest {
   @Autowired private MockMvc mockMvc;
   @SpyBean private RecipeDtoMapper recipeDtoMapper;
   @SpyBean private RecipeCreateDtoMapper recipeCreateDtoMapper;
+  @SpyBean private IngredientDtoMapper ingredientDtoMapper;
   @MockBean private RecipeService recipeService;
   @MockBean private IngredientService ingredientService;
   @Autowired private ObjectMapper objectMapper;
