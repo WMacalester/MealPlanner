@@ -18,7 +18,7 @@ class IngredientMapperTest {
 
   private final Ingredient ingredient = new Ingredient(id, name, Set.of());
   private final IngredientDto ingredientDto = new IngredientDto(id, name);
-  private final IngredientCreateDto ingredientCreateDto = new IngredientCreateDto(name.toUpperCase()+"     ");
+  private final IngredientCreateDto ingredientCreateDto = new IngredientCreateDto(name.toUpperCase()+"     " + "extra words" + "    ");
 
   private final Ingredient ingredient2 = new Ingredient(id, name2, Set.of());
   private final IngredientDto ingredientDto2 = new IngredientDto(id, name2);
@@ -48,8 +48,9 @@ class IngredientMapperTest {
   @DisplayName("IngredientCreateDto to Ingredient")
   class IngredientCreateDtoToIngredientTest {
     @Test
-    void ingredientCreateDTOtoIngredient_givenIngredientCreateDto_returnIngredientWithNameTrimmedAndLowercase() {
-      assertEquals(ingredient, ingredientCreateDtoMapper.apply(ingredientCreateDto));
+    void ingredientCreateDTOtoIngredient_givenIngredientCreateDto_returnIngredientWithNameTrimmedAndLowercaseAndSingleWhiteSpaceBetweenWords() {
+        Ingredient expected = new Ingredient(id, name + " extra words", Set.of());
+      assertEquals(expected, ingredientCreateDtoMapper.apply(ingredientCreateDto));
     }
   }
 }

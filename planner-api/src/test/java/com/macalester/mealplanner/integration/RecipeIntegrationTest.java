@@ -93,7 +93,7 @@ public class RecipeIntegrationTest extends BaseIntegrationTest {
         @Test
         @DisplayName("Posting valid recipe - returns 200")
         void addNewRecipe_validRecipe_addsRecipe() throws Exception {
-            final String newRecipeName = "recipe 3";
+            final String newRecipeName = "recipe     1     ";
             RecipeCreateDto recipeCreateDto = new RecipeCreateDto(newRecipeName, List.of(ingredient1.getId()));
 
             String responseBody =
@@ -105,8 +105,8 @@ public class RecipeIntegrationTest extends BaseIntegrationTest {
                             .getResponse()
                             .getContentAsString();
 
-            assertTrue(recipeRepository.existsByName(newRecipeName));
-            assertAll(() -> assertTrue(responseBody.contains(newRecipeName)),
+            assertTrue(recipeRepository.existsByName(recipe1name));
+            assertAll(() -> assertTrue(responseBody.contains(recipe1name)),
                     () -> assertTrue(responseBody.contains(ingredient1name)));
         }
 

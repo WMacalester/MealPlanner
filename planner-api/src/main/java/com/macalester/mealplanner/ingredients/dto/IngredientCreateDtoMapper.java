@@ -9,6 +9,6 @@ import org.springframework.stereotype.Component;
 public class IngredientCreateDtoMapper implements Function<IngredientCreateDto, Ingredient> {
     @Override
     public Ingredient apply(IngredientCreateDto ingredientCreateDto) {
-        return new Ingredient(null, ingredientCreateDto.name().trim().toLowerCase(), new HashSet<>());
+        return new Ingredient(null, ingredientCreateDto.name().trim().toLowerCase().replaceAll(" +", " "), new HashSet<>());
     }
 }

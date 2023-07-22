@@ -24,6 +24,6 @@ public class RecipeCreateDtoMapper implements Function<RecipeCreateDto, Recipe> 
                 .map(id -> ingredientService.findById(id))
                 .collect(Collectors.toSet())
             : new HashSet<>();
-    return new Recipe(null, recipeCreateDto.name().trim().toLowerCase(), ingredients);
+    return new Recipe(null, recipeCreateDto.name().trim().toLowerCase().replaceAll(" +", " "), ingredients);
   }
 }
