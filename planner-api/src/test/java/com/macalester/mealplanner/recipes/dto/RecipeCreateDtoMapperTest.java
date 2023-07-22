@@ -36,11 +36,11 @@ public class RecipeCreateDtoMapperTest {
   private final RecipeCreateDto recipeCreateDto1 =
       new RecipeCreateDto(name1, List.of(uuid2, uuid3));
   private final RecipeCreateDto recipeCreateDto2 = new RecipeCreateDto(name1, List.of());
-  private final RecipeCreateDto recipeCreateDto2_null = new RecipeCreateDto(name1, null);
+  private final RecipeCreateDto recipeCreateDto2_nullIngredients = new RecipeCreateDto(name1, null);
 
   @Nested
   @DisplayName("Recipe create dto to Recipe")
-  class RecipeCreateDtoToRecipe {
+  class RecipeCreateDtoToRecipeTest {
     @Test
     @DisplayName("Valid mapping, ingredients in database")
     void recipeCreateDtoToRecipe_givenValidObjectsAndIngredientsInDatabase_returnsMappedObject() {
@@ -68,14 +68,15 @@ public class RecipeCreateDtoMapperTest {
     @Test
     @DisplayName("Valid mapping, null ingredients maps to empty list")
     void recipeCreateDtoToRecipe_givenValidObjectsAndNullIngredients_mapsToEmptyListIngredients() {
-      assertEquals(recipe2, recipeCreateDtoMapper.apply(recipeCreateDto2_null));
+      assertEquals(recipe2, recipeCreateDtoMapper.apply(recipeCreateDto2_nullIngredients));
     }
 
     @Test
-      @DisplayName("Name is trimmed and lowercased")
+      @DisplayName("Name is trimmed, lowercased and only 1 whitespace between words")
       void recipeCreateDtoToRecipe_givenValidObjectsAndNameHasCapitalsAndWhitespace_nameIsFormatted(){
-        RecipeCreateDto recipeCreateDto = new RecipeCreateDto("   RECIPE 1 ",List.of(uuid1,uuid2));
-        assertEquals(recipe1, recipeCreateDtoMapper.apply(recipeCreateDto));
+        RecipeCreateDto recipeCreateDto = new RecipeCreateDto("   RECIPE 1     teSt",List.of(uuid1,uuid2));
+        Recipe expected = new Recipe(null, "recipe 1 test", Set.of(ingredient1, ingredient2));
+        assertEquals(expected, recipeCreateDtoMapper.apply(recipeCreateDto));
     }
   }
 }
