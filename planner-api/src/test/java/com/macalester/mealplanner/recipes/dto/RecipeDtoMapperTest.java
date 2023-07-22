@@ -34,7 +34,7 @@ public class RecipeDtoMapperTest {
 
   @Nested
   @DisplayName("Recipe to RecipeDto")
-  class RecipeToRecipeDto {
+  class RecipeToRecipeDtoTest {
     @Test
     @DisplayName("Recipe to recipeDto, ingredients are not null")
     void recipeToDto_ingredientsNotNull_mappedToRecipeDto() {
