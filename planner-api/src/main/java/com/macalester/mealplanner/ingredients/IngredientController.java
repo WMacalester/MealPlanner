@@ -3,14 +3,14 @@ package com.macalester.mealplanner.ingredients;
 import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import com.macalester.mealplanner.ingredients.dto.IngredientCreateDto;
+import com.macalester.mealplanner.ingredients.dto.IngredientCreateDtoMapper;
 import com.macalester.mealplanner.ingredients.dto.IngredientDto;
+import com.macalester.mealplanner.ingredients.dto.IngredientDtoMapper;
 import com.macalester.mealplanner.ingredients.dto.IngredientEditDto;
-import com.macalester.mealplanner.ingredients.dto.IngredientMapper;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,17 +29,18 @@ import org.springframework.web.server.ResponseStatusException;
 public class IngredientController {
 
   private final IngredientService ingredientService;
-  private final IngredientMapper mapper = Mappers.getMapper(IngredientMapper.class);
+  private final IngredientCreateDtoMapper ingredientCreateDtoMapper;
+  private final IngredientDtoMapper ingredientDtoMapper;
 
   @GetMapping
   public List<IngredientDto> getAllIngredients() {
-    return mapper.ingredientToDto(ingredientService.findAll());
+    return ingredientService.findAll().stream().map(ingredientDtoMapper).toList();
   }
 
   @GetMapping("/{id}")
   public IngredientDto getIngredientById(@PathVariable UUID id) {
     try {
-      return mapper.ingredientToDto(ingredientService.findById(id));
+      return ingredientDtoMapper.apply(ingredientService.findById(id));
     } catch (NotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -48,8 +49,8 @@ public class IngredientController {
   @PostMapping
   public IngredientDto addIngredient(@Valid @RequestBody IngredientCreateDto ingredientCreateDTO) {
     try {
-      Ingredient newIngredient = mapper.ingredientCreateDTOtoIngredient(ingredientCreateDTO);
-      return mapper.ingredientToDto(ingredientService.save(newIngredient));
+      Ingredient newIngredient = ingredientCreateDtoMapper.apply(ingredientCreateDTO);
+      return ingredientDtoMapper.apply(ingredientService.save(newIngredient));
     } catch (UniqueConstraintViolationException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }
@@ -65,7 +66,7 @@ public class IngredientController {
   public IngredientDto editIngredientById(
       @PathVariable UUID id, @RequestBody @Valid IngredientEditDto editIngredientDto) {
     try {
-      return mapper.ingredientToDto(ingredientService.editIngredientById(id, editIngredientDto));
+      return ingredientDtoMapper.apply(ingredientService.editIngredientById(id, editIngredientDto));
     } catch (NotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     } catch (UniqueConstraintViolationException e) {

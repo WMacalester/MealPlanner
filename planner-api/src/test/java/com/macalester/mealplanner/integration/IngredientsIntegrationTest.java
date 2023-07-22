@@ -25,9 +25,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 public class IngredientsIntegrationTest extends BaseIntegrationTest {
   @Autowired private IngredientRepository ingredientRepository;
 
-  private static final String name1 = "Ingredient 1";
-  private static final String name2 = "Ingredient 2";
-  private static final String name3 = "Ingredient 3";
+  private static final String name1 = "ingredient 1";
+  private static final String name2 = "ingredient 2";
+  private static final String name3 = "ingredient 3";
   private static final Ingredient ingredient1 = new Ingredient(UUID.randomUUID(), name1, null);
   private static final IngredientCreateDto ingredientCreateDto1 = new IngredientCreateDto(name1);
   private static final IngredientCreateDto ingredientCreateDto_invalid = new IngredientCreateDto(null);

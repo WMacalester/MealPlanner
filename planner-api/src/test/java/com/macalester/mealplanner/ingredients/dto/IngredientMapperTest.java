@@ -6,6 +6,8 @@ import com.macalester.mealplanner.ingredients.Ingredient;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,20 +20,21 @@ class IngredientMapperTest {
 
   private final Ingredient ingredient = new Ingredient(id, name, Set.of());
   private final IngredientDto ingredientDto = new IngredientDto(id, name);
-  private final IngredientCreateDto ingredientCreateDto = new IngredientCreateDto(name);
+  private final IngredientCreateDto ingredientCreateDto = new IngredientCreateDto(name.toUpperCase()+"     ");
 
   private final Ingredient ingredient2 = new Ingredient(id, name2, Set.of());
   private final IngredientDto ingredientDto2 = new IngredientDto(id, name2);
 
-  private final IngredientMapper mapper = Mappers.getMapper(IngredientMapper.class);
+  private final IngredientCreateDtoMapper ingredientCreateDtoMapper = new IngredientCreateDtoMapper();
+  private final IngredientDtoMapper ingredientDtoMapper = new IngredientDtoMapper();
 
   @Nested
   @DisplayName("Ingredient to IngredientDto")
-  class IngredientToIngredientDto {
+  class IngredientToIngredientDtoTest {
     @Test
     @DisplayName("Single ingredient to ingredientDto")
     void ingredientToDto_singleIngredient_mappedToIngredientDto() {
-      assertEquals(ingredientDto, mapper.ingredientToDto(ingredient));
+      assertEquals(ingredientDto, ingredientDtoMapper.apply(ingredient));
     }
 
     @Test
@@ -39,16 +42,16 @@ class IngredientMapperTest {
     void ingredientToDto_multipleIngredients_mappedToIngredientDtos() {
       assertEquals(
           List.of(ingredientDto, ingredientDto2),
-          mapper.ingredientToDto(List.of(ingredient, ingredient2)));
+          Stream.of(ingredient, ingredient2).map(ingredientDtoMapper).toList());
     }
   }
 
   @Nested
   @DisplayName("IngredientCreateDto to Ingredient")
-  class IngredientCreateDtoToIngredient {
+  class IngredientCreateDtoToIngredientTest {
     @Test
-    void ingredientCreateDTOtoIngredient_givenIngredientCreateDto_returnIngredient() {
-      assertEquals(ingredient, mapper.ingredientCreateDTOtoIngredient(ingredientCreateDto));
+    void ingredientCreateDTOtoIngredient_givenIngredientCreateDto_returnIngredientWithNameTrimmedAndLowercase() {
+      assertEquals(ingredient, ingredientCreateDtoMapper.apply(ingredientCreateDto));
     }
   }
 }
