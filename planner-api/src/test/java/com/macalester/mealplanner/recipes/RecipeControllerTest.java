@@ -82,7 +82,7 @@ class RecipeControllerTest {
 
   @Nested
   @DisplayName("Get recipe by id")
-  class GetRecipeById {
+  class GetRecipeByIdTest {
     @Test
     @DisplayName("Return recipe with given id that is in database")
     void getRecipeById_recipeWithIdInDatabase_returnsRecipe() throws Exception {
@@ -109,7 +109,7 @@ class RecipeControllerTest {
 
   @Nested
   @DisplayName("Add recipe")
-  class AddRecipe {
+  class AddRecipeTest {
     @Nested
     @DisplayName("No ingredients")
     class AddRecipe_noIngredients {
@@ -218,7 +218,7 @@ class RecipeControllerTest {
 
   @Nested
   @DisplayName("Edit recipe by id")
-  class EditRecipeById {
+  class EditRecipeByIdTest {
     @Test
     @DisplayName("Recipe with given uuid not found, returns 404")
     void editRecipeById_recipeUuidNotInDb_returns404() throws Exception {
