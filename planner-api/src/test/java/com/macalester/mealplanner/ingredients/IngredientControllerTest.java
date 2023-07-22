@@ -11,18 +11,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import com.macalester.mealplanner.ingredients.dto.IngredientCreateDto;
+import com.macalester.mealplanner.ingredients.dto.IngredientCreateDtoMapper;
 import com.macalester.mealplanner.ingredients.dto.IngredientDto;
+import com.macalester.mealplanner.ingredients.dto.IngredientDtoMapper;
 import com.macalester.mealplanner.ingredients.dto.IngredientEditDto;
-import com.macalester.mealplanner.ingredients.dto.IngredientMapper;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -33,21 +34,26 @@ class IngredientControllerTest {
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
   @MockBean private IngredientService ingredientService;
-  private final IngredientMapper ingredientMapper = Mappers.getMapper(IngredientMapper.class);
+    @SpyBean private IngredientDtoMapper ingredientDtoMapper;
+    @SpyBean
+    private IngredientCreateDtoMapper ingredientCreateDtoMapper;
 
-  private static final UUID uuid1 = UUID.randomUUID();
-  private static final UUID uuid2 = UUID.randomUUID();
-  private final Ingredient ingredient1 = new Ingredient(uuid1, "ingredient 1", null);
-  private final Ingredient ingredient2 = new Ingredient(uuid2, "ingredient 2", null);
-  private final Ingredient ingredient1_NullId = new Ingredient(null, "ingredient 1", null);
-  private final IngredientCreateDto ingredientCreateDto1 = new IngredientCreateDto("ingredient 1");
-  private final List<Ingredient> ingredients = List.of(ingredient1, ingredient2);
-  private final IngredientDto ingredientDto1 = ingredientMapper.ingredientToDto(ingredient1);
-  private final List<IngredientDto> ingredientDtos = ingredientMapper.ingredientToDto(ingredients);
+    private static final UUID uuid1 = UUID.randomUUID();
+    private static final UUID uuid2 = UUID.randomUUID();
+    private static final String name1 = "ingredient 1";
+    private static final String name2 = "ingredient 2";
+    private final Ingredient ingredient1 = new Ingredient(uuid1, name1, null);
+    private final Ingredient ingredient2 = new Ingredient(uuid2, name2, null);
+    private final Ingredient ingredient1_NullId = new Ingredient(null, name1, null);
+    private final IngredientCreateDto ingredientCreateDto1 = new IngredientCreateDto(name1);
+    private final List<Ingredient> ingredients = List.of(ingredient1, ingredient2);
+    private final IngredientDto ingredientDto1 = new IngredientDto(uuid1, name1);
+    private final IngredientDto ingredientDto2 = new IngredientDto(uuid2, name2);
+    private final List<IngredientDto> ingredientDtos = List.of(ingredientDto1, ingredientDto2);
 
   @Nested
   @DisplayName("Get all ingredients")
-  class GetAllIngredients {
+  class GetAllIngredientsTest {
     @Test
     void getAllIngredients_givenIngredientInDb_returnsList() throws Exception {
       doReturn(ingredients).when(ingredientService).findAll();
@@ -63,7 +69,7 @@ class IngredientControllerTest {
 
   @Nested
   @DisplayName("Get ingredient by Id")
-  class GetIngredientById {
+  class GetIngredientByIdTest {
     @Test
     @DisplayName("Returns ingredientDto with id in db")
     void getIngredientById_givenIngredientWithIdInDb_returnsIngredient() throws Exception {
@@ -90,7 +96,7 @@ class IngredientControllerTest {
 
   @Nested
   @DisplayName("Add ingredient")
-  class AddIngredient {
+  class AddIngredientTest {
     @Test
     @DisplayName("Valid request returns saved ingredient")
     void addIngredient_validRequest_returnsSavedIngredient() throws Exception {
@@ -133,7 +139,7 @@ class IngredientControllerTest {
 
   @Nested
   @DisplayName("Edit ingredient by id")
-  class EditIngredientById {
+  class EditIngredientByIdTest {
 
     private final IngredientEditDto ingredientEditDto = new IngredientEditDto("abc");
     private final IngredientEditDto ingredientEditDto_blankName =
