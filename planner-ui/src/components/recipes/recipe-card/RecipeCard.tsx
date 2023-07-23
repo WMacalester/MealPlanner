@@ -4,6 +4,7 @@ import { FC, useState } from "react";
 import { Recipe } from "../../../interfaces/RecipeInterface";
 import { capitalise } from "../../../utils";
 import RecipeInfoModal from "./RecipeInfoModal";
+import { RECIPE_CARD_WIDTH } from "../../../constants";
 
 const RecipeCard: FC<Recipe> = (recipe) => {
   const [openModal, setOpenModal] = useState(false);
@@ -17,7 +18,7 @@ const RecipeCard: FC<Recipe> = (recipe) => {
   return (
     <Card
       sx={{
-        width: "300px",
+        width: RECIPE_CARD_WIDTH + "px",
         m: 1,
         backgroundColor: "primary.main",
         border: 5,
