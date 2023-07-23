@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { Box, Grid, TextField } from "@mui/material";
-import { RECIPE_CARD_WIDTH } from "../../constants";
+import { BOARD_HEIGHT, RECIPE_CARD_WIDTH } from "../../constants";
 import { useLazyGetRandomMenuQuery } from "../../api/menu";
 import RecipeCard from "../recipes/recipe-card/RecipeCard";
 import RerollButton from "../button/RerollButton";
@@ -26,11 +26,10 @@ const Menuboard: FC = () => {
     <Box
       sx={{
         backgroundColor: "tertiary.main",
-        overflowY: "auto",
         padding: "1rem",
         borderRadius: "1rem",
         width: RECIPE_CARD_WIDTH * 1.2 + "px",
-        height: "80%",
+        height: BOARD_HEIGHT,
         alignItems: "start",
       }}
     >
