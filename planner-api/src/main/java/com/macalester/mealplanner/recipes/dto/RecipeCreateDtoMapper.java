@@ -1,5 +1,7 @@
 package com.macalester.mealplanner.recipes.dto;
 
+import static com.macalester.mealplanner.Utils.formatName;
+
 import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.IngredientService;
 import com.macalester.mealplanner.recipes.Recipe;
@@ -24,6 +26,6 @@ public class RecipeCreateDtoMapper implements Function<RecipeCreateDto, Recipe> 
                 .map(id -> ingredientService.findById(id))
                 .collect(Collectors.toSet())
             : new HashSet<>();
-    return new Recipe(null, recipeCreateDto.name().trim().toLowerCase().replaceAll(" +", " "), ingredients);
+    return new Recipe(null, formatName(recipeCreateDto.name()), ingredients);
   }
 }
