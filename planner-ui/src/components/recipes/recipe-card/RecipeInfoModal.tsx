@@ -25,6 +25,7 @@ const modalStyle = {
   boxShadow: 24,
   p: 4,
   maxHeight: "50%",
+  overflowY: "auto",
 };
 
 const RecipeInfoModal: FC<RecipeInfoModalProps> = ({
