@@ -7,3 +7,9 @@ spring:
   h2:
     console.enabled: true
     console.path: /h2
+
+data.loader:
+  onStart: true
+  filetype: csv
+  ingredients: initialdata/data-ingredients.csv
+  recipes: initialdata/data-recipes.csv
