@@ -5,11 +5,12 @@ import Typography from "@mui/material/Typography";
 import IngredientAddModal from "../ingredients/IngredientAddModal";
 import RecipeAddModal from "../recipes/RecipeAddModal";
 import AddButton from "../button/AddButton";
+import { NAVBAR_HEIGHT } from "../../constants";
 
 export default function Navbar() {
   return (
     <Box>
-      <AppBar position="static" sx={{ height: "5%" }}>
+      <AppBar position="absolute" sx={{ height: NAVBAR_HEIGHT }}>
         <Toolbar>
           <Typography
             variant="h4"
