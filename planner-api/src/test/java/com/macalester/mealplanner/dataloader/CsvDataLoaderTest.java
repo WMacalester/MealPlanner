@@ -51,12 +51,16 @@ class CsvDataLoaderTest {
         recipe2.setIngredients(Set.of(pasta, potato));
 
         Recipe recipe3 = new Recipe();
-        recipe3.setName("empty without colon");
+        recipe3.setName("empty without comma");
         recipe3.setIngredients(Set.of());
 
         Recipe recipe4 = new Recipe();
-        recipe4.setName("empty with colon");
+        recipe4.setName("empty with comma");
         recipe4.setIngredients(Set.of());
+
+        Recipe recipe5 = new Recipe();
+        recipe5.setName("empty with lots of commas");
+        recipe5.setIngredients(Set.of());
 
         doReturn(Optional.of(tomato)).when(ingredientRepository).findByName("tomato");
         doReturn(Optional.of(carrots)).when(ingredientRepository).findByName("carrots");
@@ -67,6 +71,6 @@ class CsvDataLoaderTest {
 
         Set<Recipe> recipes = dataLoader.loadRecipes("dataloader/csv/recipes.csv");
 
-        assertEquals(Set.of(recipe1,recipe2,recipe3, recipe4), recipes);
+        assertEquals(Set.of(recipe1,recipe2,recipe3,recipe4, recipe5), recipes);
     }
 }
