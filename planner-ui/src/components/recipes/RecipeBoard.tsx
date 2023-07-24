@@ -2,6 +2,7 @@ import { FC } from "react";
 import { useGetAllRecipesQuery } from "../../api/recipes";
 import RecipeCard from "./recipe-card/RecipeCard";
 import { Box, Grid } from "@mui/material";
+import { BOARD_HEIGHT } from "../../constants";
 
 const RecipeBoard: FC = () => {
   const { data: recipes } = useGetAllRecipesQuery();
@@ -14,7 +15,7 @@ const RecipeBoard: FC = () => {
         padding: "1rem",
         borderRadius: "1rem",
         width: "80%",
-        height: "80%",
+        height: BOARD_HEIGHT,
         alignItems: "start",
       }}
     >
