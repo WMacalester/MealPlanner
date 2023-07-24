@@ -91,13 +91,12 @@ public class CsvDataLoader implements DataLoader {
     }
 
     private Recipe computeRecipeFromString(String input) {
-        String[] nameIngredients = input.split(":");
-        if (nameIngredients.length > 2){
-            log.error(String.format("Invalid recipe found, too many colons: %s", input));
+        String[] nameIngredients = input.split(",");
+        if (nameIngredients[0].isBlank()){
             return null;
         }
 
-        Set<Ingredient> ingredients = nameIngredients.length == 2 ? findIngredientsFromString(nameIngredients[1]) : Set.of();
+        Set<Ingredient> ingredients = nameIngredients.length > 1 ? findIngredientsFromString(nameIngredients) : Set.of();
 
         Recipe newRecipe = new Recipe(null, formatName(nameIngredients[0]), ingredients);
 
@@ -108,12 +107,13 @@ public class CsvDataLoader implements DataLoader {
         return newRecipe;
     }
 
-    private Set<Ingredient> findIngredientsFromString(String input) {
-        String[] test = input.split(",");
-
-        Set<Ingredient> ingredients = new HashSet<>(test.length);
-        for (String name : test) {
-            String formattedName = formatName(name);
+    private Set<Ingredient> findIngredientsFromString(String[] input) {
+        Set<Ingredient> ingredients = new HashSet<>(input.length-1);
+        for (int i = 1; i < input.length; i++) {
+            String formattedName = formatName(input[i]);
+            if (formattedName.isBlank()){
+                continue;
+            }
             Optional<Ingredient> ingredient = ingredientRepository.findByName(formattedName);
             ingredient.ifPresentOrElse(ingredients::add,
                     () -> log.error(String.format("Ingredient with name %s was not found", formattedName)));

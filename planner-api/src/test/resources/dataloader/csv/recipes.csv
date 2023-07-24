@@ -1,7 +1,7 @@
-vegetables: tomato, onion, peas, carrots
-carbohydrates: pasta   ,  potato, bread
-empty with colon:
-empty2:
-ill3gal:
-illegal:   A  : adf
-empty without colon
+vegetables,tomato, onion, peas, carrots
+carbohydrates, pasta   ,  potato, bread
+empty with comma,
+ill3gal
+empty with lots of commas,    ,, , ,
+empty without comma
+, tomato
