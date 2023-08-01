@@ -2,11 +2,8 @@ package com.macalester.mealplanner.menu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doReturn;
 
 import com.macalester.mealplanner.recipes.Recipe;
-import com.macalester.mealplanner.recipes.RecipeRepository;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -14,14 +11,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
 
-    @Mock
-    private RecipeRepository recipeRepository;
     @InjectMocks
     private MenuService menuService;
 
@@ -43,27 +37,32 @@ class MenuServiceTest {
     @DisplayName("Get random recipes")
     class GetRandomRecipesTest {
 
-        @Test
-        @DisplayName("Valid request")
-        void getRandomRecipes_numberRecipeRequestedLessThanNumberAvailable_returnsListOfUniqueRecipes(){
-            doReturn(List.of(recipe1,recipe2, recipe3,recipe4)).when(recipeRepository).findAll();
 
-            assertEquals(3, menuService.getRandomUniqueRecipes(3).stream().distinct().count());
-        }
+            @Test
+            @DisplayName("Valid request")
+            void getRandomRecipes_numberRecipeRequestedLessThanNumberAvailable_returnsListOfUniqueRecipes(){
+                assertEquals(3, menuService.getRandomUniqueRecipes(3, Set.of(recipe1,recipe2,recipe3,recipe4)).stream().distinct().count());
+            }
 
-        @Test
-        @DisplayName("Requested more recipes than available")
-        void getRandomRecipes_numberRecipeRequestedMoreThanNumberAvailable_throwsIllegalArgumentException(){
-            doReturn(List.of(recipe1,recipe2, recipe3,recipe4)).when(recipeRepository).findAll();
+            @Test
+            @DisplayName("Requested more recipes than available")
+            void getRandomRecipes_numberRecipeRequestedMoreThanNumberAvailable_throwsIllegalArgumentException(){
+                Set<Recipe> input = Set.of(recipe1);
+                assertThrows(IllegalArgumentException.class, () -> menuService.getRandomUniqueRecipes(20, input));
+            }
 
-            assertThrows(IllegalArgumentException.class, () -> menuService.getRandomUniqueRecipes(20));
-        }
+            @Test
+            @DisplayName("Requested < 1 recipe")
+            void getRandomRecipes_requestedLessThan1Recipe_throwsIllegalArgumentException(){
+                Set<Recipe> input = Set.of(recipe1);
+                assertThrows(IllegalArgumentException.class, () -> menuService.getRandomUniqueRecipes(-1, input));
+            }
 
-        @Test
-        @DisplayName("Requested < 1 recipe")
-        void getRandomRecipes_requestedLessThan1Recipe_throwsIllegalArgumentException(){
-
-            assertThrows(IllegalArgumentException.class, () -> menuService.getRandomUniqueRecipes(-1));
+            @Test
+            @DisplayName("No recipes given to select from")
+            void getRandomRecipes_noRecipesToSelectFromGiven_throwsIllegalArgumentException(){
+                Set<Recipe> input = Set.of();
+                assertThrows(IllegalArgumentException.class, () -> menuService.getRandomUniqueRecipes(1, input));
         }
     }
 }
