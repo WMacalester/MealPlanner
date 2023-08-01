@@ -2,7 +2,10 @@ package com.macalester.mealplanner.recipes;
 
 import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,5 +54,13 @@ public class RecipeService {
 
     updatedRecipe.setId(storedRecipe.getId());
     return recipeRepository.save(updatedRecipe);
+  }
+
+  public Set<Recipe> getRecipesNotInCollection(Collection<Recipe> recipeCollection){
+      if (recipeCollection == null || recipeCollection.isEmpty()){
+          return new HashSet<>(recipeRepository.findAll());
+      }
+
+      return recipeRepository.findAllNotInCollection(recipeCollection);
   }
 }
