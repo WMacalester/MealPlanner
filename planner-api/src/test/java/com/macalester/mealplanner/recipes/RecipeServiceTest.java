@@ -77,6 +77,26 @@ class RecipeServiceTest {
     }
 
     @Nested
+    @DisplayName("Find all by id")
+    class FindAllByIdTest{
+        @Test
+        @DisplayName("All valid ids returns corresponding recipes")
+        void findAllById_allIdsInDb_returnsCorrespondingRecipes(){
+            doReturn(Optional.of(recipe1)).when(recipeRepository).findById(recipe1.getId());
+            doReturn(Optional.of(recipe2)).when(recipeRepository).findById(recipe2.getId());
+
+            assertEquals(Set.of(recipe1,recipe2), recipeService.findAllById(Set.of(recipe1.getId(), recipe2.getId())));
+        }
+
+        @Test
+        @DisplayName("An id not in db throws NotFoundException")
+        void findAllById_idNotInDb_throwsNotFoundException(){
+            Set<UUID> input = Set.of(UUID.randomUUID());
+            assertThrows(NotFoundException.class, () -> recipeService.findAllById(input));
+        }
+    }
+
+    @Nested
     @DisplayName("Add recipe")
     class AddRecipeTest {
         @Test
