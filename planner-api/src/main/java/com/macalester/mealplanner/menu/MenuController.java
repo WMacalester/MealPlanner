@@ -6,11 +6,12 @@ import com.macalester.mealplanner.recipes.RecipeService;
 import com.macalester.mealplanner.recipes.dto.RecipeDto;
 import com.macalester.mealplanner.recipes.dto.RecipeDtoMapper;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -53,13 +54,13 @@ public class MenuController {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("menu.error.notEnoughRecipesRequested", null, Locale.ENGLISH));
             }
 
-            Set<Recipe> selectedRecipes = recipeService.findAllById(menuCreateDto.recipeIds());
+            List<Recipe> selectedRecipes = recipeService.findAllById(menuCreateDto.recipeIds()).stream().sorted(Comparator.comparing(Recipe::getName)).toList();
             Set<Recipe> recipesNotSelected = recipeService.getRecipesNotInCollection(selectedRecipes);
-            Set<Recipe> recipes = numRandomRecipes > 0 ? menuService.getRandomUniqueRecipes(numRandomRecipes, recipesNotSelected) : new HashSet<>();
-            recipes.addAll(selectedRecipes);
+            List<Recipe> randomRecipes = numRandomRecipes > 0 ? menuService.getRandomUniqueRecipes(numRandomRecipes, recipesNotSelected).stream().sorted(Comparator.comparing(Recipe::getName)).collect(Collectors.toList()) : new ArrayList<>();
 
-            return recipes.stream().map(recipeDtoMapper).sorted(Comparator.comparing(RecipeDto::name)).toList();
-        } catch (IllegalArgumentException | NotFoundException e ){
+            randomRecipes.addAll(selectedRecipes);
+            return randomRecipes.stream().map(recipeDtoMapper).toList();
+        } catch (IllegalArgumentException | NotFoundException e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         }
     }

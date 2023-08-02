@@ -116,7 +116,7 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
         @DisplayName("With selected recipes")
         class WithSelectedRecipesTest {
             @Test
-            @DisplayName("Valid request with enough recipes in db and selected recipes - returns 200 and list of recipes which contain selected recipes")
+            @DisplayName("Valid request with enough recipes in db and selected recipes - returns 200 and list of recipes which contain selected recipes (sorted to end)")
             void getRandomUniqueRecipes_validRequestAndEnoughRecipesInDb_returns400() throws Exception {
                 MenuCreateDto menuCreateDto = new MenuCreateDto(Set.of(recipe1.getId()));
                 String content = objectMapper.writeValueAsString(menuCreateDto);
@@ -128,7 +128,7 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
                         .getContentAsString();
 
                 String expected = objectMapper.writeValueAsString(
-                        Stream.of(recipe1, recipe2, recipe3)
+                        Stream.of(recipe2, recipe3, recipe1)
                                 .map(recipeDtoMapper)
                                 .toList()
                 );
