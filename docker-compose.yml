@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15.3
+    environment:
+      - "POSTGRES_PASSWORD=password"
+
+  api:
+    build: ./planner-api
+    image: planner-api
+    depends_on:
+      - db
+    environment:
+      - "SPRING_PROFILES_ACTIVE=prod"
+    ports:
+      - "8080:8080"
+
+  ui:
+    build: ./planner-ui
+    depends_on:
+      - api
+    image: planner-ui
+    ports:
+      - "3000:80"
