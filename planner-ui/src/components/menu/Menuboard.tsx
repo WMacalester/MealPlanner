@@ -1,19 +1,34 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Box, Grid, TextField } from "@mui/material";
 import { BOARD_HEIGHT, RECIPE_CARD_WIDTH } from "../../constants";
-import { useLazyGetRandomMenuQuery } from "../../api/menu";
+import { useCreateRandomMenuMutation } from "../../api/menu";
 import RecipeCard from "../recipes/recipe-card/RecipeCard";
 import RerollButton from "../button/RerollButton";
 import { useGetAllRecipesQuery } from "../../api/recipes";
+import { useAppSelector } from "../../hooks/redux-hooks";
 
 const Menuboard: FC = () => {
-  const [numberRequestedRecipes, setNumberRequestedRecipes] =
-    useState<number>(1);
-  const [trigger, result] = useLazyGetRandomMenuQuery();
+  const [trigger, result] = useCreateRandomMenuMutation();
   const { data: recipes } = useGetAllRecipesQuery();
 
+  const selectedRecipeIds = useAppSelector(
+    (state) => state.selectedRecipeIds.ids
+  );
+  const minNumberOfRecipes = Math.max(1, selectedRecipeIds.length);
+  const [numberRequestedRecipes, setNumberRequestedRecipes] =
+    useState<number>(minNumberOfRecipes);
+
+  useEffect(() => {
+    setNumberRequestedRecipes(
+      Math.max(minNumberOfRecipes, numberRequestedRecipes)
+    );
+  }, [minNumberOfRecipes, numberRequestedRecipes]);
+
   const handleRerollClick = () => {
-    trigger(numberRequestedRecipes, false);
+    trigger({
+      number: numberRequestedRecipes,
+      payload: { recipeIds: selectedRecipeIds },
+    });
   };
 
   const handleNumberFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,7 +64,7 @@ const Menuboard: FC = () => {
           onChange={handleNumberFieldChange}
           InputProps={{
             inputProps: {
-              min: 1,
+              min: minNumberOfRecipes,
               max: recipes?.length,
             },
           }}
