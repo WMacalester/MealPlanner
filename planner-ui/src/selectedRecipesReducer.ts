@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 interface NewState {
   ids: string[];
@@ -20,8 +20,11 @@ const newSlice = createSlice({
         return { ...state, ids: updatedIds };
       }
     },
+    resetSelectedRecipeIds: () => {
+      return initialState;
+    },
   },
 });
 
-export const { toggleId } = newSlice.actions;
+export const { toggleId, resetSelectedRecipeIds } = newSlice.actions;
 export default newSlice.reducer;
