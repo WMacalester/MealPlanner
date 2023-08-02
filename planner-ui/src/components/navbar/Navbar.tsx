@@ -6,6 +6,7 @@ import IngredientAddModal from "../ingredients/IngredientAddModal";
 import RecipeAddModal from "../recipes/RecipeAddModal";
 import AddButton from "../button/AddButton";
 import { NAVBAR_HEIGHT } from "../../constants";
+import SelectedRecipeResetButton from "../button/SelectedRecipeResetButton";
 
 export default function Navbar() {
   return (
@@ -20,6 +21,7 @@ export default function Navbar() {
           </Typography>
 
           <>
+            <SelectedRecipeResetButton />
             <AddButton Modal={IngredientAddModal} label={"Add Ingredient"} />
             <AddButton Modal={RecipeAddModal} label={"Add Recipe"} />
           </>
