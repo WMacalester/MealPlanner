@@ -15,6 +15,18 @@ export const recipesApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["Recipe"],
     }),
+    getAllRecipesCsv: builder.query<Blob, void>({
+      query: () => ({
+        url: BASE_URL,
+        headers: {
+          Accept: "text/csv",
+        },
+        responseHandler: (res) => {
+          return res.blob();
+        },
+      }),
+      providesTags: ["Recipe"],
+    }),
     createNewRecipe: builder.mutation<Recipe, RecipeCreateDto>({
       query: (payload: RecipeCreateDto) => ({
         url: BASE_URL,
@@ -46,6 +58,7 @@ export const recipesApi = apiSlice.injectEndpoints({
 
 export const {
   useGetAllRecipesQuery,
+  useGetAllRecipesCsvQuery,
   useCreateNewRecipeMutation,
   useEditRecipeMutation,
   useDeleteRecipeMutation,

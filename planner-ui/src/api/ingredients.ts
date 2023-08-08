@@ -11,6 +11,21 @@ export const ingredientsApi = apiSlice.injectEndpoints({
     getAllIngredients: builder.query<Ingredient[], void>({
       query: () => ({
         url: BASE_URL,
+        headers: {
+          Accept: "application/json",
+        },
+      }),
+      providesTags: ["Ingredient"],
+    }),
+    getAllIngredientsCsv: builder.query<Blob, void>({
+      query: () => ({
+        url: BASE_URL,
+        headers: {
+          Accept: "text/csv",
+        },
+        responseHandler: (res) => {
+          return res.blob();
+        },
       }),
       providesTags: ["Ingredient"],
     }),
@@ -25,5 +40,8 @@ export const ingredientsApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetAllIngredientsQuery, useCreateNewIngredientMutation } =
-  ingredientsApi;
+export const {
+  useGetAllIngredientsQuery,
+  useGetAllIngredientsCsvQuery,
+  useCreateNewIngredientMutation,
+} = ingredientsApi;
