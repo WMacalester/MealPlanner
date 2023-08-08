@@ -58,7 +58,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
     }
 
     @AfterEach
-    void teardown(){
+    void teardown() {
         recipeRepository.deleteAll();
         ingredientRepository.deleteAll();
     }
@@ -67,8 +67,8 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Get All Recipes")
     class GetAllRecipesTest {
         @Test
-        @DisplayName("Returns recipes in db")
-        void getAllRecipes_returnsAllRecipes() throws Exception {
+        @DisplayName("Returns recipes in db - JSON")
+        void getAllRecipes_returnsAllRecipesInJSON() throws Exception {
             recipe1.setIngredients(Set.of());
             recipe1 = recipeRepository.save(recipe1);
             recipe2.setIngredients(Set.of(ingredient1));
@@ -83,7 +83,27 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
 
             String expected = objectMapper.writeValueAsString(Stream.of(recipe1, recipe2).map(recipeDtoMapper).toList());
 
-            assertEquals(responseBody, expected);
+            assertEquals(expected, responseBody);
+        }
+
+        @Test
+        @DisplayName("Returns recipes in db - CSV")
+        void getAllRecipes_returnsAllRecipesInCsv() throws Exception {
+            recipe1.setIngredients(Set.of());
+            recipe1 = recipeRepository.save(recipe1);
+            recipe2.setIngredients(Set.of(ingredient1));
+            recipe2 = recipeRepository.save(recipe2);
+
+            String responseBody =
+                    mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL).accept("text/csv"))
+                            .andExpect(status().isOk())
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+            String expected = recipe1name + ",\n" + recipe2name + "," + ingredient1name;
+
+            assertEquals(expected, responseBody);
         }
     }
 
