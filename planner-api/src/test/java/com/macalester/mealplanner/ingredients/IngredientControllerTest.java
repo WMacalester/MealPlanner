@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.macalester.mealplanner.dataexporter.DataExporter;
 import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import com.macalester.mealplanner.ingredients.dto.IngredientCreateDto;
@@ -34,6 +35,7 @@ class IngredientControllerTest {
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
   @MockBean private IngredientService ingredientService;
+  @MockBean private DataExporter dataExporter;
     @SpyBean private IngredientDtoMapper ingredientDtoMapper;
     @SpyBean
     private IngredientCreateDtoMapper ingredientCreateDtoMapper;
