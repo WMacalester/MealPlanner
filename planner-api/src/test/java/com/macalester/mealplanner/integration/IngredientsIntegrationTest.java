@@ -10,11 +10,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.IngredientRepository;
 import com.macalester.mealplanner.ingredients.dto.IngredientCreateDto;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -50,38 +48,67 @@ public class IngredientsIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Get all ingredients")
     class GetAllIngredientsTest {
 
-        @Test
-        @DisplayName("Get all ingredients returns all ingredients in database")
-        void getAllIngredients_givenIngredientsInDb_returnsAllIngredients() throws Exception {
-            ingredientRepository.save(ingredient1);
-            ingredientRepository.save(ingredient2);
-            ingredientRepository.save(ingredient3);
+        @Nested
+        @DisplayName("JSON Accept Header")
+        class JsonTest {
+            @Test
+            @DisplayName("Get all ingredients returns all ingredients in database")
+            void getAllIngredients_givenIngredientsInDb_returnsAllIngredients() throws Exception {
+                ingredientRepository.save(ingredient1);
+                ingredientRepository.save(ingredient2);
+                ingredientRepository.save(ingredient3);
 
-            String responseBody =
-                    mockMvc
-                            .perform(MockMvcRequestBuilders.get("/ingredients"))
-                            .andDo(print())
-                            .andExpect(status().isOk())
-                            .andReturn()
-                            .getResponse()
-                            .getContentAsString();
+                String responseBody =
+                        mockMvc
+                                .perform(MockMvcRequestBuilders.get("/ingredients"))
+                                .andDo(print())
+                                .andExpect(status().isOk())
+                                .andReturn()
+                                .getResponse()
+                                .getContentAsString();
 
-            List<Ingredient> responseIngredients =
-                    objectMapper.readValue(responseBody, new TypeReference<>() {
-                    });
-            assertEquals(
-                    List.of(name1, name2, name3),
-                    responseIngredients.stream().map(Ingredient::getName).collect(Collectors.toList()));
+                List<Ingredient> responseIngredients =
+                        objectMapper.readValue(responseBody, new TypeReference<>() {
+                        });
+                assertEquals(
+                        List.of(name1, name2, name3),
+                        responseIngredients.stream().map(Ingredient::getName).collect(Collectors.toList()));
+            }
+
+            @Test
+            @DisplayName("Get all ingredients returns empty list if no ingredients in database")
+            void getAllIngredients_givenNoIngredientsInDb_returnsEmptyList() throws Exception {
+                mockMvc
+                        .perform(MockMvcRequestBuilders.get("/ingredients"))
+                        .andDo(print())
+                        .andExpect(status().isOk())
+                        .andExpect(MockMvcResultMatchers.content().string(equalTo("[]")));
+            }
         }
 
-        @Test
-        @DisplayName("Get all ingredients returns empty list if no ingredients in database")
-        void getAllIngredients_givenNoIngredientsInDb_returnsEmptyList() throws Exception {
-            mockMvc
-                    .perform(MockMvcRequestBuilders.get("/ingredients"))
-                    .andDo(print())
-                    .andExpect(status().isOk())
-                    .andExpect(MockMvcResultMatchers.content().string(equalTo("[]")));
+        @Nested
+        @DisplayName("CSV Accept Header")
+        class CsvTest {
+            @Test
+            @DisplayName("Get all ingredients returns all ingredients in database in csv format")
+            void getAllIngredients_givenIngredientsInDb_returnsAllIngredientsInCSV() throws Exception {
+                ingredientRepository.save(ingredient1);
+                ingredientRepository.save(ingredient2);
+                ingredientRepository.save(ingredient3);
+
+                String responseBody =
+                        mockMvc
+                                .perform(MockMvcRequestBuilders.get("/ingredients").accept("text/csv"))
+                                .andDo(print())
+                                .andExpect(status().isOk())
+                                .andReturn()
+                                .getResponse()
+                                .getContentAsString();
+
+                String expected = String.join("\n", name1,name2,name3);
+
+                assertEquals(expected, responseBody);
+            }
         }
     }
 
