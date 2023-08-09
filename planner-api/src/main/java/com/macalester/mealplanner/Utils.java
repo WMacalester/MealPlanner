@@ -10,8 +10,8 @@ public class Utils {
         return name.trim().toLowerCase().replaceAll(" +", " ");
     }
 
-    public static String computeFilename(String filePrefix) {
-        SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd");
-        return filePrefix + "_" + date.format(new Date()) + ".csv";
+    public static String formatCurrentDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        return dateFormat.format(new Date());
     }
 }
