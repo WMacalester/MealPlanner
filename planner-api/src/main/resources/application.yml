@@ -10,3 +10,6 @@ springdoc:
     path: /swagger.html
 
 spring.jpa.hibernate.dll-auto: validate
+
+authentication:
+  toggle: false

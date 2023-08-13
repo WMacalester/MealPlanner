@@ -13,3 +13,7 @@ data.loader:
   filetype: csv
   ingredients: initialdata/data-ingredients.csv
   recipes: initialdata/data-recipes.csv
+
+authentication:
+  toggle: true
+  secretKey: a16af43fb94395491d4d27d5d913ec3d82024887d7edb44124ff45b9da058b53
