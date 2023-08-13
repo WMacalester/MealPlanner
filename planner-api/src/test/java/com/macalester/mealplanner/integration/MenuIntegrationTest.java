@@ -3,6 +3,7 @@ package com.macalester.mealplanner.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.macalester.mealplanner.AuthOpenSecurityConfig;
 import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.IngredientRepository;
 import com.macalester.mealplanner.menu.MenuCreateDto;
@@ -19,8 +20,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+@ContextConfiguration(classes = {AuthOpenSecurityConfig.class})
 public class MenuIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private RecipeDtoMapper recipeDtoMapper;
