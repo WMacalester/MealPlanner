@@ -40,7 +40,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers( "/auth/**")
                 .permitAll()
-                .requestMatchers("/error").anonymous() // allows exceptions to map to http codes other than 403
                 .anyRequest()
                 .authenticated()
                 .and()
