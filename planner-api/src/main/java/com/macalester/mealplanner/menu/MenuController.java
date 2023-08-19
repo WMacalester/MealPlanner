@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,7 @@ public class MenuController {
     private final MessageSource messageSource;
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<RecipeDto> createMenuWithRandomUniqueRecipes(@RequestParam int number){
         try {
             if (number < 1){
@@ -47,6 +49,7 @@ public class MenuController {
     }
 
     @PostMapping(consumes = "application/json")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<RecipeDto> createMenuWithRandomUniqueRecipes(@RequestParam int number, @Valid @RequestBody MenuCreateDto menuCreateDto){
         try {
             int numRandomRecipes = number-menuCreateDto.recipeIds().size();

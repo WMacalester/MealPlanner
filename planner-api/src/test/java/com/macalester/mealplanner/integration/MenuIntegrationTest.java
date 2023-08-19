@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.macalester.mealplanner.AuthOpenSecurityConfig;
+import com.macalester.mealplanner.AuthenticationActiveInitializer;
 import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.IngredientRepository;
 import com.macalester.mealplanner.menu.MenuCreateDto;
@@ -20,10 +21,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-@ContextConfiguration(classes = {AuthOpenSecurityConfig.class})
+@ContextConfiguration(initializers = AuthenticationActiveInitializer.class)
 public class MenuIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private RecipeDtoMapper recipeDtoMapper;
@@ -84,6 +86,7 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
         class NoSelectedRecipesTest {
             @Test
             @DisplayName("More recipes requested than available - returns 400")
+            @WithMockUser(roles = "USER")
             void getRandomUniqueRecipes_moreRecipesRequestedThanInDb_returns400() throws Exception {
                 mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL).param(RECIPE_NUMBER_PARAM, "100"))
                         .andExpect(status().isBadRequest());
@@ -91,6 +94,7 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
 
             @Test
             @DisplayName("Valid request with enough recipes in db - returns 200 and list of recipes")
+            @WithMockUser(roles = "USER")
             void getRandomUniqueRecipes_validRequestAndEnoughRecipesInDb_returns400() throws Exception {
                 String response = mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL).param(RECIPE_NUMBER_PARAM, "3"))
                         .andExpect(status().isOk())
@@ -109,6 +113,7 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
 
             @Test
             @DisplayName("Request with < 1 number of recipes - returns 400")
+            @WithMockUser(roles = "USER")
             void getRandomUniqueRecipes_requestedLessThan1Recipe_returns400() throws Exception {
                 mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL).param(RECIPE_NUMBER_PARAM, "0"))
                         .andExpect(status().isBadRequest());
@@ -120,6 +125,7 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
         class WithSelectedRecipesTest {
             @Test
             @DisplayName("Valid request with enough recipes in db and selected recipes - returns 200 and list of recipes which contain selected recipes (sorted to end)")
+            @WithMockUser(roles = "USER")
             void getRandomUniqueRecipes_validRequestAndEnoughRecipesInDb_returns400() throws Exception {
                 MenuCreateDto menuCreateDto = new MenuCreateDto(Set.of(recipe1.getId()));
                 String content = objectMapper.writeValueAsString(menuCreateDto);
@@ -141,6 +147,7 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
 
             @Test
             @DisplayName("Request body with empty recipeIds - returns requested number of recipes")
+            @WithMockUser(roles = "USER")
             void getRandomUniqueRecipes_requestBodyWithEmptyRecipeIds_returnsRequestedNumberOfRecipes() throws Exception {
                 MenuCreateDto menuCreateDto = new MenuCreateDto(Set.of());
                 String content = objectMapper.writeValueAsString(menuCreateDto);
@@ -162,6 +169,7 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
 
             @Test
             @DisplayName("More recipes requested than available - returns 400")
+            @WithMockUser(roles = "USER")
             void getRandomUniqueRecipes_moreRecipesRequestedThanInDb_returns400() throws Exception {
                 MenuCreateDto menuCreateDto = new MenuCreateDto(Set.of(recipe1.getId()));
                 String content = objectMapper.writeValueAsString(menuCreateDto);
@@ -172,6 +180,7 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
 
             @Test
             @DisplayName("Recipe id given that is not in db - returns 400")
+            @WithMockUser(roles = "USER")
             void getRandomUniqueRecipes_recipeIdNotInDb_returns400() throws Exception {
                 MenuCreateDto menuCreateDto = new MenuCreateDto(Set.of(UUID.randomUUID()));
                 String content = objectMapper.writeValueAsString(menuCreateDto);
@@ -181,6 +190,7 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
             }
             @Test
             @DisplayName("Request with < 1 number of recipes - returns 400")
+            @WithMockUser(roles = "USER")
             void getRandomUniqueRecipes_requestedLessThan1Recipe_returns400() throws Exception {
                 MenuCreateDto menuCreateDto = new MenuCreateDto(Set.of(recipe1.getId()));
                 String content = objectMapper.writeValueAsString(menuCreateDto);
@@ -191,6 +201,7 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
 
             @Test
             @DisplayName("Request body with null recipeIds - returns 400")
+            @WithMockUser(roles = "USER")
             void getRandomUniqueRecipes_requestBodyWithNullRecipeIds_returns400() throws Exception {
                 MenuCreateDto menuCreateDto = new MenuCreateDto(null);
                 String content = objectMapper.writeValueAsString(menuCreateDto);
@@ -201,6 +212,7 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
 
             @Test
             @DisplayName("More selected recipes than requested number of recipes - returns 400")
+            @WithMockUser(roles = "USER")
             void getRandomUniqueRecipes_moreRecipesInRequestBodyThanRequested_returns400() throws Exception {
                 MenuCreateDto menuCreateDto = new MenuCreateDto(Set.of(recipe1.getId(),recipe2.getId()));
                 String content = objectMapper.writeValueAsString(menuCreateDto);
@@ -211,6 +223,7 @@ public class MenuIntegrationTest extends BaseIntegrationTest {
 
             @Test
             @DisplayName("Same number of selected recipes as requested number of recipes - returns 400")
+            @WithMockUser(roles = "USER")
             void getRandomUniqueRecipes_sameNumberRecipesInRequestBodyAsRequested_returnsRecipesInRequestBody() throws Exception {
                 MenuCreateDto menuCreateDto = new MenuCreateDto(Set.of(recipe1.getId(),recipe2.getId()));
                 String content = objectMapper.writeValueAsString(menuCreateDto);
