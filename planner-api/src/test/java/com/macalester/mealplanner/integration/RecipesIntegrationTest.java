@@ -1,17 +1,22 @@
 package com.macalester.mealplanner.integration;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.macalester.mealplanner.AuthOpenSecurityConfig;
+import com.macalester.mealplanner.exceptions.NotFoundException;
 import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.IngredientRepository;
 import com.macalester.mealplanner.recipes.Recipe;
 import com.macalester.mealplanner.recipes.RecipeRepository;
 import com.macalester.mealplanner.recipes.dto.RecipeCreateDto;
+import com.macalester.mealplanner.recipes.dto.RecipeDto;
 import com.macalester.mealplanner.recipes.dto.RecipeDtoMapper;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -28,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @ContextConfiguration(classes = {AuthOpenSecurityConfig.class})
 public class RecipesIntegrationTest extends BaseIntegrationTest {
@@ -111,6 +117,31 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
     }
 
     @Nested
+    @DisplayName("Get recipe by id")
+    class GetRecipeByIdTest {
+        @Test
+        @DisplayName("Return recipe with given id that is in database")
+        void getRecipeById_recipeWithIdInDatabase_returnsRecipe() throws Exception {
+            Recipe savedRecipe = recipeRepository.save(recipe1);
+            RecipeDto expected = recipeDtoMapper.apply(savedRecipe);
+            mockMvc
+                    .perform(MockMvcRequestBuilders.get("/recipes/" + savedRecipe.getId()))
+                    .andExpect(status().isOk())
+                    .andExpect(
+                            MockMvcResultMatchers.content()
+                                    .string(equalTo(objectMapper.writeValueAsString(expected))));
+        }
+
+        @Test
+        @DisplayName("Throw NotFoundException if no recipe with given id is in database")
+        void getRecipeById_recipeWithIdNotInDatabase_throwsNotFoundException() throws Exception {
+            mockMvc
+                    .perform(MockMvcRequestBuilders.get("/recipes/" + UUID.randomUUID()))
+                    .andExpect(status().isNotFound());
+        }
+    }
+
+    @Nested
     @DisplayName("Add Recipe")
     class AddRecipeTest {
         @Test
@@ -166,6 +197,30 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
                             .getErrorMessage();
 
             assertTrue(responseBody.contains(String.format("Recipe with name %s already exists", recipe1name)));
+        }
+
+        @Test
+        @DisplayName("Invalid recipe, name is null")
+        void addRecipeNoIngredients_invalidRecipeNullName_returns400() throws Exception {
+            Recipe recipe_nullName = new Recipe(null, null, null);
+            mockMvc
+                    .perform(
+                            MockMvcRequestBuilders.post("/recipes")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(recipe_nullName)))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Invalid recipe, name is blank")
+        void addRecipeNoIngredients_invalidRecipeBlankName_returns400() throws Exception {
+            Recipe recipe_blankName = new Recipe(null, "   ", null);
+            mockMvc
+                    .perform(
+                            MockMvcRequestBuilders.post("/recipes")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(recipe_blankName)))
+                    .andExpect(status().isBadRequest());
         }
     }
 
