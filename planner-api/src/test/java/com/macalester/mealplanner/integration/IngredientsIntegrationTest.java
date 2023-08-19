@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.macalester.mealplanner.AuthOpenSecurityConfig;
+import com.macalester.mealplanner.AuthenticationActiveInitializer;
 import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.IngredientRepository;
 import com.macalester.mealplanner.ingredients.dto.IngredientCreateDto;
@@ -20,11 +21,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@ContextConfiguration(classes = {AuthOpenSecurityConfig.class})
+//@ContextConfiguration(classes = {AuthOpenSecurityConfig.class})
+@ContextConfiguration(initializers = AuthenticationActiveInitializer.class)
 public class IngredientsIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private IngredientRepository ingredientRepository;
@@ -53,6 +56,7 @@ public class IngredientsIntegrationTest extends BaseIntegrationTest {
 
         @Nested
         @DisplayName("JSON Accept Header")
+        @WithMockUser(roles = "USER")
         class JsonTest {
             @Test
             @DisplayName("Get all ingredients returns all ingredients in database")
@@ -64,7 +68,6 @@ public class IngredientsIntegrationTest extends BaseIntegrationTest {
                 String responseBody =
                         mockMvc
                                 .perform(MockMvcRequestBuilders.get("/ingredients"))
-                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andReturn()
                                 .getResponse()
@@ -80,12 +83,30 @@ public class IngredientsIntegrationTest extends BaseIntegrationTest {
 
             @Test
             @DisplayName("Get all ingredients returns empty list if no ingredients in database")
+            @WithMockUser(roles = "USER")
             void getAllIngredients_givenNoIngredientsInDb_returnsEmptyList() throws Exception {
                 mockMvc
                         .perform(MockMvcRequestBuilders.get("/ingredients"))
-                        .andDo(print())
                         .andExpect(status().isOk())
                         .andExpect(MockMvcResultMatchers.content().string(equalTo("[]")));
+            }
+
+            @Test
+            @DisplayName("User is admin, returns 200")
+            @WithMockUser(roles = "ADMIN")
+            void getAllIngredients_userIsAdmin_returnsEmptyList() throws Exception {
+                mockMvc
+                        .perform(MockMvcRequestBuilders.get("/ingredients"))
+                        .andExpect(status().isOk());
+            }
+
+            @Test
+            @DisplayName("User does not have USER role, returns 403")
+            @WithMockUser(roles = "")
+            void getAllIngredients_userNotAtLeastUserRole_returns403() throws Exception {
+                mockMvc
+                        .perform(MockMvcRequestBuilders.get("/ingredients"))
+                        .andExpect(status().isForbidden());
             }
         }
 
@@ -94,6 +115,7 @@ public class IngredientsIntegrationTest extends BaseIntegrationTest {
         class CsvTest {
             @Test
             @DisplayName("Get all ingredients returns all ingredients in database in csv format")
+            @WithMockUser(roles="ADMIN")
             void getAllIngredients_givenIngredientsInDb_returnsAllIngredientsInCSV() throws Exception {
                 ingredientRepository.save(ingredient1);
                 ingredientRepository.save(ingredient2);
@@ -102,7 +124,6 @@ public class IngredientsIntegrationTest extends BaseIntegrationTest {
                 String responseBody =
                         mockMvc
                                 .perform(MockMvcRequestBuilders.get("/ingredients").accept("text/csv"))
-                                .andDo(print())
                                 .andExpect(status().isOk())
                                 .andReturn()
                                 .getResponse()
@@ -112,6 +133,15 @@ public class IngredientsIntegrationTest extends BaseIntegrationTest {
 
                 assertEquals(expected, responseBody);
             }
+
+            @Test
+            @DisplayName("User has role User, returns 403")
+            @WithMockUser(roles="USER")
+            void getAllIngredients_userHasRoleUser_returns403V() throws Exception {
+                mockMvc
+                        .perform(MockMvcRequestBuilders.get("/ingredients").accept("text/csv"))
+                        .andExpect(status().isForbidden());
+            }
         }
     }
 
@@ -120,6 +150,7 @@ public class IngredientsIntegrationTest extends BaseIntegrationTest {
     class AddNewIngredientTest {
         @Test
         @DisplayName("Posting valid ingredient with unique name returns saved ingredient")
+        @WithMockUser(roles = "ADMIN")
         void addNewIngredient_validIngredientWithUniqueName_returnsSavedIngredient() throws Exception {
             mockMvc
                     .perform(
@@ -134,6 +165,7 @@ public class IngredientsIntegrationTest extends BaseIntegrationTest {
 
         @Test
         @DisplayName("Posting valid ingredient with a non-unique name returns 400")
+        @WithMockUser(roles = "ADMIN")
         void addNewIngredient_validIngredientWithNonUniqueName_returns400() throws Exception {
             ingredientRepository.save(ingredient1);
             mockMvc
@@ -147,6 +179,7 @@ public class IngredientsIntegrationTest extends BaseIntegrationTest {
 
         @Test
         @DisplayName("Posting Invalid ingredient returns 400")
+        @WithMockUser(roles = "ADMIN")
         void addNewIngredient_invalidIngredient_returns400() throws Exception {
             mockMvc
                     .perform(
@@ -156,5 +189,18 @@ public class IngredientsIntegrationTest extends BaseIntegrationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest());
         }
+
+        @Test
+        @DisplayName("User has role User, returns 403")
+        @WithMockUser(roles = "USER")
+        void addNewIngredient_userHasRoleUser_returns403() throws Exception {
+            mockMvc
+                    .perform(
+                            MockMvcRequestBuilders.post("/ingredients")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(ingredientCreateDto1)))
+                    .andExpect(status().isForbidden());
+        }
+
     }
 }

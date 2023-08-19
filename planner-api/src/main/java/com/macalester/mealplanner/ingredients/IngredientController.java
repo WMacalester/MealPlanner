@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -43,11 +44,13 @@ public class IngredientController {
   private static final String INGREDIENT_FILENAME = "dataIngredientsExport";
 
   @GetMapping
+  @PreAuthorize("hasRole('ROLE_USER')")
   public List<IngredientDto> getAllIngredients() {
     return ingredientService.findAll().stream().map(ingredientDtoMapper).sorted(Comparator.comparing(IngredientDto::name)).toList();
   }
 
   @GetMapping(produces = "text/csv")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public ResponseEntity<String> exportAllIngredientsAsCsv(@RequestHeader(value = "Accept", defaultValue = "text/csv") String acceptheader){
       String filename = INGREDIENT_FILENAME+"_"+formatCurrentDate()+".csv";
       String csv = dataExporter.exportIngredients(ingredientService.findAll());
@@ -67,6 +70,7 @@ public class IngredientController {
   }
 
   @PostMapping
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public IngredientDto addIngredient(@Valid @RequestBody IngredientCreateDto ingredientCreateDTO) {
     try {
       Ingredient newIngredient = ingredientCreateDtoMapper.apply(ingredientCreateDTO);
