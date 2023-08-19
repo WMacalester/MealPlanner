@@ -61,6 +61,7 @@ public class IngredientController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasRole('ROLE_USER')")
   public IngredientDto getIngredientById(@PathVariable UUID id) {
     try {
       return ingredientDtoMapper.apply(ingredientService.findById(id));
@@ -81,12 +82,14 @@ public class IngredientController {
   }
 
   @DeleteMapping("/{id}")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteIngredientById(@PathVariable UUID id) {
     ingredientService.deleteById(id);
   }
 
   @PatchMapping("/{id}")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public IngredientDto editIngredientById(
       @PathVariable UUID id, @RequestBody @Valid IngredientEditDto editIngredientDto) {
     try {
