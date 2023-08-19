@@ -30,7 +30,7 @@ public class AuthenticationIntegrationTest extends BaseIntegrationTest {
 
     private static final String username1 = "User 1";
     private static final String password1 = "password 1";
-    private User user1 = new User(null, username1, password1, UserRole.USER);
+    private User user1 = new User(null, username1, password1, UserRole.ROLE_USER);
 
     @AfterEach
     void teardown() {
