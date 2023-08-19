@@ -1,6 +1,6 @@
 package com.macalester.mealplanner.user;
 
 public enum UserRole {
-    ADMIN,
-    USER
+    ROLE_ADMIN,
+    ROLE_USER
 }

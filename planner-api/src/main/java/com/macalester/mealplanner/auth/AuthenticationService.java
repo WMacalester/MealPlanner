@@ -31,7 +31,7 @@ public class AuthenticationService {
         User user = User.builder()
                 .username(userRegisterDto.username())
                 .password(passwordEncoder.encode(userRegisterDto.password()))
-                .role(UserRole.USER)
+                .role(UserRole.ROLE_USER)
                 .build();
 
         userRepository.save(user);

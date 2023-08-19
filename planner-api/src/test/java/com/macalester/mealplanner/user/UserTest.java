@@ -13,9 +13,9 @@ public class UserTest {
     private static final String user2Name = "User 2";
     private static final String user1Passworda = "User 1 password";
     private static final String user1Passwordb = "User 1 password alternate";
-    private static final User user1a = new User.UserBuilder().username(user1Name).password(user1Passworda).role(UserRole.USER).build();
-    private static final User user1b = new User.UserBuilder().username(user1Name).password(user1Passwordb).role(UserRole.ADMIN).id(UUID.randomUUID()).build();
-    private static final User user2 = new User.UserBuilder().username(user2Name).password(user1Passworda).role(UserRole.USER).build();
+    private static final User user1a = new User.UserBuilder().username(user1Name).password(user1Passworda).role(UserRole.ROLE_USER).build();
+    private static final User user1b = new User.UserBuilder().username(user1Name).password(user1Passwordb).role(UserRole.ROLE_ADMIN).id(UUID.randomUUID()).build();
+    private static final User user2 = new User.UserBuilder().username(user2Name).password(user1Passworda).role(UserRole.ROLE_USER).build();
 
     @Nested
     @DisplayName("Equals and HashCode")

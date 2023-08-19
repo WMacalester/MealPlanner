@@ -22,7 +22,7 @@ public class UserRepositoryTest extends BasePostgresContainer {
 
     private static final String user1Name = "User 1";
     private static final String user1Password = "User 1 password";
-    private static final User user1 = new User.UserBuilder().username(user1Name).password(user1Password).role(UserRole.USER).build();
+    private static final User user1 = new User.UserBuilder().username(user1Name).password(user1Password).role(UserRole.ROLE_USER).build();
     private static final String userNameNotExist = "user does not exist";
 
     @BeforeAll
