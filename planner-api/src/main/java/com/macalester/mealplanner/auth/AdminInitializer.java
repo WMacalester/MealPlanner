@@ -1,6 +1,5 @@
 package com.macalester.mealplanner.auth;
 
-import com.macalester.mealplanner.auth.jwt.JwtService;
 import com.macalester.mealplanner.user.User;
 import com.macalester.mealplanner.user.UserRepository;
 import com.macalester.mealplanner.user.UserRole;
@@ -47,7 +46,7 @@ public class AdminInitializer implements ApplicationListener<ContextRefreshedEve
 
         String encodedPassword = password != null ? passwordEncoder.encode(password) : passwordEncoder.encode("");
 
-        User admin = new User(null, username, encodedPassword, UserRole.ADMIN);
+        User admin = new User(null, username, encodedPassword, UserRole.ROLE_ADMIN);
         userRepository.save(admin);
 
         initialised = true;
