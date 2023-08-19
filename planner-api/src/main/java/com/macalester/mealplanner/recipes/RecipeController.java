@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,11 +42,13 @@ public class RecipeController {
   private static final String RECIPE_FILENAME = "dataRecipesExport";
 
   @GetMapping
+  @PreAuthorize("hasRole('ROLE_USER')")
   public List<RecipeDto> getAllRecipes() {
     return recipeService.getAllRecipes().stream().map(recipeDtoMapper).toList();
   }
 
   @GetMapping(produces = {"text/csv"})
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public ResponseEntity<String> exportAllRecipesCsv(@RequestHeader(value = "Accept", defaultValue = "text/csv") String acceptHeader){
       String filename = RECIPE_FILENAME+"_"+formatCurrentDate()+".csv";
       String csv = dataExporter.exportRecipes(recipeService.getAllRecipes());
@@ -56,6 +59,7 @@ public class RecipeController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasRole('ROLE_USER')")
   public RecipeDto getRecipeById(@PathVariable UUID id) {
     try {
       return recipeDtoMapper.apply(recipeService.findById(id));
@@ -65,6 +69,7 @@ public class RecipeController {
   }
 
   @PostMapping
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public RecipeDto addRecipe(@Valid @RequestBody RecipeCreateDto recipeCreateDto) {
     try {
       Recipe newRecipe = recipeCreateDtoMapper.apply(recipeCreateDto);
@@ -75,12 +80,14 @@ public class RecipeController {
   }
 
   @DeleteMapping("/{id}")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteRecipeById(@PathVariable UUID id) {
     recipeService.deleteById(id);
   }
 
   @PutMapping("/{id}")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public RecipeDto editRecipeById(
       @PathVariable UUID id, @RequestBody @Valid RecipeCreateDto recipeCreateDto) {
     try {
