@@ -15,6 +15,6 @@ public class AuthenticationActiveInitializer
         TestPropertySourceUtils.addInlinedPropertiesToEnvironment(
                 configurableApplicationContext, "authentication.toggle=true");
         TestPropertySourceUtils.addInlinedPropertiesToEnvironment(
-                configurableApplicationContext, "authentication.secretKey=a16af43fb94395491d4d27d5d913ec3d82024887d7edb44124ff45b9da058b53");
+                configurableApplicationContext, "authentication.jwt.secretKey=a16af43fb94395491d4d27d5d913ec3d82024887d7edb44124ff45b9da058b53");
     }
 }
