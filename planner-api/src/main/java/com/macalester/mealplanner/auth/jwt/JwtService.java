@@ -6,8 +6,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
-import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,8 +28,6 @@ public class JwtService {
     @Value(value = "${authentication.jwt.refresh-token.expiration}")
     private long refreshExpiration;
 
-    private static final long TOKEN_EXPIRATION_DATE_OFFSET_MILLISECONDS = 3000;
-
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -44,17 +42,32 @@ public class JwtService {
     }
 
     public String generateToken(Map<String, Object> claims, UserDetails userDetails) {
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusMillis(TOKEN_EXPIRATION_DATE_OFFSET_MILLISECONDS)))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-                .compact();
+        return buildToken(claims, userDetails, jwtExpiration);
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails){
+    public String generateRefreshToken(
+            UserDetails userDetails
+    ) {
+        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+    }
+
+    public boolean isTokenValid(String token, UserDetails userDetails) {
         return !isTokenExpired(token) && extractUsername(token).equals(userDetails.getUsername());
+    }
+
+    private String buildToken(
+            Map<String, Object> extraClaims,
+            UserDetails userDetails,
+            long expiration
+    ) {
+        return Jwts
+                .builder()
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     private boolean isTokenExpired(String token) {
