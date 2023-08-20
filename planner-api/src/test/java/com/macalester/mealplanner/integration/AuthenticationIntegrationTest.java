@@ -70,7 +70,7 @@ public class AuthenticationIntegrationTest extends BaseIntegrationTest {
                             .getResponse()
                             .getContentAsString();
 
-            String expected = String.format("{\"token\":\"%s\"}",jwtService.generateToken(user1));
+            String expected = String.format("{\"accessToken\":\"%s\",\"refreshToken\":\"%s\"}",jwtService.generateToken(user1), jwtService.generateRefreshToken(user1));
 
             assertEquals(expected, responseBody);
         }
