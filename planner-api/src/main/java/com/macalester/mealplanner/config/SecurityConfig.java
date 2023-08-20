@@ -39,7 +39,9 @@ public class SecurityConfig {
                     .permitAll();
         }
 
-        httpSecurity.csrf()
+        httpSecurity.cors()
+                .and()
+                .csrf()
                 .disable()
                 .authorizeHttpRequests()
                 .requestMatchers( "/auth/**")
