@@ -19,10 +19,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
 
-    @Value(value = "${authentication.secretKey}")
-    private String SECRET_KEY;
+    @Value(value = "${authentication.jwt.secretKey}")
+    private String secretKey;
 
-    private static final long TOKEN_EXPIRATION_DATE_OFFSET_MILLISECONDS = 24L * 60 * 1000;
+    @Value(value = "${authentication.jwt.expiration}")
+    private long jwtExpiration;
+
+    @Value(value = "${authentication.jwt.refresh-token.expiration}")
+    private long refreshExpiration;
+
+    private static final long TOKEN_EXPIRATION_DATE_OFFSET_MILLISECONDS = 3000;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -64,7 +70,7 @@ public class JwtService {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
