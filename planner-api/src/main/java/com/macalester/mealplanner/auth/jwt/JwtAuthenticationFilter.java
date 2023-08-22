@@ -1,10 +1,13 @@
 package com.macalester.mealplanner.auth.jwt;
 
+import com.macalester.mealplanner.auth.AuthUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.lang.NonNull;
@@ -32,13 +35,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        final String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
+        Optional<Cookie> accessCookie = AuthUtils.getTokenFromRequest(request, JwtToken.ACCESS_TOKEN);
+        if (accessCookie.isEmpty()) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String token = authHeader.substring(BEARER_PREFIX.length());
+        final String token = accessCookie.get().getValue();
         final String username = jwtService.extractUsername(token);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
