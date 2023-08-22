@@ -1,15 +1,20 @@
 package com.macalester.mealplanner.integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.macalester.mealplanner.AuthenticationActiveInitializer;
 import com.macalester.mealplanner.auth.UserRegisterDto;
 import com.macalester.mealplanner.auth.jwt.JwtService;
+import com.macalester.mealplanner.auth.jwt.JwtToken;
 import com.macalester.mealplanner.user.User;
 import com.macalester.mealplanner.user.UserRepository;
 import com.macalester.mealplanner.user.UserRole;
+import jakarta.servlet.http.Cookie;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -58,7 +63,7 @@ public class AuthenticationIntegrationTest extends BaseIntegrationTest {
         @DisplayName("User with unique username is registered and returns 200")
         void registerUser_usernameUnique_registersUser() throws Exception {
             UserRegisterDto userRegisterDto = new UserRegisterDto(username1, password1);
-            String responseBody =
+            Cookie[] responseCookies =
                     mockMvc
                             .perform(
                                     MockMvcRequestBuilders.post(BASE_URL + "/register")
@@ -68,11 +73,14 @@ public class AuthenticationIntegrationTest extends BaseIntegrationTest {
                             .andExpect(status().isOk())
                             .andReturn()
                             .getResponse()
-                            .getContentAsString();
+                            .getCookies();
 
-            String expected = String.format("{\"accessToken\":\"%s\",\"refreshToken\":\"%s\"}",jwtService.generateToken(user1), jwtService.generateRefreshToken(user1));
+            List<String> responseCookieValues = Arrays.stream(responseCookies).map(Cookie::getName).toList();
 
-            assertEquals(expected, responseBody);
+            Assertions.assertAll(
+                    () -> assertTrue(responseCookieValues.contains(JwtToken.REFRESH_TOKEN.getHeaderName())),
+                    () -> assertTrue(responseCookieValues.contains(JwtToken.ACCESS_TOKEN.getHeaderName()))
+            );
         }
     }
 }

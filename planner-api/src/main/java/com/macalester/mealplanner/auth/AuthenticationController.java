@@ -2,6 +2,7 @@ package com.macalester.mealplanner.auth;
 
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -22,21 +23,21 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public AuthenticationResponse registerUser(@Valid @RequestBody UserRegisterDto userRegisterDto) {
+    public void registerUser(@Valid @RequestBody UserRegisterDto userRegisterDto, HttpServletResponse response) {
         try {
-            return authenticationService.registerUser(userRegisterDto);
+            authenticationService.registerUser(userRegisterDto, response);
         } catch (UniqueConstraintViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
     @PostMapping("/authenticate")
-    public AuthenticationResponse authenticateUser(@Valid @RequestBody AuthenticationRequest authenticationRequest) {
-        return authenticationService.authenticateUser(authenticationRequest);
+    public void authenticateUser(@Valid @RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) {
+        authenticationService.authenticateUser(authenticationRequest, response);
     }
 
     @GetMapping(value = "/refresh-token")
-    public AuthenticationResponse refreshtoken(HttpServletRequest request) {
-        return authenticationService.refreshToken(request);
+    public void refreshtoken(HttpServletRequest request, HttpServletResponse response) {
+        authenticationService.refreshToken(request, response);
     }
 }
