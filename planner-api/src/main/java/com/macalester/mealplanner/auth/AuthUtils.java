@@ -18,4 +18,12 @@ public class AuthUtils {
 
         return Arrays.stream(cookies).filter(e -> tokenType.getHeaderName().equals(e.getName())).findFirst();
     }
+
+    public static Cookie generateCookieFromJwt(JwtToken tokenType, String token) {
+        Cookie cookie = new Cookie(tokenType.getHeaderName(), token);
+        cookie.setHttpOnly(false);
+        cookie.setSecure(false);
+        cookie.setPath(tokenType.getPath());
+        return cookie;
+    }
 }
