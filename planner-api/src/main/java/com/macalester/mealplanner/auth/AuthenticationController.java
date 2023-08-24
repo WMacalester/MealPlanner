@@ -1,22 +1,24 @@
 package com.macalester.mealplanner.auth;
 
+import static com.macalester.mealplanner.auth.AuthUtils.generateCookieFromJwt;
+
+import com.macalester.mealplanner.auth.jwt.JwtService;
 import com.macalester.mealplanner.auth.jwt.JwtToken;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
+import com.macalester.mealplanner.user.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
-import static com.macalester.mealplanner.auth.AuthUtils.generateCookieFromJwt;
 
 @ConditionalOnProperty(value = "authentication.toggle", havingValue = "true")
 @RestController
@@ -25,11 +27,15 @@ import static com.macalester.mealplanner.auth.AuthUtils.generateCookieFromJwt;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+    private final JwtService jwtService;
 
     @PostMapping("/register")
     public void registerUser(@Valid @RequestBody UserRegisterDto userRegisterDto, HttpServletResponse response) {
         try {
-            authenticationService.registerUser(userRegisterDto, response);
+            User user = authenticationService.registerUser(userRegisterDto);
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.addCookie(generateCookieFromJwt(JwtToken.ACCESS_TOKEN, jwtService.generateToken(user)));
+            response.addCookie(generateCookieFromJwt(JwtToken.REFRESH_TOKEN, jwtService.generateRefreshToken(user)));
         } catch (UniqueConstraintViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -37,18 +43,34 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public void authenticateUser(@Valid @RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) {
-        authenticationService.authenticateUser(authenticationRequest, response);
+        Optional<User> user = authenticationService.authenticateUser(authenticationRequest);
+
+        if (user.isPresent()) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.addCookie(generateCookieFromJwt(JwtToken.ACCESS_TOKEN, jwtService.generateToken(user.get())));
+            response.addCookie(generateCookieFromJwt(JwtToken.REFRESH_TOKEN, jwtService.generateRefreshToken(user.get())));
+        } else {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        }
     }
 
-    @GetMapping("/refresh-token")
-    public void refreshtoken(HttpServletRequest request, HttpServletResponse response) {
-        authenticationService.refreshToken(request, response);
+    @PostMapping("/refresh-token")
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        Optional<User> user = authenticationService.refreshToken(request);
+
+        if (user.isPresent()) {
+            response.addCookie(generateCookieFromJwt(JwtToken.ACCESS_TOKEN, jwtService.generateToken(user.get())));
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        }
     }
 
     @PostMapping("/logout")
-    public void logout(HttpServletResponse response){
+    public void logout(HttpServletResponse response) {
         Cookie blankAccessCookie = generateCookieFromJwt(JwtToken.ACCESS_TOKEN, "");
         Cookie blankRefreshCookie = generateCookieFromJwt(JwtToken.REFRESH_TOKEN, "");
+        response.setStatus(HttpServletResponse.SC_OK);
         response.addCookie(blankAccessCookie);
         response.addCookie(blankRefreshCookie);
     }
