@@ -21,7 +21,7 @@ public class AuthUtils {
 
     public static Cookie generateCookieFromJwt(JwtToken tokenType, String token) {
         Cookie cookie = new Cookie(tokenType.getHeaderName(), token);
-        cookie.setHttpOnly(false);
+        cookie.setHttpOnly(true);
         cookie.setSecure(false);
         cookie.setPath(tokenType.getPath());
         return cookie;
