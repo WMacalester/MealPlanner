@@ -1,6 +1,8 @@
 package com.macalester.mealplanner.auth;
 
+import com.macalester.mealplanner.auth.jwt.JwtToken;
 import com.macalester.mealplanner.exceptions.UniqueConstraintViolationException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import static com.macalester.mealplanner.auth.AuthUtils.generateCookieFromJwt;
 
 @ConditionalOnProperty(value = "authentication.toggle", havingValue = "true")
 @RestController
@@ -36,8 +40,16 @@ public class AuthenticationController {
         authenticationService.authenticateUser(authenticationRequest, response);
     }
 
-    @GetMapping(value = "/refresh-token")
+    @GetMapping("/refresh-token")
     public void refreshtoken(HttpServletRequest request, HttpServletResponse response) {
         authenticationService.refreshToken(request, response);
+    }
+
+    @PostMapping("/logout")
+    public void logout(HttpServletResponse response){
+        Cookie blankAccessCookie = generateCookieFromJwt(JwtToken.ACCESS_TOKEN, "");
+        Cookie blankRefreshCookie = generateCookieFromJwt(JwtToken.REFRESH_TOKEN, "");
+        response.addCookie(blankAccessCookie);
+        response.addCookie(blankRefreshCookie);
     }
 }
