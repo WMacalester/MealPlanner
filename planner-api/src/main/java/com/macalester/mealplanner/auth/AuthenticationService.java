@@ -20,6 +20,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static com.macalester.mealplanner.auth.AuthUtils.generateCookieFromJwt;
+
 @ConditionalOnProperty(value = "authentication.toggle", havingValue = "true")
 @Service
 @RequiredArgsConstructor
@@ -43,8 +45,8 @@ public class AuthenticationService {
 
         userRepository.save(user);
 
-        response.addCookie(cookieFromJwt(JwtToken.ACCESS_TOKEN.getHeaderName(), jwtService.generateToken(user)));
-        response.addCookie(cookieFromJwt(JwtToken.REFRESH_TOKEN.getHeaderName(), jwtService.generateRefreshToken(user)));
+        response.addCookie(generateCookieFromJwt(JwtToken.ACCESS_TOKEN, jwtService.generateToken(user)));
+        response.addCookie(generateCookieFromJwt(JwtToken.REFRESH_TOKEN, jwtService.generateRefreshToken(user)));
     }
 
     public void authenticateUser(AuthenticationRequest authenticationRequest, HttpServletResponse response) {
@@ -53,8 +55,8 @@ public class AuthenticationService {
         User user = userRepository.findByUsername(authenticationRequest.username())
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("User with username %s already exists", authenticationRequest.password())));
 
-        response.addCookie(cookieFromJwt(JwtToken.ACCESS_TOKEN.getHeaderName(), jwtService.generateToken(user)));
-        response.addCookie(cookieFromJwt(JwtToken.REFRESH_TOKEN.getHeaderName(), jwtService.generateRefreshToken(user)));
+        response.addCookie(generateCookieFromJwt(JwtToken.ACCESS_TOKEN, jwtService.generateToken(user)));
+        response.addCookie(generateCookieFromJwt(JwtToken.REFRESH_TOKEN, jwtService.generateRefreshToken(user)));
     }
 
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
@@ -73,16 +75,8 @@ public class AuthenticationService {
 
             if (jwtService.isTokenValid(refreshToken, user)) {
                 String accessToken = jwtService.generateToken(user);
-                response.addCookie(cookieFromJwt(JwtToken.ACCESS_TOKEN.getHeaderName(), accessToken));
+                response.addCookie(generateCookieFromJwt(JwtToken.ACCESS_TOKEN, accessToken));
             }
         }
-    }
-
-    private static Cookie cookieFromJwt(String name, String token) {
-        Cookie cookie = new Cookie(name, token);
-        cookie.setHttpOnly(false);
-        cookie.setSecure(false);
-        cookie.setPath("/");
-        return cookie;
     }
 }
