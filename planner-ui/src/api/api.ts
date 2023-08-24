@@ -11,20 +11,13 @@ const baseQuery = fetchBaseQuery({
   credentials: "include",
 });
 
-const refreshAccessToken = async (api: BaseQueryApi, extraOptions: {}) => {
-  const refreshResult = await baseQuery(
-    {
-      credentials: "include",
-      url: BASE_URL + "/auth/refresh-token",
-      method: "post",
-      headers: {
-        refresh: "true",
-      },
-    },
-    api,
-    extraOptions
-  );
-  return refreshResult.error?.status === 403;
+const refreshTokenArgs: FetchArgs = {
+  credentials: "include",
+  url: BASE_URL + "/auth/refresh-token",
+  method: "post",
+  headers: {
+    refresh: "true",
+  },
 };
 
 const baseQueryWithReauth = async (
@@ -35,10 +28,10 @@ const baseQueryWithReauth = async (
   let result = await baseQuery(args, api, extraOptions);
 
   if (result?.error?.status === 403) {
-    const isTokenRefreshed = await refreshAccessToken(api, extraOptions);
-    if (isTokenRefreshed) {
-      result = await baseQuery(args, api, extraOptions);
-    }
+    const refreshResult = await baseQuery(refreshTokenArgs, api, extraOptions);
+    return refreshResult.error?.status === 403
+      ? result
+      : await baseQuery(args, api, extraOptions);
   }
 
   return result;
