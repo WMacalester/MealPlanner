@@ -1,6 +1,7 @@
 package com.macalester.mealplanner.auth.jwt;
 
 import com.macalester.mealplanner.auth.AuthUtils;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -23,7 +24,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    public static final String BEARER_PREFIX = "Bearer ";
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
@@ -36,24 +36,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         Optional<Cookie> accessCookie = AuthUtils.getTokenFromRequest(request, JwtToken.ACCESS_TOKEN);
-        if (accessCookie.isEmpty()) {
+        if (accessCookie.isEmpty() || accessCookie.get().getValue().isEmpty()) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String token = accessCookie.get().getValue();
-        final String username = jwtService.extractUsername(token);
+        try {
+            String token = accessCookie.get().getValue();
+            String username = jwtService.extractUsername(token);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            if (jwtService.isTokenValid(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                if (jwtService.isTokenValid(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authenticationToken =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                }
             }
+        } catch (ExpiredJwtException e) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
 
         filterChain.doFilter(request, response);

@@ -9,18 +9,14 @@ import com.macalester.mealplanner.user.UserRepository;
 import com.macalester.mealplanner.user.UserRole;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static com.macalester.mealplanner.auth.AuthUtils.generateCookieFromJwt;
 
 @ConditionalOnProperty(value = "authentication.toggle", havingValue = "true")
 @Service
@@ -32,7 +28,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public void registerUser(UserRegisterDto userRegisterDto, HttpServletResponse response) {
+    public User registerUser(UserRegisterDto userRegisterDto) {
         if (userRepository.existsByUsername(userRegisterDto.username())) {
             throw new UniqueConstraintViolationException(String.format("User with username %s already exists", userRegisterDto.username()));
         }
@@ -43,40 +39,34 @@ public class AuthenticationService {
                 .role(UserRole.ROLE_USER)
                 .build();
 
-        userRepository.save(user);
-
-        response.addCookie(generateCookieFromJwt(JwtToken.ACCESS_TOKEN, jwtService.generateToken(user)));
-        response.addCookie(generateCookieFromJwt(JwtToken.REFRESH_TOKEN, jwtService.generateRefreshToken(user)));
+        return userRepository.save(user);
     }
 
-    public void authenticateUser(AuthenticationRequest authenticationRequest, HttpServletResponse response) {
+    public Optional<User> authenticateUser(AuthenticationRequest authenticationRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.username(), authenticationRequest.password()));
-
-        User user = userRepository.findByUsername(authenticationRequest.username())
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("User with username %s already exists", authenticationRequest.password())));
-
-        response.addCookie(generateCookieFromJwt(JwtToken.ACCESS_TOKEN, jwtService.generateToken(user)));
-        response.addCookie(generateCookieFromJwt(JwtToken.REFRESH_TOKEN, jwtService.generateRefreshToken(user)));
+        return userRepository.findByUsername(authenticationRequest.username());
     }
 
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    public Optional<User> refreshToken(HttpServletRequest request) {
         Optional<Cookie> refreshCookie = AuthUtils.getTokenFromRequest(request, JwtToken.REFRESH_TOKEN);
 
-        if (refreshCookie.isEmpty()){
-            return;
+        if (refreshCookie.isEmpty() || refreshCookie.get().getValue().isEmpty()){
+            return Optional.empty();
         }
 
         String refreshToken = refreshCookie.get().getValue();
         String username = jwtService.extractUsername(refreshToken);
 
         if (username != null) {
-            UserDetails user = userRepository.findByUsername(username)
+            User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new NotFoundException(String.format("User with username %s was not found", username)));
 
             if (jwtService.isTokenValid(refreshToken, user)) {
-                String accessToken = jwtService.generateToken(user);
-                response.addCookie(generateCookieFromJwt(JwtToken.ACCESS_TOKEN, accessToken));
+                return Optional.of(user);
+
             }
         }
+
+        return Optional.empty();
     }
 }
