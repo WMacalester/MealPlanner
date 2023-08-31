@@ -33,7 +33,7 @@ public class AuthenticationIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private JwtService jwtService;
 
-    private static final String username1 = "User 1";
+    private static final String username1 = "User1";
     private static final String password1 = "password 1";
     private User user1 = new User(null, username1, password1, UserRole.ROLE_USER);
 
@@ -81,6 +81,19 @@ public class AuthenticationIntegrationTest extends BaseIntegrationTest {
                     () -> assertTrue(responseCookieValues.contains(JwtToken.REFRESH_TOKEN.getHeaderName())),
                     () -> assertTrue(responseCookieValues.contains(JwtToken.ACCESS_TOKEN.getHeaderName()))
             );
+        }
+
+        @Test
+        @DisplayName("User has non-alphanumeric characters and returns 403")
+        void registerUser_usernameHasNonAlphaNumericCharacters_registersUser() throws Exception {
+            UserRegisterDto userRegisterDto = new UserRegisterDto("User6!", password1);
+            mockMvc
+                    .perform(
+                            MockMvcRequestBuilders.post(BASE_URL + "/register")
+                                    .contentType(MediaType.APPLICATION_JSON).
+                                    content(objectMapper.writeValueAsString(userRegisterDto))
+                    )
+                    .andExpect(status().isBadRequest());
         }
     }
 }
