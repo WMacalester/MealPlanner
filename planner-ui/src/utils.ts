@@ -7,3 +7,7 @@ export const capitalise = (input: string) => {
 export const isNameAlpha = (input: string) => {
   return RegExp(/^[A-Za-z ]*$/).test(input);
 };
+
+export const isNameAlphaNumeric = (input: string) => {
+  return RegExp(/^[A-Za-z0-9 ]*$/).test(input);
+};
