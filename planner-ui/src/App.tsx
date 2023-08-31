@@ -1,43 +1,39 @@
-import RecipeBoard from "./components/recipes/RecipeBoard";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
-import { Box, Grid } from "@mui/material";
 import Navbar from "./components/navbar/Navbar";
-import Menuboard from "./components/menu/Menuboard";
-import { NAVBAR_HEIGHT } from "./constants";
+import { Route, Routes } from "react-router-dom";
+import LoginPage from "./routes/LoginPage";
+import RecipeBoardPage from "./routes/RecipeBoardPage";
+import RequireAuth from "./components/auth/RequireAuth";
+import { UserRole } from "./interfaces/UserRole";
+import ForbiddenPage from "./routes/ForbiddenPage";
+import MissingPage from "./routes/MissingPage";
+import Layout from "./Layout";
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <Navbar />
-      <Box height={"100%"} bgcolor={"base.main"}>
-        <Grid
-          container
-          direction={"row"}
-          height={"100%"}
-          justifyContent={"space-between"}
-          paddingX={"5%"}
-          paddingTop={NAVBAR_HEIGHT}
-        >
-          <Grid
-            item
-            xs
-            alignItems={"center"}
-            justifyContent={"center"}
-            display="flex"
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/forbidden" element={<ForbiddenPage />} />
+
+          <Route
+            element={
+              <>
+                <Navbar />
+                <RequireAuth
+                  allowedRoles={[UserRole.ROLE_ADMIN, UserRole.ROLE_USER]}
+                />
+              </>
+            }
           >
-            <RecipeBoard />
-          </Grid>
-          <Grid
-            item
-            alignItems={"center"}
-            justifyContent={"center"}
-            display="flex"
-          >
-            <Menuboard />
-          </Grid>
-        </Grid>
-      </Box>
+            <Route path="/" element={<RecipeBoardPage />} />
+          </Route>
+
+          <Route path="*" element={<MissingPage />} />
+        </Route>
+      </Routes>
     </ThemeProvider>
   );
 }
