@@ -19,6 +19,12 @@ export const authApiSlice = apiSlice.injectEndpoints({
         body: payload,
       }),
     }),
+    refreshToken: builder.mutation<AuthState, void>({
+      query: () => ({
+        url: BASE_URL + "/refresh-token",
+        method: "post",
+      }),
+    }),
     logout: builder.mutation<void, void>({
       query: () => ({
         url: BASE_URL + "/logout",
@@ -32,4 +38,5 @@ export const {
   useRegisterUserMutation,
   useAuthenticateUserMutation,
   useLogoutMutation,
+  useRefreshTokenMutation,
 } = authApiSlice;
