@@ -1,21 +1,18 @@
-export interface TokenInterface {
-  accessToken: string;
-  refreshToken: string;
+import { UserRole } from "./UserRole";
+
+interface BaseUser {
+  username: string;
 }
 
-export interface UserLogin {
-  username: string;
+export interface UserLogin extends BaseUser {
   password: string;
 }
 
-export interface User extends UserLogin, TokenInterface {}
-
-export interface AuthState {
-  user: UserLogin | null;
-  accessToken: string | null;
-  refreshToken: string | null;
+export interface User extends BaseUser {
+  role: UserRole;
 }
 
-export interface AuthPayload extends TokenInterface {
-  user: UserLogin | null;
+export interface AuthState {
+  username: string | null;
+  userRole: UserRole | null;
 }
