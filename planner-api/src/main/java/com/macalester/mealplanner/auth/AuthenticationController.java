@@ -30,39 +30,44 @@ public class AuthenticationController {
     private final JwtService jwtService;
 
     @PostMapping("/register")
-    public void registerUser(@Valid @RequestBody UserRegisterDto userRegisterDto, HttpServletResponse response) {
+    public AuthenticationResponse registerUser(@Valid @RequestBody UserRegisterDto userRegisterDto, HttpServletResponse response) {
         try {
             User user = authenticationService.registerUser(userRegisterDto);
             response.setStatus(HttpServletResponse.SC_OK);
             response.addCookie(generateCookieFromJwt(JwtToken.ACCESS_TOKEN, jwtService.generateToken(user)));
             response.addCookie(generateCookieFromJwt(JwtToken.REFRESH_TOKEN, jwtService.generateRefreshToken(user)));
+            return new AuthenticationResponse(user);
         } catch (UniqueConstraintViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
     @PostMapping("/authenticate")
-    public void authenticateUser(@Valid @RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) {
+    public AuthenticationResponse authenticateUser(@Valid @RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) {
         Optional<User> user = authenticationService.authenticateUser(authenticationRequest);
 
         if (user.isPresent()) {
             response.setStatus(HttpServletResponse.SC_OK);
             response.addCookie(generateCookieFromJwt(JwtToken.ACCESS_TOKEN, jwtService.generateToken(user.get())));
             response.addCookie(generateCookieFromJwt(JwtToken.REFRESH_TOKEN, jwtService.generateRefreshToken(user.get())));
+            return new AuthenticationResponse(user.get());
         } else {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return null;
         }
     }
 
     @PostMapping("/refresh-token")
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    public AuthenticationResponse refreshToken(HttpServletRequest request, HttpServletResponse response) {
         Optional<User> user = authenticationService.refreshToken(request);
 
         if (user.isPresent()) {
             response.addCookie(generateCookieFromJwt(JwtToken.ACCESS_TOKEN, jwtService.generateToken(user.get())));
             response.setStatus(HttpServletResponse.SC_OK);
+            return new AuthenticationResponse(user.get());
         } else {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return null;
         }
     }
 
