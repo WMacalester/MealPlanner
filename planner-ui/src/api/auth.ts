@@ -1,18 +1,18 @@
-import { TokenInterface, User, UserLogin } from "../interfaces/AuthInterface";
+import { AuthState, UserLogin } from "../interfaces/AuthInterface";
 import { apiSlice } from "./api";
 
 const BASE_URL = "/auth";
 
 export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    registerUser: builder.mutation<TokenInterface, UserLogin>({
+    registerUser: builder.mutation<AuthState, UserLogin>({
       query: (payload: UserLogin) => ({
         url: BASE_URL + "/register",
         method: "post",
         body: payload,
       }),
     }),
-    authenticateUser: builder.mutation<User, UserLogin>({
+    authenticateUser: builder.mutation<AuthState, UserLogin>({
       query: (payload: UserLogin) => ({
         url: BASE_URL + "/authenticate",
         method: "post",
