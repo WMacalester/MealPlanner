@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: calc(100% - 4rem); /*subtract height of navbar*/
 }
 
 code {
@@ -13,7 +14,6 @@ code {
 }
 
 html,
-body,
 #root {
   height: 100%;
 }
