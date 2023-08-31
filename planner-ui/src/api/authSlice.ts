@@ -1,46 +1,41 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import {
-  AuthPayload,
-  AuthState,
-  TokenInterface,
-} from "../interfaces/AuthInterface";
+import { AuthState } from "../interfaces/AuthInterface";
 
 export const authSlice = createSlice({
   name: "auth",
-  initialState: { user: null, accessToken: null } as AuthState,
+  initialState: {
+    username: null,
+    userRole: localStorage.getItem("role"),
+  } as AuthState,
   reducers: {
-    setCredentials: (state, action: PayloadAction<AuthPayload>) => {
-      const { user, accessToken, refreshToken } = action.payload;
-      state.user = user;
-      state.accessToken = accessToken;
-      state.refreshToken = refreshToken;
+    setCredentials: (state, action: PayloadAction<AuthState>) => {
+      const { username, userRole } = action.payload;
+
+      if (userRole) {
+        localStorage.setItem("role", userRole);
+      } else {
+        localStorage.removeItem("role");
+      }
+
+      return { ...state, username, userRole };
     },
     logOut: (state) => {
-      state.user = null;
-      state.accessToken = null;
-      state.refreshToken = null;
-    },
-    resetAccessToken: (state) => {
-      state.accessToken = null;
-    },
-    setTokens: (state, action: PayloadAction<TokenInterface>) => {
-      const { accessToken, refreshToken } = action.payload;
-      state.accessToken = accessToken;
-      state.refreshToken = refreshToken;
+      state.username = null;
+      state.userRole = null;
+      localStorage.removeItem("role");
     },
   },
 });
 
-export const { setCredentials, logOut, resetAccessToken, setTokens } =
-  authSlice.actions;
+export const { setCredentials, logOut } = authSlice.actions;
 
 export default authSlice.reducer;
 
 export const selectCurrentUser = (state: RootState) => {
-  return state.auth.user;
+  return state.auth.username;
 };
 
-export const selectCurrentAccessToken = (state: RootState) => {
-  return state.auth.accessToken;
+export const selectCurrentRole = (state: RootState) => {
+  return state.auth.userRole;
 };
