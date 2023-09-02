@@ -1,31 +1,42 @@
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import IngredientAddModal from "../ingredients/IngredientAddModal";
 import RecipeAddModal from "../recipes/RecipeAddModal";
 import AddButton from "../button/AddButton";
 import SelectedRecipeResetButton from "../button/SelectedRecipeResetButton";
+import useIsUserPermittedHook from "../../hooks/useIsUserPermittedHook";
+import { UserRole } from "../../interfaces/UserRole";
+import LogoutButton from "../button/LogoutButton";
+import Link from "@mui/material/Link";
 
 export default function Navbar() {
+  const canUserView = useIsUserPermittedHook([UserRole.ROLE_ADMIN]);
   return (
-    <Box>
+    <>
       <AppBar position="static" sx={{ height: "4rem" }}>
         <Toolbar>
-          <Typography
+          <Link
             variant="h4"
-            sx={{ flexGrow: 1, color: "highlights.main" }}
+            href="/"
+            underline="none"
+            sx={{
+              flexGrow: 1,
+              color: "highlights.main",
+            }}
           >
             Meal Planner
-          </Typography>
+          </Link>
 
-          <>
-            <SelectedRecipeResetButton />
-            <AddButton Modal={IngredientAddModal} label={"Add Ingredient"} />
-            <AddButton Modal={RecipeAddModal} label={"Add Recipe"} />
-          </>
+          <SelectedRecipeResetButton />
+          {canUserView && (
+            <>
+              <AddButton Modal={IngredientAddModal} label={"Add Ingredient"} />
+              <AddButton Modal={RecipeAddModal} label={"Add Recipe"} />
+            </>
+          )}
+          <LogoutButton />
         </Toolbar>
       </AppBar>
-    </Box>
+    </>
   );
 }
