@@ -84,9 +84,22 @@ public class AuthenticationIntegrationTest extends BaseIntegrationTest {
         }
 
         @Test
-        @DisplayName("User has non-alphanumeric characters and returns 403")
-        void registerUser_usernameHasNonAlphaNumericCharacters_registersUser() throws Exception {
+        @DisplayName("User has non-alphanumeric characters and returns 400")
+        void registerUser_usernameHasNonAlphaNumericCharacters_returns400() throws Exception {
             UserRegisterDto userRegisterDto = new UserRegisterDto("User6!", password1);
+            mockMvc
+                    .perform(
+                            MockMvcRequestBuilders.post(BASE_URL + "/register")
+                                    .contentType(MediaType.APPLICATION_JSON).
+                                    content(objectMapper.writeValueAsString(userRegisterDto))
+                    )
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Password has illegal characters and returns 400")
+        void registerUser_passwordHasIllegalCharacters_returns400() throws Exception {
+            UserRegisterDto userRegisterDto = new UserRegisterDto("User", "password`[");
             mockMvc
                     .perform(
                             MockMvcRequestBuilders.post(BASE_URL + "/register")
