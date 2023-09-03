@@ -3,7 +3,6 @@ package com.macalester.mealplanner.config;
 import com.macalester.mealplanner.auth.jwt.JwtAuthenticationFilter;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -20,7 +19,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-@ConditionalOnProperty(value = "authentication.toggle", havingValue = "true")
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -44,7 +42,7 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers( "/auth/**")
+                .requestMatchers( "/auth/**", "/status/")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

@@ -70,10 +70,10 @@ jobs:
     steps:
       - checkout:
           path: ~/project
-      - run: mvn -B clean install
+      - run: mvn -B clean install -Dspring.profiles.active=test
       - maven/with_cache:
           steps:
-            - run: mvn test
+            - run: mvn test -Dspring.profiles.active=test
 
 workflows:
   ui:

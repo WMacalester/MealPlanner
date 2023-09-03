@@ -3,7 +3,6 @@ package com.macalester.mealplanner.integration;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.macalester.mealplanner.AuthenticationActiveInitializer;
 import com.macalester.mealplanner.auth.UserRegisterDto;
 import com.macalester.mealplanner.auth.jwt.JwtService;
 import com.macalester.mealplanner.auth.jwt.JwtToken;
@@ -20,10 +19,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-@ContextConfiguration(initializers = AuthenticationActiveInitializer.class)
 public class AuthenticationIntegrationTest extends BaseIntegrationTest {
 
     private static final String BASE_URL = "/auth";

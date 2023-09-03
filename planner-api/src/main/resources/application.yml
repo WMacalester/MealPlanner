@@ -12,7 +12,6 @@ springdoc:
 spring.jpa.hibernate.dll-auto: validate
 
 authentication:
-  toggle: false
   jwt:
     expiration: 86400000 # 1 day
     refresh-token:
