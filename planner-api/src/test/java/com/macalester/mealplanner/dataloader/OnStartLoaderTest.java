@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.macalester.mealplanner.BasePostgresContainer;
-import com.macalester.mealplanner.Main;
 import com.macalester.mealplanner.ingredients.IngredientRepository;
 import com.macalester.mealplanner.recipes.RecipeRepository;
 import org.junit.jupiter.api.AfterAll;
@@ -17,25 +16,23 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.TestPropertySourceUtils;
 
 @SpringBootTest
-@ContextConfiguration(
-        initializers = OnStartLoaderTest.OnStartLoaderInitialiser.class,
-        classes = Main.class
-)
+@ContextConfiguration(initializers = OnStartLoaderTest.OnStartLoaderInitialiser.class)
 class OnStartLoaderTest extends BasePostgresContainer {
     @Autowired
     private IngredientRepository ingredientRepository;
     @Autowired
     private RecipeRepository recipeRepository;
-    @Autowired private DataLoader dataLoader;
+    @Autowired
+    private DataLoader dataLoader;
 
     @AfterAll
-    static void teardown(@Autowired IngredientRepository ingredientRepository, @Autowired RecipeRepository recipeRepository){
+    static void teardown(@Autowired IngredientRepository ingredientRepository, @Autowired RecipeRepository recipeRepository) {
         recipeRepository.deleteAll();
         ingredientRepository.deleteAll();
     }
 
     @Test
-    void csvDataLoaderIsLoaded(){
+    void csvDataLoaderIsLoaded() {
         assertEquals(CsvDataLoader.class, dataLoader.getClass());
     }
 
