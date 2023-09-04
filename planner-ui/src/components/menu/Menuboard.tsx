@@ -9,7 +9,7 @@ import { useAppSelector } from "../../hooks/redux-hooks";
 
 const Menuboard: FC = () => {
   const [trigger, result] = useCreateRandomMenuMutation();
-  const { data: recipes } = useGetAllRecipesQuery();
+  const { data: recipes } = useGetAllRecipesQuery({});
 
   const selectedRecipeIds = useAppSelector(
     (state) => state.selectedRecipeIds.ids

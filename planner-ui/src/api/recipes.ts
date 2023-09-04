@@ -7,11 +7,16 @@ import { apiSlice } from "./api";
 
 const BASE_URL = "/recipes";
 
+interface getAllRecipesQueryArgs {
+  recipeName?: string;
+}
+
 export const recipesApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getAllRecipes: builder.query<Recipe[], void>({
-      query: () => ({
+    getAllRecipes: builder.query<Recipe[], getAllRecipesQueryArgs>({
+      query: (params) => ({
         url: BASE_URL,
+        params,
       }),
       providesTags: ["Recipe"],
     }),
