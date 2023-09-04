@@ -8,33 +8,43 @@ import useIsUserPermittedHook from "../../hooks/useIsUserPermittedHook";
 import { UserRole } from "../../interfaces/UserRole";
 import LogoutButton from "../button/LogoutButton";
 import Link from "@mui/material/Link";
+import { Box } from "@mui/material";
 
 export default function Navbar() {
   const canUserView = useIsUserPermittedHook([UserRole.ROLE_ADMIN]);
   return (
     <>
       <AppBar position="static" sx={{ height: "4rem" }}>
-        <Toolbar>
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
           <Link
             variant="h4"
             href="/"
             underline="none"
             sx={{
-              flexGrow: 1,
               color: "highlights.main",
             }}
           >
             Meal Planner
           </Link>
 
-          <SelectedRecipeResetButton />
-          {canUserView && (
-            <>
-              <AddButton Modal={IngredientAddModal} label={"Add Ingredient"} />
-              <AddButton Modal={RecipeAddModal} label={"Add Recipe"} />
-            </>
-          )}
-          <LogoutButton />
+          <Box display={"flex"}>
+            <SelectedRecipeResetButton />
+            {canUserView && (
+              <>
+                <AddButton
+                  Modal={IngredientAddModal}
+                  label={"Add Ingredient"}
+                />
+                <AddButton Modal={RecipeAddModal} label={"Add Recipe"} />
+              </>
+            )}
+            <LogoutButton />
+          </Box>
         </Toolbar>
       </AppBar>
     </>
