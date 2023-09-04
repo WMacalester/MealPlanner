@@ -4,12 +4,14 @@ import RecipeCard from "./recipe-card/RecipeCard";
 import { Box, Container, Grid, TextField } from "@mui/material";
 import { BOARD_HEIGHT } from "../../constants";
 import { isNameAlpha } from "../../utils";
+import useDebounce from "../../hooks/useDebounce";
 
 const RecipeBoard: FC = () => {
   const [filterValue, setFilterValue] = useState<string | undefined>(undefined);
   const [filterValueError, setFilterValueError] = useState(false);
+  const debouncedSearchValue = useDebounce(filterValue);
   const { data: recipes } = useGetAllRecipesQuery({
-    recipeName: filterValue,
+    recipeName: debouncedSearchValue,
   });
 
   const onFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
