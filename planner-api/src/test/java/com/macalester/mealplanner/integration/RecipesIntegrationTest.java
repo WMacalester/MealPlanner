@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -92,26 +93,28 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Filter")
         class FilterTest {
             @Test
-            @DisplayName("Valid authorFilter returns list of recipes")
+            @DisplayName("Valid nameFilter returns list of recipes which contain nameFilter in name or in an ingredient name")
             @WithMockUser(roles = "USER")
             void getAllRecipesWithValidFilter_returnsFilteredRecipesInJSON() throws Exception {
                 recipe1 = recipeRepository.save(recipe1);
                 recipeRepository.save(recipe2);
+                Recipe recipe3 = recipeRepository.save(new Recipe(null, "recipe with ingredient through filter",Set.of(ingredient1)));
+                recipeRepository.save(new Recipe(null, "recipe without ingredient through filter",Set.of(ingredient2)));
 
                 String responseBody =
-                        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL).param("recipeName", recipe1name))
+                        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL).param("recipeName", "a"))
                                 .andExpect(status().isOk())
                                 .andReturn()
                                 .getResponse()
                                 .getContentAsString();
 
-                String expected = objectMapper.writeValueAsString(List.of(recipeDtoMapper.apply(recipe1)));
+                String expected = objectMapper.writeValueAsString(Stream.of(recipe1,recipe3).map(recipeDtoMapper).toList());
 
                 assertEquals(expected, responseBody);
             }
 
             @Test
-            @DisplayName("Invalid authorFilter returns 400")
+            @DisplayName("Invalid nameFilter returns 400")
             @WithMockUser(roles = "USER")
             void getAllRecipesWithInvalidFilter_returns400() throws Exception {
                         mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL).param("recipeName", " ^ "))
