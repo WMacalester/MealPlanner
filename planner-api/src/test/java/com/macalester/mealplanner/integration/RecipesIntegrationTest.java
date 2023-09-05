@@ -49,8 +49,8 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
 
     private static final String recipe1name = "recipe a";
     private static final String recipe2name = "recipe b";
-    private final Recipe recipe1 = new Recipe(UUID.randomUUID(), recipe1name, new HashSet<>());
-    private final Recipe recipe2 = new Recipe(UUID.randomUUID(), recipe2name, new HashSet<>());
+    private Recipe recipe1 = new Recipe(UUID.randomUUID(), recipe1name, new HashSet<>());
+    private Recipe recipe2 = new Recipe(UUID.randomUUID(), recipe2name, new HashSet<>());
 
     @BeforeEach
     void init() {
@@ -72,8 +72,9 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Returns recipes in db - JSON")
         @WithMockUser(roles = "USER")
         void getAllRecipes_returnsAllRecipesInJSON() throws Exception {
-            recipe2.setIngredients(Set.of(ingredient1));
-            List<Recipe> recipes = recipeRepository.saveAll(Set.of(recipe1,recipe2));
+            recipe1 = recipeRepository.save(recipe1);
+            recipe2 = recipeRepository.save(recipe2);
+            List<Recipe> recipes = List.of(recipe1, recipe2);
 
             String responseBody =
                     mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL))
@@ -87,6 +88,41 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
             assertEquals(expected, responseBody);
         }
 
+        @Nested
+        @DisplayName("Filter")
+        class FilterTest {
+            @Test
+            @DisplayName("Valid authorFilter returns list of recipes")
+            @WithMockUser(roles = "USER")
+            void getAllRecipesWithValidFilter_returnsFilteredRecipesInJSON() throws Exception {
+                recipe1 = recipeRepository.save(recipe1);
+                recipeRepository.save(recipe2);
+
+                String responseBody =
+                        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL).param("recipeName", recipe1name))
+                                .andExpect(status().isOk())
+                                .andReturn()
+                                .getResponse()
+                                .getContentAsString();
+
+                String expected = objectMapper.writeValueAsString(List.of(recipeDtoMapper.apply(recipe1)));
+
+                assertEquals(expected, responseBody);
+            }
+
+            @Test
+            @DisplayName("Invalid authorFilter returns 400")
+            @WithMockUser(roles = "USER")
+            void getAllRecipesWithInvalidFilter_returns400() throws Exception {
+                        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL).param("recipeName", " ^ "))
+                                .andExpect(status().isBadRequest());
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("Get All Recipes CSV")
+    class GetAllRecipesCSVTest {
         @Test
         @DisplayName("Returns recipes in db - CSV")
         @WithMockUser(roles = "ADMIN")
