@@ -15,11 +15,11 @@ class RecipeRepositoryTest extends BasePostgresContainer {
 
     @Autowired private RecipeRepository recipeRepository;
 
-    private static Recipe recipeA = new Recipe(null, "recipe a", Set.of());
-    private static Recipe recipeB = new Recipe(null, "recipe b", Set.of());
-    private static Recipe recipeC = new Recipe(null, "recipe c", Set.of());
-    private static Recipe recipeD = new Recipe(null, "recipe d", Set.of());
-    private static Recipe recipeE = new Recipe(null, "recipe e", Set.of());
+    private static Recipe recipeA = new Recipe(null, "recipe a", DietType.VEGAN, Set.of());
+    private static Recipe recipeB = new Recipe(null, "recipe b", DietType.VEGAN, Set.of());
+    private static Recipe recipeC = new Recipe(null, "recipe c", DietType.VEGAN, Set.of());
+    private static Recipe recipeD = new Recipe(null, "recipe d", DietType.VEGAN, Set.of());
+    private static Recipe recipeE = new Recipe(null, "recipe e", DietType.VEGAN, Set.of());
 
     @BeforeAll
     static void init(@Autowired RecipeRepository recipeRepository){

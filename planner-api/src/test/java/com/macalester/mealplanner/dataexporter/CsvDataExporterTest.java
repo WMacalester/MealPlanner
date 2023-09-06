@@ -4,6 +4,7 @@ package com.macalester.mealplanner.dataexporter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.macalester.mealplanner.ingredients.Ingredient;
+import com.macalester.mealplanner.recipes.DietType;
 import com.macalester.mealplanner.recipes.Recipe;
 import java.util.List;
 import java.util.Set;
@@ -27,9 +28,9 @@ class CsvDataExporterTest {
     private static final Ingredient ingredient2 = new Ingredient(UUID.randomUUID(), ingredientName2, Set.of());
     private static final Ingredient ingredient3 = new Ingredient(UUID.randomUUID(), ingredientName3, Set.of());
 
-    private static final Recipe recipe1 = new Recipe(UUID.randomUUID(), recipeName1, Set.of(ingredient1));
-    private static final Recipe recipe2 = new Recipe(UUID.randomUUID(), recipeName2, Set.of(ingredient1, ingredient2));
-    private static final Recipe recipe3 = new Recipe(UUID.randomUUID(), recipeName3, Set.of(ingredient2, ingredient3));
+    private static final Recipe recipe1 = new Recipe(UUID.randomUUID(), recipeName1, DietType.MEAT, Set.of(ingredient1));
+    private static final Recipe recipe2 = new Recipe(UUID.randomUUID(), recipeName2, DietType.VEGAN, Set.of(ingredient1, ingredient2));
+    private static final Recipe recipe3 = new Recipe(UUID.randomUUID(), recipeName3, DietType.MEAT, Set.of(ingredient2, ingredient3));
 
 
     @Nested

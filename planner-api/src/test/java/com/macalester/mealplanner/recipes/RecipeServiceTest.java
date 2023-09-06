@@ -34,8 +34,8 @@ class RecipeServiceTest {
     private static final String name1 = "recipe 1";
     private static final String name2 = "recipe 2";
 
-    private final Recipe recipe1 = new Recipe(uuid1, name1, Set.of());
-    private final Recipe recipe2 = new Recipe(uuid2, name2, Set.of());
+    private final Recipe recipe1 = new Recipe(uuid1, name1, DietType.MEAT, Set.of());
+    private final Recipe recipe2 = new Recipe(uuid2, name2, DietType.MEAT, Set.of());
     private final Ingredient ingredient1 =
             new Ingredient(UUID.randomUUID(), "ingredient 1", Set.of());
 
@@ -123,8 +123,8 @@ class RecipeServiceTest {
     @Nested
     @DisplayName("Edit recipe by Id")
     class EditRecipeByIdTest {
-        private final Recipe recipe_NullId1 = new Recipe(null, name1, Set.of());
-        private final Recipe recipe_NullId2 = new Recipe(null, name2, Set.of());
+        private final Recipe recipe_NullId1 = new Recipe(null, name1, DietType.MEAT, Set.of());
+        private final Recipe recipe_NullId2 = new Recipe(null, name2, DietType.MEAT, Set.of());
 
         @Test
         @DisplayName("Recipe with given id not in database throws NotFoundException")
@@ -136,7 +136,7 @@ class RecipeServiceTest {
         @Test
         @DisplayName("All fields updated and returns recipe with correct id")
         void editRecipeById_validRecipeObjectAndIdInDb_savesAndReturnsUpdatedRecipe() {
-            Recipe recipe1_allUpdated = new Recipe(uuid1, name2, Set.of(ingredient1));
+            Recipe recipe1_allUpdated = new Recipe(uuid1, name2, DietType.VEGAN, Set.of(ingredient1));
             doReturn(Optional.of(recipe1)).when(recipeRepository).findById(uuid1);
             doReturn(recipe1_allUpdated).when(recipeRepository).save(recipe1_allUpdated);
 
@@ -149,7 +149,7 @@ class RecipeServiceTest {
             @Test
             @DisplayName("Name is not changed, saves and returns updated recipe")
             void editRecipeById_nameNotChanged_savesAndReturnsUpdatedRecipe() {
-                Recipe recipe_allUpdated = new Recipe(uuid1, name1, Set.of(ingredient1));
+                Recipe recipe_allUpdated = new Recipe(uuid1, name1, DietType.MEAT, Set.of(ingredient1));
                 doReturn(Optional.of(recipe1)).when(recipeRepository).findById(uuid1);
                 doReturn(recipe_allUpdated).when(recipeRepository).save(recipe_allUpdated);
 
@@ -170,12 +170,12 @@ class RecipeServiceTest {
             @Test
             @DisplayName("Name is changed and is unique, returns updated recipe")
             void editRecipeById_nameIsChangedAndUnique_savesAndReturnsUpdatedRecipe() {
-                Recipe recipe_allUpdated = new Recipe(uuid1, name2, Set.of(ingredient1));
+                Recipe recipe_nameUpdated = new Recipe(uuid1, name2, DietType.MEAT, Set.of(ingredient1));
                 doReturn(Optional.of(recipe1)).when(recipeRepository).findById(uuid1);
                 doReturn(false).when(recipeRepository).existsByName(name2);
-                doReturn(recipe_allUpdated).when(recipeRepository).save(recipe_allUpdated);
+                doReturn(recipe_nameUpdated).when(recipeRepository).save(recipe_nameUpdated);
 
-                assertEquals(recipe_allUpdated, recipeService.editRecipeById(uuid1, recipe_NullId2));
+                assertEquals(recipe_nameUpdated, recipeService.editRecipeById(uuid1, recipe_NullId2));
             }
         }
     }

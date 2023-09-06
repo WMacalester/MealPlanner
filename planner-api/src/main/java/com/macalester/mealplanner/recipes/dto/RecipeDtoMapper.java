@@ -23,6 +23,6 @@ public class RecipeDtoMapper implements Function<Recipe, RecipeDto> {
                 .sorted(Comparator.comparing(Ingredient::getName))
                 .toList();
     return new RecipeDto(
-        recipe.getId(), recipe.getName(), sorted.stream().map(ingredientDtoMapper).toList());
+        recipe.getId(), recipe.getName(), recipe.getDietType(), sorted.stream().map(ingredientDtoMapper).toList());
   }
 }

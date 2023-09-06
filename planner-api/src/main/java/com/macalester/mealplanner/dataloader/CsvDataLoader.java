@@ -4,6 +4,7 @@ import static com.macalester.mealplanner.Utils.formatName;
 
 import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.IngredientRepository;
+import com.macalester.mealplanner.recipes.DietType;
 import com.macalester.mealplanner.recipes.Recipe;
 import jakarta.validation.Validator;
 import java.io.BufferedReader;
@@ -92,13 +93,21 @@ public class CsvDataLoader implements DataLoader {
 
     private Recipe computeRecipeFromString(String input) {
         String[] nameIngredients = input.split(",");
-        if (nameIngredients[0].isBlank()){
+        if (nameIngredients[0].isBlank() || nameIngredients.length < 2) {
             return null;
         }
 
-        Set<Ingredient> ingredients = nameIngredients.length > 1 ? findIngredientsFromString(nameIngredients) : Set.of();
+        DietType dietType;
 
-        Recipe newRecipe = new Recipe(null, formatName(nameIngredients[0]), ingredients);
+        try {
+            dietType = DietType.valueOf(nameIngredients[1].trim());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+
+        Set<Ingredient> ingredients = nameIngredients.length > 2 ? findIngredientsFromString(nameIngredients) : Set.of();
+
+        Recipe newRecipe = new Recipe(null, formatName(nameIngredients[0]), dietType, ingredients);
 
         if (!validator.validate(newRecipe).isEmpty()) {
             log.error(String.format("Invalid ingredient found: %s", input));
@@ -108,10 +117,10 @@ public class CsvDataLoader implements DataLoader {
     }
 
     private Set<Ingredient> findIngredientsFromString(String[] input) {
-        Set<Ingredient> ingredients = new HashSet<>(input.length-1);
-        for (int i = 1; i < input.length; i++) {
+        Set<Ingredient> ingredients = new HashSet<>(input.length - 1);
+        for (int i = 2; i < input.length; i++) {
             String formattedName = formatName(input[i]);
-            if (formattedName.isBlank()){
+            if (formattedName.isBlank()) {
                 continue;
             }
             Optional<Ingredient> ingredient = ingredientRepository.findByName(formattedName);
