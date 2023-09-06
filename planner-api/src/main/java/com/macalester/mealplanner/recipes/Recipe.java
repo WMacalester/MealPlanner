@@ -4,6 +4,8 @@ import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.validator.NameConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,34 +25,37 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Recipe {
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-  @NameConstraint
-  @Column(unique = true)
-  private String name;
+    @NameConstraint
+    @Column(unique = true)
+    private String name;
 
-  @ManyToMany
-  @JoinTable(
-      name = "Recipe_Ingredients",
-      joinColumns = {@JoinColumn(name = "recipe_id")},
-      inverseJoinColumns = {@JoinColumn(name = "ingredient_id")})
-  private Set<Ingredient> ingredients;
+    @Enumerated(EnumType.STRING)
+    private DietType dietType;
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == this) {
-      return true;
+    @ManyToMany
+    @JoinTable(
+            name = "Recipe_Ingredients",
+            joinColumns = {@JoinColumn(name = "recipe_id")},
+            inverseJoinColumns = {@JoinColumn(name = "ingredient_id")})
+    private Set<Ingredient> ingredients;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof Recipe other)) {
+            return false;
+        }
+        return name.equals(other.name);
     }
-    if (!(o instanceof Recipe other)) {
-      return false;
-    }
-    return name.equals(other.name);
-  }
 
-  @Override
-  public int hashCode() {
-    return 113 + (this.name == null ? 37 : this.name.hashCode());
-  }
+    @Override
+    public int hashCode() {
+        return 113 + (this.name == null ? 37 : this.name.hashCode());
+    }
 }

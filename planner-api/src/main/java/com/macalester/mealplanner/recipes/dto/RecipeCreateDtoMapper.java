@@ -26,6 +26,6 @@ public class RecipeCreateDtoMapper implements Function<RecipeCreateDto, Recipe> 
                 .map(id -> ingredientService.findById(id))
                 .collect(Collectors.toSet())
             : new HashSet<>();
-    return new Recipe(null, formatName(recipeCreateDto.name()), ingredients);
+    return new Recipe(null, formatName(recipeCreateDto.name()), recipeCreateDto.dietType(), ingredients);
   }
 }

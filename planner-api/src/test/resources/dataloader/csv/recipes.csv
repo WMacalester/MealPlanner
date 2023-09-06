@@ -1,7 +1,8 @@
-vegetables,tomato, onion, peas, carrots
-carbohydrates, pasta   ,  potato, bread
-empty with comma,
-ill3gal
-empty with lots of commas,    ,, , ,
+vegetables,MEAT,tomato, onion, peas, carrots
+carbohydrates,MEAT, pasta   ,  potato, bread
+empty with comma, MEAT
+ill3gal, MEAT
+empty with lots of commas, MEAT,    ,, , ,
 empty without comma
-, tomato
+, MEAT, tomato
+test, NotValidDietType

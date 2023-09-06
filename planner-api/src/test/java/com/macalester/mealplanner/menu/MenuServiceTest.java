@@ -3,6 +3,7 @@ package com.macalester.mealplanner.menu;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.macalester.mealplanner.recipes.DietType;
 import com.macalester.mealplanner.recipes.Recipe;
 import java.util.Set;
 import java.util.UUID;
@@ -28,10 +29,10 @@ class MenuServiceTest {
     private static final String name3 = "recipe c";
     private static final String name4 = "recipe d";
 
-    private static final Recipe recipe1 = new Recipe(uuid1, name1, Set.of());
-    private static final Recipe recipe2 = new Recipe(uuid2, name2, Set.of());
-    private static final Recipe recipe3 = new Recipe(uuid3, name3, Set.of());
-    private static final Recipe recipe4 = new Recipe(uuid4, name4, Set.of());
+    private static final Recipe recipe1 = new Recipe(uuid1, name1, DietType.MEAT, Set.of());
+    private static final Recipe recipe2 = new Recipe(uuid2, name2, DietType.MEAT, Set.of());
+    private static final Recipe recipe3 = new Recipe(uuid3, name3, DietType.MEAT, Set.of());
+    private static final Recipe recipe4 = new Recipe(uuid4, name4, DietType.MEAT, Set.of());
 
     @Nested
     @DisplayName("Get random recipes")

@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.IngredientRepository;
+import com.macalester.mealplanner.recipes.DietType;
 import com.macalester.mealplanner.recipes.Recipe;
 import com.macalester.mealplanner.recipes.RecipeRepository;
 import com.macalester.mealplanner.recipes.dto.RecipeCreateDto;
@@ -50,8 +51,8 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
 
     private static final String recipe1name = "recipe a";
     private static final String recipe2name = "recipe b";
-    private Recipe recipe1 = new Recipe(UUID.randomUUID(), recipe1name, new HashSet<>());
-    private Recipe recipe2 = new Recipe(UUID.randomUUID(), recipe2name, new HashSet<>());
+    private Recipe recipe1 = new Recipe(UUID.randomUUID(), recipe1name, DietType.MEAT, new HashSet<>());
+    private Recipe recipe2 = new Recipe(UUID.randomUUID(), recipe2name, DietType.MEAT, new HashSet<>());
 
     @BeforeEach
     void init() {
@@ -98,8 +99,8 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
             void getAllRecipesWithValidFilter_returnsFilteredRecipesInJSON() throws Exception {
                 recipe1 = recipeRepository.save(recipe1);
                 recipeRepository.save(recipe2);
-                Recipe recipe3 = recipeRepository.save(new Recipe(null, "recipe with ingredient through filter",Set.of(ingredient1)));
-                recipeRepository.save(new Recipe(null, "recipe without ingredient through filter",Set.of(ingredient2)));
+                Recipe recipe3 = recipeRepository.save(new Recipe(null, "recipe with ingredient through filter", DietType.VEGAN, Set.of(ingredient1)));
+                recipeRepository.save(new Recipe(null, "recipe without ingredient through filter", DietType.VEGAN,Set.of(ingredient2)));
 
                 String responseBody =
                         mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL).param("recipeName", "a"))
@@ -189,7 +190,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
         @WithMockUser(roles = "ADMIN")
         void addNewRecipe_validRecipe_addsRecipe() throws Exception {
             final String newRecipeName = "recipe     a     ";
-            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(newRecipeName, List.of(ingredient1.getId()));
+            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(newRecipeName, DietType.MEAT, List.of(ingredient1.getId()));
 
             String responseBody =
                     mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
@@ -210,7 +211,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
         @WithMockUser(roles = "ADMIN")
         void addNewRecipe_invalidName_returns400() throws Exception {
             final String newRecipeName = "   ";
-            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(newRecipeName, List.of(ingredient1.getId()));
+            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(newRecipeName, DietType.MEAT, List.of(ingredient1.getId()));
 
             mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -228,7 +229,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
         @WithMockUser(roles = "ADMIN")
         void addNewRecipe_validRecipeWithNonUniqueName_returns400() throws Exception {
             recipeRepository.save(recipe1);
-            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(recipe1name, List.of(ingredient1.getId()));
+            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(recipe1name, DietType.MEAT, List.of(ingredient1.getId()));
 
             String responseBody =
                     mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
@@ -246,7 +247,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Invalid recipe, name is null")
         @WithMockUser(roles = "ADMIN")
         void addRecipeNoIngredients_invalidRecipeNullName_returns400() throws Exception {
-            Recipe recipe_nullName = new Recipe(null, null, null);
+            Recipe recipe_nullName = new Recipe(null, null, null, null);
             mockMvc
                     .perform(
                             MockMvcRequestBuilders.post("/recipes")
@@ -259,7 +260,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Invalid recipe, name is blank")
         @WithMockUser(roles = "ADMIN")
         void addRecipeNoIngredients_invalidRecipeBlankName_returns400() throws Exception {
-            Recipe recipe_blankName = new Recipe(null, "   ", null);
+            Recipe recipe_blankName = new Recipe(null, "   ", null, null);
             mockMvc
                     .perform(
                             MockMvcRequestBuilders.post("/recipes")
@@ -325,7 +326,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
         void editRecipeById_validName_nameIsUpdatedAndReturns200() throws Exception {
             UUID recipeId = recipeRepository.save(recipe1).getId();
             String newName = "new recipe name";
-            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(newName, List.of());
+            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(newName, DietType.VEGAN, List.of());
 
             String responseBody =
                     mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + recipeId)
@@ -338,7 +339,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
 
             Optional<Recipe> found = recipeRepository.findById(recipeId);
             assertTrue(found.isPresent());
-            assertAll(() -> assertTrue(responseBody.contains(newName)), () -> assertEquals(newName, found.get().getName()));
+            assertAll(() -> assertTrue(responseBody.contains(newName)), () -> assertEquals(newName, found.get().getName()), () -> assertTrue(responseBody.contains("VEGAN")));
         }
 
         @Test
@@ -347,7 +348,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
         void editRecipeById_invalidName_nameIsNotUpdatedAndReturns400() throws Exception {
             UUID recipeId = recipeRepository.save(recipe1).getId();
             String newName = "   ";
-            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(newName, List.of());
+            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(newName, DietType.VEGAN, List.of());
 
             mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + recipeId)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -360,7 +361,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
         @WithMockUser(roles = "ADMIN")
         void editRecipeById_noRecipeWithId_returns400() throws Exception {
             String newName = "recipe c";
-            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(newName, List.of());
+            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(newName, DietType.VEGAN, List.of());
 
             mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + UUID.randomUUID())
                             .contentType(MediaType.APPLICATION_JSON)
@@ -375,7 +376,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
         void editRecipeById_ingredientsInDb_returns200() throws Exception {
             UUID recipeId = recipeRepository.save(recipe1).getId();
             List<UUID> newIngredients = List.of(ingredient1.getId());
-            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(recipe1name, newIngredients);
+            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(recipe1name, DietType.VEGAN, newIngredients);
 
             String responseBody =
                     mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + recipeId)
@@ -402,7 +403,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
             recipe1.setIngredients(Set.of());
             UUID recipeId = recipeRepository.save(recipe1).getId();
             List<UUID> newIngredients = List.of(UUID.randomUUID());
-            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(recipe1name, newIngredients);
+            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(recipe1name, DietType.VEGAN, newIngredients);
 
             mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + recipeId)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -418,7 +419,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
         @DisplayName("User has role user, returns 403")
         @WithMockUser(roles = "USER")
         void editRecipeById_userHasRoleUser_returns403() throws Exception {
-            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(recipe1name, List.of());
+            RecipeCreateDto recipeCreateDto = new RecipeCreateDto(recipe1name, DietType.VEGAN, List.of());
             mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + UUID.randomUUID())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(recipeCreateDto)))

@@ -40,7 +40,7 @@ class OnStartLoaderTest extends BasePostgresContainer {
     void onStart_ingredientsAndRecipesLoadedAndSaved() {
         assertAll(
                 () -> assertEquals(5, ingredientRepository.findAll().size()),
-                () -> assertEquals(5, recipeRepository.findAll().size())
+                () -> assertEquals(4, recipeRepository.findAll().size())
         );
     }
 

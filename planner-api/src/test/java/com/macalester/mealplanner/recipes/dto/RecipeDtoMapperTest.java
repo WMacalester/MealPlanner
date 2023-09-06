@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.macalester.mealplanner.ingredients.Ingredient;
 import com.macalester.mealplanner.ingredients.dto.IngredientDto;
 import com.macalester.mealplanner.ingredients.dto.IngredientDtoMapper;
+import com.macalester.mealplanner.recipes.DietType;
 import com.macalester.mealplanner.recipes.Recipe;
 import java.util.List;
 import java.util.Set;
@@ -26,11 +27,11 @@ public class RecipeDtoMapperTest {
   private final Ingredient ingredient2 = new Ingredient(uuid4, "ingredient b", null);
   private final IngredientDto ingredientDto1 = new IngredientDto(uuid3, "ingredient a");
   private final IngredientDto ingredientDto2 = new IngredientDto(uuid4, "ingredient b");
-  private final Recipe recipe1 = new Recipe(uuid1, name1, Set.of(ingredient1, ingredient2));
-  private final Recipe recipe_nullIngredients = new Recipe(uuid2, name2, null);
+  private final Recipe recipe1 = new Recipe(uuid1, name1, DietType.VEGAN, Set.of(ingredient1, ingredient2));
+  private final Recipe recipe_nullIngredients = new Recipe(uuid2, name2, DietType.VEGAN, null);
   private final RecipeDto recipeDto1 =
-      new RecipeDto(uuid1, name1, List.of(ingredientDto1, ingredientDto2));
-  private final RecipeDto recipeDto_nullIngredients = new RecipeDto(uuid2, name2, List.of());
+      new RecipeDto(uuid1, name1, DietType.VEGAN, List.of(ingredientDto1, ingredientDto2));
+  private final RecipeDto recipeDto_nullIngredients = new RecipeDto(uuid2, name2, DietType.VEGAN, List.of());
 
   @Nested
   @DisplayName("Recipe to RecipeDto")
