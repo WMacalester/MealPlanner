@@ -1,7 +1,12 @@
 import { FC, useState } from "react";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
-import { FormControl, SelectChangeEvent, Typography } from "@mui/material";
+import {
+  FormControl,
+  SelectChangeEvent,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useCreateNewRecipeMutation } from "../../api/recipes";
 import { RecipeCreateDto } from "../../interfaces/RecipeInterface";
 import { useGetAllIngredientsQuery } from "../../api/ingredients";
@@ -119,24 +124,26 @@ const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
               Add a New Recipe
             </Typography>
 
-            <NameInputField
-              name={recipeName}
-              isError={isRecipeNameError}
-              helperText={recipeNameErrorMessage}
-              setName={setRecipeName}
-              setErrorMessage={setRecipeNameErrorMessage}
-            />
+            <Stack spacing={2}>
+              <NameInputField
+                name={recipeName}
+                isError={isRecipeNameError}
+                helperText={recipeNameErrorMessage}
+                setName={setRecipeName}
+                setErrorMessage={setRecipeNameErrorMessage}
+              />
 
-            <DietTypeSelect
-              selectedDietType={undefined}
-              handleDietTypeSelect={handleDietTypeSelect}
-            />
+              <DietTypeSelect
+                selectedDietType={undefined}
+                handleDietTypeSelect={handleDietTypeSelect}
+              />
 
-            <IngredientSelect
-              availableIngredients={availableIngredients}
-              selectedIngredientIds={selectedIngredientIds}
-              handleIngredientSelect={handleIngredientSelect}
-            />
+              <IngredientSelect
+                availableIngredients={availableIngredients}
+                selectedIngredientIds={selectedIngredientIds}
+                handleIngredientSelect={handleIngredientSelect}
+              />
+            </Stack>
 
             <SubmitAndCancelButtons
               handleCancelClick={handleCancelClick}

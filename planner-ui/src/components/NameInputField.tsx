@@ -36,10 +36,6 @@ const NameInputField: FC<NameInputFieldProps> = ({
       onChange={handleNameChange}
       error={isError}
       helperText={`${helperText}`}
-      sx={{
-        marginBottom: "1rem",
-        ".MuiInputBase-label": { fontSize: "1.25rem" },
-      }}
     />
   );
 };
