@@ -93,33 +93,69 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
         @Nested
         @DisplayName("Filter")
         class FilterTest {
-            @Test
-            @DisplayName("Valid nameFilter returns list of recipes which contain nameFilter in name or in an ingredient name")
-            @WithMockUser(roles = "USER")
-            void getAllRecipesWithValidFilter_returnsFilteredRecipesInJSON() throws Exception {
-                recipe1 = recipeRepository.save(recipe1);
-                recipeRepository.save(recipe2);
-                Recipe recipe3 = recipeRepository.save(new Recipe(null, "recipe with ingredient through filter", DietType.VEGAN, Set.of(ingredient1)));
-                recipeRepository.save(new Recipe(null, "recipe without ingredient through filter", DietType.VEGAN,Set.of(ingredient2)));
+            @Nested
+            @DisplayName("Name")
+            class NameFilterTest {
+                @Test
+                @DisplayName("Valid nameFilter returns list of recipes which contain nameFilter in name or in an ingredient name")
+                @WithMockUser(roles = "USER")
+                void getAllRecipesWithValidFilter_returnsFilteredRecipesInJSON() throws Exception {
+                    recipe1 = recipeRepository.save(recipe1);
+                    recipeRepository.save(recipe2);
+                    Recipe recipe3 = recipeRepository.save(new Recipe(null, "recipe with ingredient through filter", DietType.VEGAN, Set.of(ingredient1)));
+                    recipeRepository.save(new Recipe(null, "recipe without ingredient through filter", DietType.VEGAN, Set.of(ingredient2)));
 
-                String responseBody =
-                        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL).param("recipeName", "a"))
-                                .andExpect(status().isOk())
-                                .andReturn()
-                                .getResponse()
-                                .getContentAsString();
+                    String responseBody =
+                            mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL).param("recipeName", "a"))
+                                    .andExpect(status().isOk())
+                                    .andReturn()
+                                    .getResponse()
+                                    .getContentAsString();
 
-                String expected = objectMapper.writeValueAsString(Stream.of(recipe1,recipe3).map(recipeDtoMapper).toList());
+                    String expected = objectMapper.writeValueAsString(Stream.of(recipe1, recipe3).map(recipeDtoMapper).toList());
 
-                assertEquals(expected, responseBody);
+                    assertEquals(expected, responseBody);
+                }
+
+                @Test
+                @DisplayName("Invalid nameFilter returns 400")
+                @WithMockUser(roles = "USER")
+                void getAllRecipesWithInvalidFilter_returns400() throws Exception {
+                    mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL).param("recipeName", " ^ "))
+                            .andExpect(status().isBadRequest());
+                }
             }
 
-            @Test
-            @DisplayName("Invalid nameFilter returns 400")
-            @WithMockUser(roles = "USER")
-            void getAllRecipesWithInvalidFilter_returns400() throws Exception {
-                        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL).param("recipeName", " ^ "))
-                                .andExpect(status().isBadRequest());
+            @Nested
+            @DisplayName("Diet Type")
+            class DietTypeTest {
+                @Test
+                @DisplayName("Valid dietTypeFilter returns list of recipes which contain dietType")
+                @WithMockUser(roles = "USER")
+                void getAllRecipesWithValidDietTypeFilter_returnsFilteredRecipesInJSON() throws Exception {
+                    recipe1 = recipeRepository.save(recipe1);
+                    recipeRepository.save(recipe2);
+                    Recipe recipe3 = recipeRepository.save(new Recipe(null, "recipe with dietType through filter", DietType.VEGAN, Set.of(ingredient1)));
+
+                    String responseBody =
+                            mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL).param("dietType", String.valueOf(DietType.VEGAN)))
+                                    .andExpect(status().isOk())
+                                    .andReturn()
+                                    .getResponse()
+                                    .getContentAsString();
+
+                    String expected = objectMapper.writeValueAsString(List.of(recipeDtoMapper.apply(recipe3)));
+
+                    assertEquals(expected, responseBody);
+                }
+
+                @Test
+                @DisplayName("Invalid dietTypeFilter returns 400")
+                @WithMockUser(roles = "USER")
+                void getAllRecipesWithInvalidDietTypeFilter_returns400() throws Exception {
+                    mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL).param("dietType", "INVALID"))
+                            .andExpect(status().isBadRequest());
+                }
             }
         }
     }
@@ -132,7 +168,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
         @WithMockUser(roles = "ADMIN")
         void getAllRecipes_userIsAdmin_returnsAllRecipesInCsv() throws Exception {
             recipe2.setIngredients(Set.of(ingredient1));
-            recipeRepository.saveAll(List.of(recipe1,recipe2));
+            recipeRepository.saveAll(List.of(recipe1, recipe2));
 
             String responseBody =
                     mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL).accept("text/csv"))

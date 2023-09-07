@@ -48,12 +48,16 @@ public class RecipeController {
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_USER')")
-    public List<RecipeDto> getAllRecipes(@RequestParam(required = false) String recipeName) {
+    public List<RecipeDto> getAllRecipes(@RequestParam(required = false) String recipeName, @RequestParam(required = false) String dietType) {
         try {
             FilterRequest filterRequest = new FilterRequest();
 
             if (recipeName != null && !recipeName.isBlank()) {
                 filterRequest.setName(recipeName);
+            }
+
+            if (dietType != null){
+                filterRequest.setDietType(DietType.valueOf(dietType));
             }
 
             List<Recipe> recipes = filterService.findAllRecipesWithCriteria(filterRequest);
