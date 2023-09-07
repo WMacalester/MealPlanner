@@ -1,21 +1,30 @@
 import { FC, useState } from "react";
 import { useGetAllRecipesQuery } from "../../api/recipes";
 import RecipeCard from "../recipes/recipe-card/RecipeCard";
-import { Box, Container, Grid, TextField } from "@mui/material";
+import { Box, Divider, Grid } from "@mui/material";
 import { BOARD_HEIGHT } from "../../constants";
 import { isNameAlpha } from "../../utils";
 import useDebounce from "../../hooks/useDebounce";
-import DietTypeSelect from "../recipes/DietTypeSelect";
+import { DietType } from "../../interfaces/DietType";
+import FilterBar from "./FilterBar";
 
 const RecipeBoard: FC = () => {
   const [filterValue, setFilterValue] = useState<string | undefined>(undefined);
-  const [filterValueError, setFilterValueError] = useState(false);
+  const [nameFilterError, setFilterValueError] = useState(false);
   const debouncedSearchValue = useDebounce(filterValue);
+  const [selectedDietType, setSelectedDietType] = useState<
+    DietType | undefined
+  >(undefined);
   const { data: recipes } = useGetAllRecipesQuery({
     recipeName: debouncedSearchValue,
+    dietType: selectedDietType,
   });
 
-  const onFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDietTypeSelect = (value: DietType | undefined) => {
+    setSelectedDietType(value);
+  };
+
+  const onNameFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (!value) {
       setFilterValueError(false);
@@ -38,15 +47,15 @@ const RecipeBoard: FC = () => {
         alignItems: "start",
       }}
     >
-      <Container>
-        <TextField
-          type="search"
-          onChange={onFilterChange}
-          label="Search by Name"
-          error={filterValueError}
-          helperText={filterValueError ? "Invalid character in search" : ""}
-        />
-      </Container>
+      <FilterBar
+        onNameFilterChange={onNameFilterChange}
+        nameFilterError={nameFilterError}
+        selectedDietType={selectedDietType}
+        handleDietTypeSelect={handleDietTypeSelect}
+      />
+
+      <Divider variant="middle" sx={{ marginY: "0.5rem" }} />
+
       <Grid
         container
         rowSpacing={1}
