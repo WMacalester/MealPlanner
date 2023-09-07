@@ -1,3 +1,4 @@
+import { DietType } from "../interfaces/DietType";
 import {
   Recipe,
   RecipeCreateDto,
@@ -9,6 +10,7 @@ const BASE_URL = "/recipes";
 
 interface getAllRecipesQueryArgs {
   recipeName?: string;
+  dietType?: DietType;
 }
 
 export const recipesApi = apiSlice.injectEndpoints({
