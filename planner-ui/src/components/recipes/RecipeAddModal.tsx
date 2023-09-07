@@ -9,6 +9,8 @@ import { IngredientSelect } from "./IngredientSelect";
 import { AddModalProps } from "../../interfaces/AddModalProps";
 import NameInputField from "../NameInputField";
 import SubmitAndCancelButtons from "../button/SubmitAndCancelButtons";
+import { DietType } from "../../interfaces/DietType";
+import DietTypeSelect from "./DietTypeSelect";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -31,10 +33,17 @@ const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
   const [recipeNameErrorMessage, setRecipeNameErrorMessage] = useState("");
   const [formErrorMessage, setFormErrorMessage] = useState("");
   const { data: availableIngredients } = useGetAllIngredientsQuery();
+  const [selectedDietType, setSelectedDietType] = useState<
+    DietType | undefined
+  >(undefined);
   const [selectedIngredientIds, setSelectedIngredientIds] = useState<string[]>(
     []
   );
   const [submit] = useCreateNewRecipeMutation();
+
+  const handleDietTypeSelect = (value: DietType) => {
+    setSelectedDietType(value);
+  };
 
   const handleIngredientSelect = (
     event: SelectChangeEvent<typeof selectedIngredientIds>
@@ -61,9 +70,10 @@ const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
   };
 
   const handleSubmit = () => {
-    if (!isSubmitDisabled) {
+    if (!isSubmitDisabled && selectedDietType) {
       const newRecipe: RecipeCreateDto = {
         name: recipeName.trim(),
+        dietType: selectedDietType,
         ingredientIds: selectedIngredientIds.map((e) => e.split(/"(.*?)"/)[3]),
       };
       submit(newRecipe)
@@ -91,7 +101,9 @@ const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
 
   const isRecipeNameError: boolean = recipeNameErrorMessage.length !== 0;
   const isSubmitDisabled: boolean =
-    recipeName.trim().length === 0 || isRecipeNameError;
+    recipeName.trim().length === 0 ||
+    isRecipeNameError ||
+    selectedDietType === undefined;
 
   return (
     <div>
@@ -113,6 +125,11 @@ const RecipeAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
               helperText={recipeNameErrorMessage}
               setName={setRecipeName}
               setErrorMessage={setRecipeNameErrorMessage}
+            />
+
+            <DietTypeSelect
+              selectedDietType={undefined}
+              handleDietTypeSelect={handleDietTypeSelect}
             />
 
             <IngredientSelect

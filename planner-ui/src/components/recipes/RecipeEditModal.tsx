@@ -1,7 +1,12 @@
 import { FC, useState } from "react";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
-import { FormControl, SelectChangeEvent, Typography } from "@mui/material";
+import {
+  FormControl,
+  SelectChangeEvent,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useEditRecipeMutation } from "../../api/recipes";
 import { Recipe, RecipeEditDto } from "../../interfaces/RecipeInterface";
 import { useGetAllIngredientsQuery } from "../../api/ingredients";
@@ -10,6 +15,8 @@ import { MutationModalProps } from "../../interfaces/AddModalProps";
 import NameInputField from "../NameInputField";
 import SubmitAndCancelButtons from "../button/SubmitAndCancelButtons";
 import { capitalise } from "../../utils";
+import { DietType } from "../../interfaces/DietType";
+import DietTypeSelect from "./DietTypeSelect";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -32,6 +39,9 @@ const RecipeEditModal: FC<MutationModalProps<Recipe>> = ({
   data: recipe,
 }) => {
   const [recipeName, setRecipeName] = useState(recipe.name);
+  const [recipeDietType, setRecipeDietType] = useState<DietType>(
+    recipe.dietType
+  );
   const [recipeNameErrorMessage, setRecipeNameErrorMessage] = useState("");
   const [formErrorMessage, setFormErrorMessage] = useState("");
   const { data: availableIngredients } = useGetAllIngredientsQuery();
@@ -43,6 +53,10 @@ const RecipeEditModal: FC<MutationModalProps<Recipe>> = ({
   const isRecipeNameError: boolean = recipeNameErrorMessage.length !== 0;
   const isSubmitDisabled: boolean =
     recipeName.trim().length === 0 || isRecipeNameError;
+
+  const handleDietTypeSelect = (value: DietType) => {
+    setRecipeDietType(value);
+  };
 
   const handleIngredientSelect = (
     event: SelectChangeEvent<typeof selectedIngredientIds>
@@ -74,6 +88,7 @@ const RecipeEditModal: FC<MutationModalProps<Recipe>> = ({
     if (!isSubmitDisabled) {
       const newRecipe: RecipeEditDto = {
         name: recipeName.trim(),
+        dietType: recipeDietType,
         ingredientIds: selectedIngredientIds.map((e) => e.split(/"(.*?)"/)[3]),
       };
       submit({ payload: newRecipe, id: recipe.id })
@@ -109,6 +124,7 @@ const RecipeEditModal: FC<MutationModalProps<Recipe>> = ({
         closeAfterTransition
       >
         <Fade in={open}>
+          {/* todo make spacing between items at this level */}
           <FormControl sx={modalStyle} onKeyDown={handleKeyDown}>
             <Typography variant="h5" alignSelf={"center"} paddingBottom={1.5}>
               Edit {capitalise(recipe.name)}
@@ -122,6 +138,11 @@ const RecipeEditModal: FC<MutationModalProps<Recipe>> = ({
               setErrorMessage={setRecipeNameErrorMessage}
             />
 
+            <DietTypeSelect
+              selectedDietType={recipeDietType}
+              handleDietTypeSelect={handleDietTypeSelect}
+            />
+            <Box padding={"1rem"} />
             <IngredientSelect
               availableIngredients={availableIngredients}
               selectedIngredientIds={selectedIngredientIds}

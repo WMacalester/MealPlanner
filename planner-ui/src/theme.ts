@@ -18,6 +18,11 @@ const theme = createTheme({
       main: "#FBFEF9",
       contrastText: "#fff",
     },
+    diet: {
+      MEAT: "#D44D5C",
+      VEGETARIAN: "#109648",
+      VEGAN: "#7D80DA",
+    },
     base: {
       main: "#191923",
     },
@@ -38,11 +43,13 @@ declare module "@mui/material/styles" {
     highlights: PaletteOptions["primary"];
     base: PaletteOptions["primary"];
     tertiary: PaletteOptions["primary"];
+    diet: PaletteOptions["primary"];
   }
 
   interface PaletteOptions {
     highlights?: PaletteOptions["primary"];
     base?: PaletteOptions["primary"];
     tertiary?: PaletteOptions["primary"];
+    diet?: { MEAT: string; VEGETARIAN: string; VEGAN: string };
   }
 }

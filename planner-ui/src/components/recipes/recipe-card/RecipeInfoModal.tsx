@@ -1,13 +1,22 @@
 import { FC } from "react";
 import { Recipe } from "../../../interfaces/RecipeInterface";
 import Typography from "@mui/material/Typography";
-import { Box, Fade, IconButton, List, ListItem, Modal } from "@mui/material";
+import {
+  Box,
+  Divider,
+  Fade,
+  IconButton,
+  List,
+  ListItem,
+  Modal,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { capitalise } from "../../../utils";
 import RecipeEditModal from "../RecipeEditModal";
 import React from "react";
 import RecipeDeleteModal from "../../RecipeDeleteModal";
+import { getDietTypeDisplayText } from "../../../interfaces/DietType";
 
 interface RecipeInfoModalProps {
   recipe: Recipe;
@@ -67,14 +76,22 @@ const RecipeInfoModal: FC<RecipeInfoModalProps> = ({
                 </IconButton>
               </div>
             </Box>
+            <Typography fontStyle={"italic"}>
+              {getDietTypeDisplayText(recipe.dietType)}
+            </Typography>
             {recipe.ingredients?.length > 0 ? (
-              <List>
-                {recipe.ingredients.map((ingredient) => (
-                  <ListItem key={ingredient.id}>
-                    <Typography variant="h5">{ingredient.name}</Typography>
-                  </ListItem>
-                ))}
-              </List>
+              <>
+                <Divider variant="middle" sx={{ marginY: "0.5rem" }}>
+                  Ingredients
+                </Divider>
+                <List>
+                  {recipe.ingredients.map((ingredient) => (
+                    <ListItem key={ingredient.id}>
+                      <Typography>{ingredient.name}</Typography>
+                    </ListItem>
+                  ))}
+                </List>
+              </>
             ) : (
               <Typography variant="h5" sx={{ padding: "1rem" }}>
                 No ingredients available

@@ -8,6 +8,7 @@ import { RECIPE_CARD_WIDTH } from "../../../constants";
 import { useAppDispatch, useAppSelector } from "../../../hooks/redux-hooks";
 import { toggleId } from "../../../selectedRecipesReducer";
 import SelectRecipeButton from "../../button/SelectRecipeButton";
+import { getDietTypeDisplayEmoji } from "../../../interfaces/DietType";
 
 const RecipeCard: FC<Recipe> = (recipe) => {
   const [openModal, setOpenModal] = useState(false);
@@ -28,38 +29,59 @@ const RecipeCard: FC<Recipe> = (recipe) => {
     dispatch(toggleId(recipe.id));
   };
 
+  const cardColour = isSelected ? "primary.main" : "diet." + recipe.dietType;
+
   return (
     <Card
       sx={{
         width: RECIPE_CARD_WIDTH + "px",
         m: 1,
-        backgroundColor: isSelected ? "secondary.main" : "primary.main",
+        backgroundColor: cardColour,
         border: 5,
         borderColor: isSelected ? "highlights.main" : "secondary.main",
         boxShadow: 5,
       }}
     >
-      <Grid container alignItems={"center"} justifyContent={"center"}>
-        <Grid item xs={10}>
+      <Grid
+        container
+        alignItems={"center"}
+        flexDirection={"row"}
+        justifyContent={"center"}
+      >
+        <Grid item xs={10} alignItems={"center"} justifyContent={"center"}>
           <CardActionArea onClick={() => handleCardClick()}>
             <CardContent>
-              <Typography
-                variant={"h4"}
-                color="highlights.main"
-                sx={{
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "2",
-                  WebkitBoxOrient: "vertical",
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
                 }}
               >
-                {capitalise(recipe.name)}
-              </Typography>
+                <Typography
+                  variant={"h5"}
+                  color="highlights.main"
+                  marginRight={"1rem"}
+                >
+                  {getDietTypeDisplayEmoji(recipe.dietType) + " "}
+                </Typography>
+                <Typography
+                  variant={"h5"}
+                  color="highlights.main"
+                  sx={{
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                    display: "-webkit-box",
+                    WebkitLineClamp: "2",
+                    WebkitBoxOrient: "vertical",
+                  }}
+                >
+                  {capitalise(recipe.name)}
+                </Typography>
+              </div>
             </CardContent>
           </CardActionArea>
         </Grid>
-        <Grid item xs={1} alignItems={"center"}>
+        <Grid item xs={1} alignItems={"center"} marginRight={1}>
           <SelectRecipeButton
             isSelected={isSelected}
             name={recipe.name}
