@@ -1,6 +1,6 @@
 import { Box, Grid } from "@mui/material";
 import { FC } from "react";
-import RecipeBoard from "../components/recipes/RecipeBoard";
+import RecipeBoard from "../components/recipeboard/RecipeBoard";
 import Menuboard from "../components/menu/Menuboard";
 
 const RecipeBoardPage: FC = () => {
