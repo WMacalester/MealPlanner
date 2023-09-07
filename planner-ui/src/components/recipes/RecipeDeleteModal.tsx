@@ -1,9 +1,9 @@
-import { useDeleteRecipeMutation } from "../api/recipes";
+import { useDeleteRecipeMutation } from "../../api/recipes";
 import { Box, Button, Fade, Modal, Typography } from "@mui/material";
-import CancelButton from "./button/CancelButton";
-import { Recipe } from "../interfaces/RecipeInterface";
+import CancelButton from "../button/CancelButton";
+import { Recipe } from "../../interfaces/RecipeInterface";
 import { FC } from "react";
-import { MutationModalProps } from "../interfaces/AddModalProps";
+import { MutationModalProps } from "../../interfaces/AddModalProps";
 
 const modalStyle = {
   position: "absolute" as "absolute",
