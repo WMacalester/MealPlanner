@@ -56,7 +56,10 @@ public class FilterService {
             ));
         }
 
-
+        if (request.getDietType() != null){
+            Predicate dietTypePredicate = criteriaBuilder.equal(root.get("dietType"), request.getDietType());
+            predicates.add(dietTypePredicate);
+        }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
 
