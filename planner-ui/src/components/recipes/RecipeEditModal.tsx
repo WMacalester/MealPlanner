@@ -124,30 +124,30 @@ const RecipeEditModal: FC<MutationModalProps<Recipe>> = ({
         closeAfterTransition
       >
         <Fade in={open}>
-          {/* todo make spacing between items at this level */}
           <FormControl sx={modalStyle} onKeyDown={handleKeyDown}>
             <Typography variant="h5" alignSelf={"center"} paddingBottom={1.5}>
               Edit {capitalise(recipe.name)}
             </Typography>
 
-            <NameInputField
-              name={recipeName}
-              isError={isRecipeNameError}
-              helperText={recipeNameErrorMessage}
-              setName={setRecipeName}
-              setErrorMessage={setRecipeNameErrorMessage}
-            />
+            <Stack spacing={2}>
+              <NameInputField
+                name={recipeName}
+                isError={isRecipeNameError}
+                helperText={recipeNameErrorMessage}
+                setName={setRecipeName}
+                setErrorMessage={setRecipeNameErrorMessage}
+              />
 
-            <DietTypeSelect
-              selectedDietType={recipeDietType}
-              handleDietTypeSelect={handleDietTypeSelect}
-            />
-            <Box padding={"1rem"} />
-            <IngredientSelect
-              availableIngredients={availableIngredients}
-              selectedIngredientIds={selectedIngredientIds}
-              handleIngredientSelect={handleIngredientSelect}
-            />
+              <DietTypeSelect
+                selectedDietType={recipeDietType}
+                handleDietTypeSelect={handleDietTypeSelect}
+              />
+              <IngredientSelect
+                availableIngredients={availableIngredients}
+                selectedIngredientIds={selectedIngredientIds}
+                handleIngredientSelect={handleIngredientSelect}
+              />
+            </Stack>
 
             <SubmitAndCancelButtons
               handleCancelClick={handleCancelClick}
