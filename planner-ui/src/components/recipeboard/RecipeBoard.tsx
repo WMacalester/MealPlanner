@@ -1,10 +1,11 @@
 import { FC, useState } from "react";
 import { useGetAllRecipesQuery } from "../../api/recipes";
-import RecipeCard from "./recipe-card/RecipeCard";
+import RecipeCard from "../recipes/recipe-card/RecipeCard";
 import { Box, Container, Grid, TextField } from "@mui/material";
 import { BOARD_HEIGHT } from "../../constants";
 import { isNameAlpha } from "../../utils";
 import useDebounce from "../../hooks/useDebounce";
+import DietTypeSelect from "../recipes/DietTypeSelect";
 
 const RecipeBoard: FC = () => {
   const [filterValue, setFilterValue] = useState<string | undefined>(undefined);
