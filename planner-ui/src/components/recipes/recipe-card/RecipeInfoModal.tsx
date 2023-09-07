@@ -15,7 +15,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { capitalise } from "../../../utils";
 import RecipeEditModal from "../RecipeEditModal";
 import React from "react";
-import RecipeDeleteModal from "../../RecipeDeleteModal";
+import RecipeDeleteModal from "../RecipeDeleteModal";
 import { getDietTypeDisplayText } from "../../../interfaces/DietType";
 
 interface RecipeInfoModalProps {
