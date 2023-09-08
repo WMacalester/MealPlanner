@@ -34,7 +34,8 @@ const Menuboard: FC = () => {
 
   const handleNumberFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    value.toString().match(/[0-9]*/) &&
+    value &&
+      value.toString().match(/[0-9]*/) &&
       setNumberRequestedRecipes(parseInt(value));
   };
 
