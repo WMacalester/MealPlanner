@@ -17,10 +17,10 @@ const SelectRecipeButton: FC<SelectRecipeButtonProps> = ({
   return (
     <div>
       <IconButton
-        aria-label={`Select ${name} button`}
+        aria-label={`Select ${name} for menu button`}
         onClick={handleClick}
         sx={{
-          color: isSelected ? "primary.main" : "highlights.main",
+          color: isSelected ? "recipeCardText.selected" : "recipeCardText.main",
         }}
       >
         {isSelected ? <PlaylistRemoveIcon /> : <PlaylistAddIcon />}
