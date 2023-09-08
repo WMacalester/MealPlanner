@@ -1,7 +1,8 @@
-import { Stack, TextField } from "@mui/material";
+import { Stack } from "@mui/material";
 import DietTypeBoardSelect from "./DietTypeBoardSelect";
 import { FC } from "react";
 import { DietType } from "../../interfaces/DietType";
+import StyledTextField from "../styles/StyledTextField";
 
 interface FilterBarProps {
   onNameFilterChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -18,17 +19,18 @@ const FilterBar: FC<FilterBarProps> = ({
 }) => {
   return (
     <Stack
-      sx={{ display: "flex", spacing: 2 }}
+      sx={{ display: "flex", spacing: 2, color: "highlights.main" }}
       justifyContent={"center"}
       alignItems={"center"}
     >
-      <TextField
+      <StyledTextField
         type="search"
         onChange={onFilterChange}
         label="Search by Name"
+        variant="outlined"
+        width="75%"
         error={filterValueError}
         helperText={filterValueError ? "Invalid character in search" : ""}
-        sx={{ width: "80%" }}
       />
       <DietTypeBoardSelect
         selectedDietType={selectedDietType}
