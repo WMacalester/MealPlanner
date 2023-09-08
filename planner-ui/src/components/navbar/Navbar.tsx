@@ -8,7 +8,7 @@ import useIsUserPermittedHook from "../../hooks/useIsUserPermittedHook";
 import { UserRole } from "../../interfaces/UserRole";
 import LogoutButton from "../button/LogoutButton";
 import Link from "@mui/material/Link";
-import { Box } from "@mui/material";
+import { Stack } from "@mui/material";
 import { FC } from "react";
 import ThemeToggle from "../button/ThemeToggle";
 
@@ -16,6 +16,15 @@ interface NavbarProps {
   themeChecked: boolean;
   handleThemeToggle: () => void;
 }
+
+const AdminOnlyButtons = () => {
+  return (
+    <>
+      <AddButton Modal={IngredientAddModal} label={"Add Ingredient"} />
+      <AddButton Modal={RecipeAddModal} label={"Add Recipe"} />
+    </>
+  );
+};
 
 const Navbar: FC<NavbarProps> = ({ themeChecked, handleThemeToggle }) => {
   const canUserView = useIsUserPermittedHook([UserRole.ROLE_ADMIN]);
@@ -45,19 +54,11 @@ const Navbar: FC<NavbarProps> = ({ themeChecked, handleThemeToggle }) => {
             handleThemeToggle={handleThemeToggle}
           />
 
-          <Box display={"flex"}>
+          <Stack direction="row" spacing={1}>
             <SelectedRecipeResetButton />
-            {canUserView && (
-              <>
-                <AddButton
-                  Modal={IngredientAddModal}
-                  label={"Add Ingredient"}
-                />
-                <AddButton Modal={RecipeAddModal} label={"Add Recipe"} />
-              </>
-            )}
+            {canUserView && <AdminOnlyButtons />}
             <LogoutButton />
-          </Box>
+          </Stack>
         </Toolbar>
       </AppBar>
     </>
