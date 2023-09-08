@@ -17,18 +17,7 @@ import SubmitAndCancelButtons from "../button/SubmitAndCancelButtons";
 import { capitalise } from "../../utils";
 import { DietType } from "../../interfaces/DietType";
 import DietTypeSelect from "./DietTypeSelect";
-
-const modalStyle = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+import ModalStyle from "../styles/ModalStyle";
 
 const recipeNameAlreadyExistsRegex = new RegExp(/^Recipe.*already exists/);
 const recipeNameAlreadyExistsMessage = "A recipe with that name already exists";
@@ -124,7 +113,7 @@ const RecipeEditModal: FC<MutationModalProps<Recipe>> = ({
         closeAfterTransition
       >
         <Fade in={open}>
-          <FormControl sx={modalStyle} onKeyDown={handleKeyDown}>
+          <FormControl sx={ModalStyle} onKeyDown={handleKeyDown}>
             <Typography variant="h5" alignSelf={"center"} paddingBottom={1.5}>
               Edit {capitalise(recipe.name)}
             </Typography>

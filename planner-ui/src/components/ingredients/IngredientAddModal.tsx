@@ -7,18 +7,7 @@ import { IngredientCreateDto } from "../../interfaces/IngredientInterface";
 import { AddModalProps } from "../../interfaces/AddModalProps";
 import NameInputField from "../NameInputField";
 import SubmitAndCancelButtons from "../button/SubmitAndCancelButtons";
-
-const modalStyle = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+import ModalStyle from "../styles/ModalStyle";
 
 const ingredientNameAlreadyExistsRegex = new RegExp(
   /^Ingredient.*already exists/
@@ -92,7 +81,7 @@ const IngredientAddModal: FC<AddModalProps> = ({ open, handleClose }) => {
         closeAfterTransition
       >
         <Fade in={open}>
-          <FormControl sx={modalStyle} onKeyDown={handleEnterPress}>
+          <FormControl sx={ModalStyle} onKeyDown={handleEnterPress}>
             <Typography variant="h5" alignSelf={"center"} paddingBottom={1.5}>
               Add a New Ingredient
             </Typography>
