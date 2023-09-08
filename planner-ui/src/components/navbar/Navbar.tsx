@@ -9,9 +9,17 @@ import { UserRole } from "../../interfaces/UserRole";
 import LogoutButton from "../button/LogoutButton";
 import Link from "@mui/material/Link";
 import { Box } from "@mui/material";
+import { FC } from "react";
+import ThemeToggle from "../button/ThemeToggle";
 
-export default function Navbar() {
+interface NavbarProps {
+  themeChecked: boolean;
+  handleThemeToggle: () => void;
+}
+
+const Navbar: FC<NavbarProps> = ({ themeChecked, handleThemeToggle }) => {
   const canUserView = useIsUserPermittedHook([UserRole.ROLE_ADMIN]);
+
   return (
     <>
       <AppBar position="static" sx={{ height: "4rem" }}>
@@ -32,6 +40,11 @@ export default function Navbar() {
             Meal Planner
           </Link>
 
+          <ThemeToggle
+            checked={themeChecked}
+            handleThemeToggle={handleThemeToggle}
+          />
+
           <Box display={"flex"}>
             <SelectedRecipeResetButton />
             {canUserView && (
@@ -49,4 +62,6 @@ export default function Navbar() {
       </AppBar>
     </>
   );
-}
+};
+
+export default Navbar;

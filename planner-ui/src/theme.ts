@@ -1,33 +1,32 @@
 import { createTheme } from "@mui/material/styles";
 
-const theme = createTheme({
+const highlightsMain = "#ffffff";
+const secondaryMainLight = "#064663";
+
+const themeLight = createTheme({
   palette: {
     contrastThreshold: 4.5,
     primary: {
-      light: "#0e79b2",
-      main: "#0E79B2",
+      main: "#508CA4",
     },
     secondary: {
-      main: "#BF1363",
-      contrastText: "#ffcc00",
+      main: secondaryMainLight,
     },
     tertiary: {
-      main: "#F39237",
+      main: "#ff6150",
     },
     highlights: {
-      main: "#FBFEF9",
-      contrastText: "#fff",
+      main: highlightsMain,
     },
     diet: {
-      MEAT: "#D44D5C",
-      VEGETARIAN: "#109648",
-      VEGAN: "#7D80DA",
+      MEAT: "#8E3B46",
+      VEGETARIAN: "#0A8754",
+      VEGAN: "#004F2D",
     },
     base: {
-      main: "#191923",
+      main: "#041C32",
     },
   },
-
   typography: {
     button: {
       fontSize: "1.3rem",
@@ -36,7 +35,37 @@ const theme = createTheme({
   },
 });
 
-export default theme;
+const themeDark = createTheme({
+  palette: {
+    contrastThreshold: 4.5,
+    primary: {
+      main: "#508CA4",
+    },
+    secondary: {
+      main: "#91AEC1",
+    },
+    tertiary: {
+      main: "#ff6150",
+    },
+    highlights: {
+      main: highlightsMain,
+    },
+    diet: {
+      MEAT: "#8E3B46",
+      VEGETARIAN: "#0A8754",
+      VEGAN: "#004F2D",
+    },
+    base: {
+      main: "#ffffff",
+    },
+  },
+  typography: {
+    button: {
+      fontSize: "1.3rem",
+      textTransform: "none",
+    },
+  },
+});
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -53,3 +82,5 @@ declare module "@mui/material/styles" {
     diet?: { MEAT: string; VEGETARIAN: string; VEGAN: string };
   }
 }
+
+export { themeLight, themeDark };

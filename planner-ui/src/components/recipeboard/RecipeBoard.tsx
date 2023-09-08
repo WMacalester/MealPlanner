@@ -37,14 +37,18 @@ const RecipeBoard: FC = () => {
 
   return (
     <Box
+      border={4}
       sx={{
-        backgroundColor: "tertiary.main",
+        backgroundColor: "primary.main",
         overflowY: "auto",
         padding: "1rem",
         borderRadius: "1rem",
+        borderColor: "secondary.main",
+        borderWidth: "1rem",
         width: "80%",
         height: BOARD_HEIGHT,
         alignItems: "start",
+        boxShadow: 20,
       }}
     >
       <FilterBar

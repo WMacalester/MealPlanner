@@ -20,7 +20,7 @@ const SelectRecipeButton: FC<SelectRecipeButtonProps> = ({
         aria-label={`Select ${name} button`}
         onClick={handleClick}
         sx={{
-          color: isSelected ? "highlights.main" : "highlights.main",
+          color: isSelected ? "primary.main" : "highlights.main",
         }}
       >
         {isSelected ? <PlaylistRemoveIcon /> : <PlaylistAddIcon />}
