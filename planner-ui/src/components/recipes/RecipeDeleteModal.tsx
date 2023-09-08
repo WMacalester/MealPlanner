@@ -4,18 +4,8 @@ import CancelButton from "../button/CancelButton";
 import { Recipe } from "../../interfaces/RecipeInterface";
 import { FC } from "react";
 import { MutationModalProps } from "../../interfaces/AddModalProps";
-
-const modalStyle = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+import ModalStyle from "../styles/ModalStyle";
+import { capitalise } from "../../utils";
 
 const RecipeDeleteModal: FC<MutationModalProps<Recipe>> = ({
   data: recipe,
@@ -43,9 +33,9 @@ const RecipeDeleteModal: FC<MutationModalProps<Recipe>> = ({
       closeAfterTransition
     >
       <Fade in={open}>
-        <Box sx={modalStyle} onKeyDown={handleKeyDown}>
+        <Box sx={ModalStyle} onKeyDown={handleKeyDown}>
           <Typography variant="h5">
-            Are you sure you want to delete {recipe.name}?
+            Are you sure you want to delete {capitalise(recipe.name)}?
           </Typography>
           <Box
             display={"flex"}

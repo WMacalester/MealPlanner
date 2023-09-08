@@ -17,25 +17,13 @@ import RecipeEditModal from "../RecipeEditModal";
 import React from "react";
 import RecipeDeleteModal from "../RecipeDeleteModal";
 import { getDietTypeDisplayText } from "../../../interfaces/DietType";
+import ModalStyle from "../../styles/ModalStyle";
 
 interface RecipeInfoModalProps {
   recipe: Recipe;
   open: boolean;
   handleClose: () => void;
 }
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-  maxHeight: "50%",
-  overflowY: "auto",
-};
 
 const RecipeInfoModal: FC<RecipeInfoModalProps> = ({
   recipe,
@@ -64,7 +52,7 @@ const RecipeInfoModal: FC<RecipeInfoModalProps> = ({
         closeAfterTransition
       >
         <Fade in={open}>
-          <Box sx={modalStyle}>
+          <Box sx={ModalStyle}>
             <Box justifyContent={"space-between"} display={"flex"}>
               <Typography variant="h4">{capitalise(recipe.name)} </Typography>{" "}
               <div>
