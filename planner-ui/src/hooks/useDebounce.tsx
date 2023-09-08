@@ -13,7 +13,6 @@ const useDebounce = <T,>(value: T, delay = 400) => {
     };
   }, [value, delay]);
 
-  console.log(debouncedValue);
   return debouncedValue;
 };
 
