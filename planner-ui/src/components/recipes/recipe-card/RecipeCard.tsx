@@ -29,7 +29,7 @@ const RecipeCard: FC<Recipe> = (recipe) => {
     dispatch(toggleId(recipe.id));
   };
 
-  const cardColour = isSelected ? "primary.main" : "diet." + recipe.dietType;
+  const cardColour = isSelected ? "base.main" : "diet." + recipe.dietType;
 
   return (
     <Card
@@ -38,7 +38,7 @@ const RecipeCard: FC<Recipe> = (recipe) => {
         m: 1,
         backgroundColor: cardColour,
         border: 5,
-        borderColor: isSelected ? "highlights.main" : "secondary.main",
+        borderColor: "secondary.main",
         boxShadow: 5,
       }}
     >
@@ -57,16 +57,12 @@ const RecipeCard: FC<Recipe> = (recipe) => {
                   alignItems: "center",
                 }}
               >
-                <Typography
-                  variant={"h5"}
-                  color="highlights.main"
-                  marginRight={"1rem"}
-                >
-                  {getDietTypeDisplayEmoji(recipe.dietType) + " "}
+                <Typography variant={"h5"} marginRight={"1rem"}>
+                  {getDietTypeDisplayEmoji(recipe.dietType)}
                 </Typography>
                 <Typography
                   variant={"h5"}
-                  color="highlights.main"
+                  color={!isSelected ? "highlights.main" : "primary.main"}
                   sx={{
                     textOverflow: "ellipsis",
                     overflow: "hidden",

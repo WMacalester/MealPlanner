@@ -20,8 +20,8 @@ const RerollButton: FC<RerollButtonProps> = ({ handleClick }) => {
           marginX: "1rem",
           ":hover": {
             color: "highlights.main",
-            backgroundColor: "red",
-            borderColor: "red",
+            backgroundColor: "base.main",
+            borderColor: "secondary.main",
           },
         }}
       >

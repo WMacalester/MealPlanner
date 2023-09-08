@@ -6,6 +6,7 @@ import RecipeCard from "../recipes/recipe-card/RecipeCard";
 import RerollButton from "../button/RerollButton";
 import { useGetAllRecipesQuery } from "../../api/recipes";
 import { useAppSelector } from "../../hooks/redux-hooks";
+import { TextFieldInputLabelProps } from "../CommonStyles";
 
 const Menuboard: FC = () => {
   const [trigger, result] = useCreateRandomMenuMutation();
@@ -39,10 +40,13 @@ const Menuboard: FC = () => {
 
   return (
     <Box
+      border={4}
       sx={{
-        backgroundColor: "tertiary.main",
+        backgroundColor: "primary.main",
         padding: "1rem",
         borderRadius: "1rem",
+        borderColor: "secondary.main",
+        borderWidth: "1rem",
         width: RECIPE_CARD_WIDTH * 1.2 + "px",
         height: BOARD_HEIGHT,
         alignItems: "start",
@@ -66,9 +70,14 @@ const Menuboard: FC = () => {
             inputProps: {
               min: minNumberOfRecipes,
               max: recipes?.length,
+              color: "highlights.main",
             },
           }}
-          sx={{ width: "7rem" }}
+          InputLabelProps={TextFieldInputLabelProps}
+          sx={{
+            width: "7rem",
+            input: { color: "highlights.main" },
+          }}
         />
         <RerollButton handleClick={handleRerollClick} />
       </Box>

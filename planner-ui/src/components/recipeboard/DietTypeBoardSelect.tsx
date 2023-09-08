@@ -36,7 +36,7 @@ const DietTypeBoardSelect: React.FC<DietTypeSelectProps> = ({
                 value={e}
                 sx={{
                   "&.Mui-checked": {
-                    color: "diet." + e,
+                    color: "base.main",
                   },
                 }}
               />
