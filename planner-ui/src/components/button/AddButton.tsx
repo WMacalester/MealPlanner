@@ -2,6 +2,7 @@ import { Button } from "@mui/material";
 import { useState, FC, ComponentType } from "react";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import { AddModalProps } from "../../interfaces/AddModalProps";
+import MainPageButtonStyle from "../styles/MainPageButtonStyle";
 
 interface AddButtonProps {
   label: string;
@@ -16,21 +17,17 @@ const AddButton: FC<AddButtonProps> = ({ label, Modal }) => {
   };
 
   return (
-    <div>
+    <>
       <Button
         aria-label={`${label} button`}
         onClick={handleOpen}
         endIcon={<PostAddIcon />}
-        variant="outlined"
-        sx={{
-          color: "highlights.main",
-          marginX: "1rem",
-        }}
+        sx={MainPageButtonStyle}
       >
         {label}
       </Button>
       <Modal open={openModal} handleClose={handleClose} />
-    </div>
+    </>
   );
 };
 

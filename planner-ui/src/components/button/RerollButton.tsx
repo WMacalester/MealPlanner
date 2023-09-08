@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
 import { FC } from "react";
 import CasinoIcon from "@mui/icons-material/Casino";
+import MainPageButtonStyle from "../styles/MainPageButtonStyle";
 
 interface RerollButtonProps {
   handleClick: () => void;
@@ -8,26 +9,15 @@ interface RerollButtonProps {
 
 const RerollButton: FC<RerollButtonProps> = ({ handleClick }) => {
   return (
-    <div>
-      <Button
-        aria-label={`Generate menu button`}
-        onClick={handleClick}
-        endIcon={<CasinoIcon />}
-        variant="outlined"
-        sx={{
-          borderColor: "black",
-          color: "black",
-          marginX: "1rem",
-          ":hover": {
-            color: "highlights.main",
-            backgroundColor: "base.main",
-            borderColor: "secondary.main",
-          },
-        }}
-      >
-        Menu
-      </Button>
-    </div>
+    <Button
+      aria-label={`Generate menu button`}
+      onClick={handleClick}
+      endIcon={<CasinoIcon />}
+      variant="contained"
+      sx={{ ...MainPageButtonStyle, border: 2, borderColor: "highlights.main" }}
+    >
+      Menu
+    </Button>
   );
 };
 
