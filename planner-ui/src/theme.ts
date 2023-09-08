@@ -1,7 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 
 const highlightsMain = "#ffffff";
-const secondaryMainLight = "#064663";
 
 const themeLight = createTheme({
   palette: {
@@ -10,7 +9,7 @@ const themeLight = createTheme({
       main: "#508CA4",
     },
     secondary: {
-      main: secondaryMainLight,
+      main: "#064663",
     },
     tertiary: {
       main: "#ff6150",
@@ -69,16 +68,16 @@ const themeDark = createTheme({
 
 declare module "@mui/material/styles" {
   interface Palette {
-    highlights: PaletteOptions["primary"];
-    base: PaletteOptions["primary"];
-    tertiary: PaletteOptions["primary"];
+    highlights: { main: string };
+    base: { main: string };
+    tertiary: { main: string };
     diet: PaletteOptions["primary"];
   }
 
   interface PaletteOptions {
-    highlights?: PaletteOptions["primary"];
-    base?: PaletteOptions["primary"];
-    tertiary?: PaletteOptions["primary"];
+    highlights: { main: string };
+    base?: { main: string };
+    tertiary?: { main: string };
     diet?: { MEAT: string; VEGETARIAN: string; VEGAN: string };
   }
 }

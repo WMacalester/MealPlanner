@@ -1,12 +1,12 @@
 import { FC, useEffect, useState } from "react";
-import { Box, Grid, TextField } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { BOARD_HEIGHT, RECIPE_CARD_WIDTH } from "../../constants";
 import { useCreateRandomMenuMutation } from "../../api/menu";
 import RecipeCard from "../recipes/recipe-card/RecipeCard";
 import RerollButton from "../button/RerollButton";
 import { useGetAllRecipesQuery } from "../../api/recipes";
 import { useAppSelector } from "../../hooks/redux-hooks";
-import { TextFieldInputLabelProps } from "../CommonStyles";
+import StyledTextField from "../styles/StyledTextField";
 
 const Menuboard: FC = () => {
   const [trigger, result] = useCreateRandomMenuMutation();
@@ -60,24 +60,14 @@ const Menuboard: FC = () => {
           paddingX: "1rem",
         }}
       >
-        <TextField
-          variant="standard"
+        <StyledTextField
           value={numberRequestedRecipes}
           type="number"
-          label="Number of Recipes"
           onChange={handleNumberFieldChange}
-          InputProps={{
-            inputProps: {
-              min: minNumberOfRecipes,
-              max: recipes?.length,
-              color: "highlights.main",
-            },
-          }}
-          InputLabelProps={TextFieldInputLabelProps}
-          sx={{
-            width: "7rem",
-            input: { color: "highlights.main" },
-          }}
+          min={minNumberOfRecipes}
+          max={recipes?.length}
+          label="Number of Recipes"
+          width="40%"
         />
         <RerollButton handleClick={handleRerollClick} />
       </Box>
