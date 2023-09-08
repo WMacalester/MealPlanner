@@ -31,12 +31,13 @@ const DietTypeBoardSelect: React.FC<DietTypeSelectProps> = ({
             key={e}
             control={
               <Checkbox
+                aria-label="Select diet type to search"
                 checked={selectedDietType === e}
                 onChange={handleChange}
                 value={e}
                 sx={{
                   "&.Mui-checked": {
-                    color: "base.main",
+                    color: "highlights.main",
                   },
                 }}
               />

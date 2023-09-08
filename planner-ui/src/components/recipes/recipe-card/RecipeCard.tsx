@@ -41,6 +41,7 @@ const RecipeCard: FC<Recipe> = (recipe) => {
         borderColor: "secondary.main",
         boxShadow: 5,
       }}
+      aria-label="Card containing recipe information"
     >
       <Grid
         container
@@ -57,12 +58,20 @@ const RecipeCard: FC<Recipe> = (recipe) => {
                   alignItems: "center",
                 }}
               >
-                <Typography variant={"h5"} marginRight={"1rem"}>
+                <Typography
+                  variant={"h5"}
+                  marginRight={"1rem"}
+                  aria-label="Diet type emoji"
+                >
                   {getDietTypeDisplayEmoji(recipe.dietType)}
                 </Typography>
                 <Typography
                   variant={"h5"}
-                  color={!isSelected ? "highlights.main" : "primary.main"}
+                  color={
+                    !isSelected
+                      ? "recipeCardText.main"
+                      : "recipeCardText.selected"
+                  }
                   sx={{
                     textOverflow: "ellipsis",
                     overflow: "hidden",
@@ -70,6 +79,7 @@ const RecipeCard: FC<Recipe> = (recipe) => {
                     WebkitLineClamp: "2",
                     WebkitBoxOrient: "vertical",
                   }}
+                  aria-label="Recipe name"
                 >
                   {capitalise(recipe.name)}
                 </Typography>

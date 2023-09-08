@@ -1,12 +1,13 @@
 import { createTheme } from "@mui/material/styles";
 
 const highlightsMain = "#ffffff";
+const primaryLight = "#156F93";
 
-const themeLight = createTheme({
+const themeDark = createTheme({
   palette: {
     contrastThreshold: 4.5,
     primary: {
-      main: "#508CA4",
+      main: primaryLight,
     },
     secondary: {
       main: "#064663",
@@ -16,6 +17,10 @@ const themeLight = createTheme({
     },
     highlights: {
       main: highlightsMain,
+    },
+    recipeCardText: {
+      main: highlightsMain,
+      selected: highlightsMain,
     },
     diet: {
       MEAT: "#8E3B46",
@@ -34,17 +39,21 @@ const themeLight = createTheme({
   },
 });
 
-const themeDark = createTheme({
+const themeLight = createTheme({
   palette: {
     contrastThreshold: 4.5,
     primary: {
-      main: "#508CA4",
+      main: "#156F93",
     },
     secondary: {
       main: "#91AEC1",
     },
     tertiary: {
       main: "#ff6150",
+    },
+    recipeCardText: {
+      main: highlightsMain,
+      selected: primaryLight,
     },
     highlights: {
       main: highlightsMain,
@@ -72,13 +81,15 @@ declare module "@mui/material/styles" {
     base: { main: string };
     tertiary: { main: string };
     diet: PaletteOptions["primary"];
+    recipeCardText: { main: string };
   }
 
   interface PaletteOptions {
     highlights: { main: string };
-    base?: { main: string };
-    tertiary?: { main: string };
-    diet?: { MEAT: string; VEGETARIAN: string; VEGAN: string };
+    base: { main: string };
+    tertiary: { main: string };
+    diet: { MEAT: string; VEGETARIAN: string; VEGAN: string };
+    recipeCardText: { main: string; selected: string };
   }
 }
 
