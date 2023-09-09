@@ -33,27 +33,40 @@ public class MenuController {
     private final RecipeDtoMapper recipeDtoMapper;
     private final MessageSource messageSource;
 
+    /**
+     * Get a collection of random unique recipes
+     *
+     * @param number int number of recipes desired
+     * @return List of {@link com.macalester.mealplanner.recipes.dto.RecipeDto}
+     */
     @PostMapping
     @PreAuthorize("hasRole('ROLE_USER')")
-    public List<RecipeDto> createMenuWithRandomUniqueRecipes(@RequestParam int number){
+    public List<RecipeDto> createMenuWithRandomUniqueRecipes(@RequestParam int number) {
         try {
-            if (number < 1){
+            if (number < 1) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("menu.error.notEnoughRecipesRequested", null, Locale.ENGLISH));
             }
             Set<Recipe> recipes = menuService.getRandomUniqueRecipes(number, recipeService.getAllRecipes());
 
             return recipes.stream().map(recipeDtoMapper).sorted(Comparator.comparing(RecipeDto::name)).toList();
-        } catch (IllegalArgumentException | NotFoundException e ){
+        } catch (IllegalArgumentException | NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         }
     }
 
+    /**
+     * Get a collection of random unique recipes. Recipes to be included are given in the request.
+     *
+     * @param number        int number of recipes desired
+     * @param menuCreateDto {@link com.macalester.mealplanner.menu.MenuCreateDto} - the recipes to be included in the returned collection
+     * @return List of {@link com.macalester.mealplanner.recipes.dto.RecipeDto}
+     */
     @PostMapping(consumes = "application/json")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public List<RecipeDto> createMenuWithRandomUniqueRecipes(@RequestParam int number, @Valid @RequestBody MenuCreateDto menuCreateDto){
+    public List<RecipeDto> createMenuWithRandomUniqueRecipes(@RequestParam int number, @Valid @RequestBody MenuCreateDto menuCreateDto) {
         try {
-            int numRandomRecipes = number-menuCreateDto.recipeIds().size();
-            if (number < 1 || numRandomRecipes < 0){
+            int numRandomRecipes = number - menuCreateDto.recipeIds().size();
+            if (number < 1 || numRandomRecipes < 0) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageSource.getMessage("menu.error.notEnoughRecipesRequested", null, Locale.ENGLISH));
             }
 
@@ -63,7 +76,7 @@ public class MenuController {
 
             randomRecipes.addAll(selectedRecipes);
             return randomRecipes.stream().map(recipeDtoMapper).toList();
-        } catch (IllegalArgumentException | NotFoundException e){
+        } catch (IllegalArgumentException | NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         }
     }

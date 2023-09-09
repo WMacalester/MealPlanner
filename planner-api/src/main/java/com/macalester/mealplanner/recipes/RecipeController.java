@@ -46,6 +46,13 @@ public class RecipeController {
 
     private static final String RECIPE_FILENAME = "dataRecipesExport";
 
+    /**
+     * Get all recipes. Optional request params may be provided for filtering the returned list.
+     *
+     * @param recipeName optional request param for filtering recipes by recipe name or ingredient name
+     * @param dietType   optional request param for filtering recipes by dietType
+     * @return List of {@link com.macalester.mealplanner.recipes.dto.RecipeDto}
+     */
     @GetMapping
     @PreAuthorize("hasRole('ROLE_USER')")
     public List<RecipeDto> getAllRecipes(@RequestParam(required = false) String recipeName, @RequestParam(required = false) String dietType) {
@@ -56,7 +63,7 @@ public class RecipeController {
                 filterRequest.setName(recipeName);
             }
 
-            if (dietType != null){
+            if (dietType != null) {
                 filterRequest.setDietType(DietType.valueOf(dietType));
             }
 
@@ -67,6 +74,11 @@ public class RecipeController {
         }
     }
 
+    /**
+     * Get all {@link com.macalester.mealplanner.recipes.Recipe} as a csv. Requires "Accept" header to be "text/csv" and admin permission
+     *
+     * @return Csv of {@link com.macalester.mealplanner.recipes.Recipe}
+     */
     @GetMapping(produces = {"text/csv"})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> exportAllRecipesCsv(@RequestHeader(value = "Accept", defaultValue = "text/csv") String acceptHeader) {
@@ -78,6 +90,12 @@ public class RecipeController {
                 .body(csv);
     }
 
+    /**
+     * Get recipe by Id
+     *
+     * @param id - UUID of recipe
+     * @return {@link com.macalester.mealplanner.recipes.dto.RecipeDto} if recipe is found
+     */
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_USER')")
     public RecipeDto getRecipeById(@PathVariable UUID id) {
@@ -88,6 +106,12 @@ public class RecipeController {
         }
     }
 
+    /**
+     * Add a new recipe. Requires admin permission
+     *
+     * @param recipeCreateDto {@link com.macalester.mealplanner.recipes.dto.RecipeCreateDto}
+     * @return {@link com.macalester.mealplanner.recipes.dto.RecipeDto} if request is valid
+     */
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public RecipeDto addRecipe(@Valid @RequestBody RecipeCreateDto recipeCreateDto) {
@@ -99,6 +123,11 @@ public class RecipeController {
         }
     }
 
+    /**
+     * Delete a recipe by Id. Requires admin permission
+     *
+     * @param id UUID
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -106,6 +135,13 @@ public class RecipeController {
         recipeService.deleteById(id);
     }
 
+    /**
+     * Edit recipe by id. Requires admin permission
+     *
+     * @param id              UUID
+     * @param recipeCreateDto {@link com.macalester.mealplanner.recipes.dto.RecipeCreateDto}
+     * @return {@link com.macalester.mealplanner.recipes.dto.RecipeDto} for edited recipe if recipe is found and requested changes are valid
+     */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public RecipeDto editRecipeById(
