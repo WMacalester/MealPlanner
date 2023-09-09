@@ -5,6 +5,7 @@ import {
   BaseQueryApi,
 } from "@reduxjs/toolkit/query/react";
 import { BASE_URL } from "../constants";
+import { logOut } from "./authSlice";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
@@ -29,9 +30,11 @@ const baseQueryWithReauth = async (
 
   if (result?.error?.status === 403) {
     const refreshResult = await baseQuery(refreshTokenArgs, api, extraOptions);
-    return refreshResult.error?.status === 403
-      ? result
-      : await baseQuery(args, api, extraOptions);
+    if (refreshResult.data) {
+      result = await baseQuery(args, api, extraOptions);
+    } else {
+      api.dispatch(logOut());
+    }
   }
 
   return result;
