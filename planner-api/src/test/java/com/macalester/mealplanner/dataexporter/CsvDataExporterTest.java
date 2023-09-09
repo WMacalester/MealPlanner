@@ -50,9 +50,9 @@ class CsvDataExporterTest {
         @DisplayName("Valid recipes returns formatted string")
         @Test
         void exportIngredients_emptyFilename_throwsIllegalArgumentException() {
-            String recipe1Expected = recipeName1 + "," + ingredientName1;
-            String recipe2Expected = recipeName2 + "," + ingredientName1 + "," + ingredientName2;
-            String recipe3Expected = recipeName3 + "," + ingredientName2 + "," + ingredientName3;
+            String recipe1Expected = recipeName1 + "," + DietType.MEAT + "," + ingredientName1;
+            String recipe2Expected = recipeName2 + "," + DietType.VEGAN + "," + ingredientName1 + "," + ingredientName2;
+            String recipe3Expected = recipeName3 + "," + DietType.MEAT + "," + ingredientName2 + "," + ingredientName3;
             String expected = String.join("\n",recipe1Expected,recipe2Expected,recipe3Expected);
 
             assertEquals(expected, csvDataExporter.exportRecipes(List.of(recipe1,recipe2,recipe3)));
