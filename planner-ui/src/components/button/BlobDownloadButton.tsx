@@ -2,6 +2,7 @@ import Button from "@mui/material/Button";
 import { FC } from "react";
 
 import DownloadIcon from "@mui/icons-material/Download";
+import MainPageButtonStyle from "../styles/MainPageButtonStyle";
 
 export enum DownloadType {
   CSV = "text/csv",
@@ -39,10 +40,7 @@ const BlobDownloadButton: FC<DownloadButtonProps> = ({
     <Button
       onClick={handleClick}
       endIcon={<DownloadIcon />}
-      sx={{
-        color: "highlights.main",
-        marginX: "1rem",
-      }}
+      sx={MainPageButtonStyle}
       aria-label={`Download ${label} CSV`}
     >
       {label}
