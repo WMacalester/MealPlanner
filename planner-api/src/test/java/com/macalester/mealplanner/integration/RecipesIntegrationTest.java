@@ -177,7 +177,7 @@ public class RecipesIntegrationTest extends BaseIntegrationTest {
                             .getResponse()
                             .getContentAsString();
 
-            String expected = recipe1name + ",\n" + recipe2name + "," + ingredient1name;
+            String expected = recipe1name + "," + DietType.MEAT + ",\n" + recipe2name + "," + DietType.MEAT + "," + ingredient1name;
 
             assertEquals(expected, responseBody);
         }
