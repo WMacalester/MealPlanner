@@ -16,14 +16,16 @@ const Menuboard: FC = () => {
     (state) => state.selectedRecipeIds.ids
   );
   const minNumberOfRecipes = Math.max(1, selectedRecipeIds.length);
+  const maxNumberOfRecipes = recipes ? recipes.length : 0;
   const [numberRequestedRecipes, setNumberRequestedRecipes] =
-    useState<number>(minNumberOfRecipes);
+    useState<number>(0);
 
   useEffect(() => {
-    setNumberRequestedRecipes(
-      Math.max(minNumberOfRecipes, numberRequestedRecipes)
-    );
-  }, [minNumberOfRecipes, numberRequestedRecipes]);
+    const value = recipes?.length
+      ? Math.max(minNumberOfRecipes, numberRequestedRecipes)
+      : 0;
+    setNumberRequestedRecipes(value);
+  }, [minNumberOfRecipes, numberRequestedRecipes, recipes]);
 
   const handleRerollClick = () => {
     trigger({
@@ -33,10 +35,8 @@ const Menuboard: FC = () => {
   };
 
   const handleNumberFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    value &&
-      value.toString().match(/[0-9]*/) &&
-      setNumberRequestedRecipes(parseInt(value));
+    const value = parseInt(e.target.value);
+    value <= maxNumberOfRecipes && setNumberRequestedRecipes(value);
   };
 
   return (
@@ -67,7 +67,7 @@ const Menuboard: FC = () => {
           type="number"
           onChange={handleNumberFieldChange}
           min={minNumberOfRecipes}
-          max={recipes?.length}
+          max={maxNumberOfRecipes}
           label="Number of Recipes"
           width="40%"
           aria-label="Number of recipes to be included in generated menu"
