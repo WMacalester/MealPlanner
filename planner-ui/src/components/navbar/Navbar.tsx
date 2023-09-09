@@ -1,8 +1,5 @@
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import IngredientAddModal from "../ingredients/IngredientAddModal";
-import RecipeAddModal from "../recipes/RecipeAddModal";
-import AddButton from "../button/AddButton";
 import SelectedRecipeResetButton from "../button/SelectedRecipeResetButton";
 import useIsUserPermittedHook from "../../hooks/useIsUserPermittedHook";
 import { UserRole } from "../../interfaces/UserRole";
@@ -11,23 +8,15 @@ import Link from "@mui/material/Link";
 import { Stack } from "@mui/material";
 import { FC } from "react";
 import ThemeToggle from "../button/ThemeToggle";
+import AdminDrawer from "./AdminDrawer";
 
 interface NavbarProps {
   themeChecked: boolean;
   handleThemeToggle: () => void;
 }
 
-const AdminOnlyButtons = () => {
-  return (
-    <>
-      <AddButton Modal={IngredientAddModal} label={"Add Ingredient"} />
-      <AddButton Modal={RecipeAddModal} label={"Add Recipe"} />
-    </>
-  );
-};
-
 const Navbar: FC<NavbarProps> = ({ themeChecked, handleThemeToggle }) => {
-  const canUserView = useIsUserPermittedHook([UserRole.ROLE_ADMIN]);
+  const isUserAdmin = useIsUserPermittedHook([UserRole.ROLE_ADMIN]);
 
   return (
     <>
@@ -50,14 +39,13 @@ const Navbar: FC<NavbarProps> = ({ themeChecked, handleThemeToggle }) => {
             Meal Planner
           </Link>
 
-          <ThemeToggle
-            checked={themeChecked}
-            handleThemeToggle={handleThemeToggle}
-          />
-
-          <Stack direction="row" spacing={1}>
+          {isUserAdmin && <AdminDrawer />}
+          <Stack direction="row" spacing={1} alignItems={"center"}>
             <SelectedRecipeResetButton />
-            {canUserView && <AdminOnlyButtons />}
+            <ThemeToggle
+              checked={themeChecked}
+              handleThemeToggle={handleThemeToggle}
+            />
             <LogoutButton />
           </Stack>
         </Toolbar>
