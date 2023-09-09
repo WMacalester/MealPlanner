@@ -27,6 +27,12 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final JwtService jwtService;
 
+    /**
+     * Register a new user. The username must be unique, and will return an error if not.
+     *
+     * @param userRegisterDto {@link com.macalester.mealplanner.auth.UserRegisterDto}
+     * @return {@link com.macalester.mealplanner.auth.AuthenticationResponse}. Access token and refresh token are also attached as cookies
+     */
     @PostMapping("/register")
     public AuthenticationResponse registerUser(@Valid @RequestBody UserRegisterDto userRegisterDto, HttpServletResponse response) {
         try {
@@ -40,6 +46,12 @@ public class AuthenticationController {
         }
     }
 
+    /**
+     * Log in the user
+     *
+     * @param authenticationRequest {@link com.macalester.mealplanner.auth.AuthenticationRequest}
+     * @return {@link com.macalester.mealplanner.auth.AuthenticationResponse}. Access token and refresh token are also attached as cookies
+     */
     @PostMapping("/authenticate")
     public AuthenticationResponse authenticateUser(@Valid @RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) {
         Optional<User> user = authenticationService.authenticateUser(authenticationRequest);
@@ -55,6 +67,11 @@ public class AuthenticationController {
         }
     }
 
+    /**
+     * Reissue access token from refresh token cookie
+     *
+     * @return {@link com.macalester.mealplanner.auth.AuthenticationResponse}. Access token and refresh token are also attached as cookies
+     */
     @PostMapping("/refresh-token")
     public AuthenticationResponse refreshToken(HttpServletRequest request, HttpServletResponse response) {
         Optional<User> user = authenticationService.refreshToken(request);
@@ -69,6 +86,9 @@ public class AuthenticationController {
         }
     }
 
+    /**
+     * Log out user by clearing their http-only cookies
+     */
     @PostMapping("/logout")
     public void logout(HttpServletResponse response) {
         Cookie blankAccessCookie = generateCookieFromJwt(JwtToken.ACCESS_TOKEN, "");
