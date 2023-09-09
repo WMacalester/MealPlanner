@@ -43,6 +43,7 @@ const BlobDownloadButton: FC<DownloadButtonProps> = ({
         color: "highlights.main",
         marginX: "1rem",
       }}
+      aria-label={`Download ${label} CSV`}
     >
       {label}
     </Button>

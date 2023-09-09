@@ -31,6 +31,7 @@ const ThemeToggle: FC<ThemeToggleProps> = ({ checked, handleThemeToggle }) => {
             checked={checked}
             onChange={handleThemeToggle}
             inputProps={{ "aria-label": "theme toggle" }}
+            aria-label="Toggle colour theme"
           />
         }
         label="Toggle theme"

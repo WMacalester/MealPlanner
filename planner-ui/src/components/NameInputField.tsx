@@ -30,6 +30,7 @@ const NameInputField: FC<NameInputFieldProps> = ({
   return (
     <TextField
       required
+      aria-label="Name Input Field"
       label="Name"
       name={name}
       defaultValue={capitalise(name)}

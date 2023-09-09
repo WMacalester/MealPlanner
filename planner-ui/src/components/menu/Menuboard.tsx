@@ -42,6 +42,7 @@ const Menuboard: FC = () => {
   return (
     <Box
       border={4}
+      aria-label="Board for viewing and creating a menu"
       sx={{
         backgroundColor: "primary.main",
         padding: "1rem",
@@ -69,6 +70,7 @@ const Menuboard: FC = () => {
           max={recipes?.length}
           label="Number of Recipes"
           width="40%"
+          aria-label="Number of recipes to be included in generated menu"
         />
         <RerollButton handleClick={handleRerollClick} />
       </Box>

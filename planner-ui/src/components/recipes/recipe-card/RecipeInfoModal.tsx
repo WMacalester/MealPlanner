@@ -72,7 +72,7 @@ const RecipeInfoModal: FC<RecipeInfoModalProps> = ({
                 <Divider variant="middle" sx={{ marginY: "0.5rem" }}>
                   Ingredients
                 </Divider>
-                <List>
+                <List aria-label="Ingredients for the recipe">
                   {recipe.ingredients.map((ingredient) => (
                     <ListItem key={ingredient.id}>
                       <Typography>{ingredient.name}</Typography>

@@ -22,6 +22,7 @@ const LoginDialogButton: FC<LoginDialogButtonProps> = ({
           borderColor: "secondary.main",
         },
       }}
+      aria-label="Log in button"
     >
       {name}
     </Button>
