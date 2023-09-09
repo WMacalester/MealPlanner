@@ -27,7 +27,7 @@ const RecipeDeleteModal: FC<MutationModalProps<Recipe>> = ({
 
   return (
     <Modal
-      aria-label="Form for editing a recipe"
+      aria-label="Form for deleting a recipe"
       open={open}
       onClose={handleClose}
       closeAfterTransition
@@ -55,6 +55,7 @@ const RecipeDeleteModal: FC<MutationModalProps<Recipe>> = ({
                   backgroundColor: "primary.main",
                 },
               }}
+              aria-label="Delete the recipe"
             >
               Delete
             </Button>

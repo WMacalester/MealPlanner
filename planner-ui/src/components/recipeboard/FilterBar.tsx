@@ -24,6 +24,7 @@ const FilterBar: FC<FilterBarProps> = ({
       alignItems={"center"}
     >
       <StyledTextField
+        aria-label="Search by recipe or ingredient name"
         type="search"
         onChange={onFilterChange}
         label="Search by Name"

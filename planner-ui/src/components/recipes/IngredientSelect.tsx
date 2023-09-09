@@ -23,12 +23,12 @@ export const IngredientSelect: FC<IngredientSelectProps> = ({
 }) => {
   return (
     <FormControl>
-      <InputLabel id="demo-customized-select-label">Ingredients</InputLabel>
+      <InputLabel>Ingredients</InputLabel>
       <Select
         multiple
         id="Ingredient name"
-        labelId="demo-customized-select-label"
         label="Ingredients"
+        aria-label="Select ingredients"
         value={selectedIngredientIds}
         onChange={handleIngredientSelect}
         renderValue={(selected) =>

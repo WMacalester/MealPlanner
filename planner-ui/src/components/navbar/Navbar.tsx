@@ -45,6 +45,7 @@ const Navbar: FC<NavbarProps> = ({ themeChecked, handleThemeToggle }) => {
             sx={{
               color: "highlights.main",
             }}
+            aria-label="Link to home page"
           >
             Meal Planner
           </Link>

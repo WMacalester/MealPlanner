@@ -65,6 +65,7 @@ const RecipeBoard: FC = () => {
         rowSpacing={1}
         columnSpacing={{ xs: 1 }}
         sx={{ justifyContent: "space-evenly" }}
+        aria-label="Board of recipes"
       >
         {recipes?.map((recipe) => (
           <Grid item key={recipe.id}>
