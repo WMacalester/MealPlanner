@@ -1,1 +1,5 @@
 docker-compose-args.env
+
+*.terraform*
+*.tfstate*
+cloud/secrets.tf
