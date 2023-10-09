@@ -17,6 +17,12 @@ terraform {
 
 provider "aws" {
   region = "eu-west-2"
+  default_tags {
+    tags = {
+      project: "meal planner"
+      provisioned-by-terraform: true
+    }
+  }
 }
 
 resource "aws_s3_bucket" "terraform_state" {
