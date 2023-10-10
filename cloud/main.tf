@@ -16,7 +16,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "eu-west-2"
+  region = var.aws_region
   default_tags {
     tags = {
       project: "meal planner"
@@ -26,7 +26,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "terraform_state" {
-  bucket        = "wmacalester-mealplanner-terraform-state"
+  bucket = "wmacalester-mealplanner-terraform-state"
   force_destroy = true
 }
 
