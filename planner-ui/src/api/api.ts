@@ -4,17 +4,16 @@ import {
   FetchArgs,
   BaseQueryApi,
 } from "@reduxjs/toolkit/query/react";
-import { BASE_URL } from "../constants";
 import { logOut } from "./authSlice";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: BASE_URL,
+  baseUrl: process.env.REACT_APP_BASE_URL,
   credentials: "include",
 });
 
 const refreshTokenArgs: FetchArgs = {
   credentials: "include",
-  url: BASE_URL + "/auth/refresh-token",
+  url: process.env.REACT_APP_BASE_URL + "/auth/refresh-token",
   method: "post",
   headers: {
     refresh: "true",
