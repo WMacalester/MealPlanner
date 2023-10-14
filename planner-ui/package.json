@@ -13,6 +13,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.11",
+    "env-cmd": "^10.1.0",
     "jest-junit": "^15.0.0",
     "prettier": "2.8.8",
     "react": "^18.2.0",
@@ -25,8 +26,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "env-cmd -f .env.development react-scripts start",
+    "build": "env-cmd -f .env.production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "check-format-strict:ui": "cd .. && npm run check-format-strict:ui",
