@@ -40,23 +40,23 @@ resource "aws_iam_role" "api-ecs-role" {
   })
 }
 
-resource "aws_iam_policy" "ecs-task-policy" {
-  name        = "ecs-task-policy"
-  description = "Policy to allow ECS tasks to access ECR"
-  policy      = data.aws_iam_policy_document.ecs-task-policy.json
-}
+# resource "aws_iam_policy" "ecs-task-policy" {
+#   name        = "ecs-task-policy"
+#   description = "Policy to allow ECS tasks to access ECR"
+#   policy      = data.aws_iam_policy_document.ecs-task-policy.json
+# }
 
-resource "aws_iam_role_policy_attachment" "ecs-task-policy-attachment" {
-  policy_arn = aws_iam_policy.ecs-task-policy.arn
-  role       = aws_iam_role.api-ecs-role.name
-}
+# resource "aws_iam_role_policy_attachment" "ecs-task-policy-attachment" {
+#   policy_arn = aws_iam_policy.ecs-task-policy.arn
+#   role       = aws_iam_role.api-ecs-role.name
+# }
 
-data "aws_iam_policy_document" "ecs-task-policy" {
-  statement {
-    actions   = ["ecr:GetAuthorizationToken", "ecr:BatchCheckLayerAvailability", "ecr:GetDownloadUrlForLayer", "ecr:GetRepositoryPolicy", "ecr:DescribeRepositories", "ecr:ListImages", "ecr:GetLifecyclePolicy", "ecr:GetLifecyclePolicyPreview", "ecr:GetImageScanFindings", "ecr:BatchGetImage"]
-    resources = ["*"]
-  }
-}
+# data "aws_iam_policy_document" "ecs-task-policy" {
+#   statement {
+#     actions   = ["ecr:GetAuthorizationToken", "ecr:BatchCheckLayerAvailability", "ecr:GetDownloadUrlForLayer", "ecr:GetRepositoryPolicy", "ecr:DescribeRepositories", "ecr:ListImages", "ecr:GetLifecyclePolicy", "ecr:GetLifecyclePolicyPreview", "ecr:GetImageScanFindings", "ecr:BatchGetImage"]
+#     resources = ["*"]
+#   }
+# }
 
 resource "aws_ecs_service" "api-service" {
   name            = "api-service"
@@ -112,7 +112,12 @@ resource "aws_launch_template" "ecs_launch_template" {
    }
  }
 
-  user_data = filebase64("${path.module}/templates/launch_template_user_data.sh")
+  user_data = base64encode(
+    <<-EOF
+    #!/bin/bash
+    echo ECS_CLUSTER=${aws_ecs_cluster.api-cluster.name} >> /etc/ecs/ecs.config;
+    EOF
+  )
 }
 
 resource "aws_iam_role" "ec2_instance_role" {
