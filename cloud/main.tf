@@ -55,3 +55,7 @@ resource "aws_dynamodb_table" "terraform_locks" {
     type = "S"
   }
 }
+
+resource "aws_ecr_repository" "mealplanner-api" {
+  name = "mealplanner-api"
+}
