@@ -20,7 +20,7 @@ class StatusControllerTest {
   @Test
   void givenStatusController_whenEndpointCalled_returnsMessage() throws Exception {
     mockMvc
-        .perform(MockMvcRequestBuilders.get("/status/"))
+        .perform(MockMvcRequestBuilders.get("/status"))
         .andExpect(status().isOk())
         .andExpect(
             result -> assertEquals("Server is running", result.getResponse().getContentAsString()));
