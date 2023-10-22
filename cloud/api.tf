@@ -2,54 +2,25 @@ resource "aws_ecs_cluster" "api-cluster" {
   name = "api"
 }
 
+data "template_file" "api_task_definition" {
+  template = file("${path.module}/templates/container_definition.tpl")
+  vars = {
+    api_repository = "${aws_ecr_repository.mealplanner-api.repository_url}:latest"
+    aws_region = var.aws_region
+    admin_username = var.secret_admin_username
+    secret_key = var.secret_authSecretKey
+    admin_password = var.secret_admin_password
+    active_profile = var.active_profile
+    log_group = aws_cloudwatch_log_group.api.name
+  }
+}
+
 resource "aws_ecs_task_definition" "api-task" {
   family                   = "service"
   network_mode = "bridge"
-#   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"] 
-# network_configuration {
-#    subnets         = data.aws_subnet_ids.default_subnet.ids
-#    security_groups = ["${aws_security_group.test_security_group.id}"]
-#  }
 
-#   execution_role_arn = aws_iam_role.api-ecs-role.arn
-
-  container_definitions = jsonencode([
-    {
-        "name": "mealplanner-api",
-        "image": "${var.api_repository_url}:latest",
-        "cpu": 256,
-        "memory": 512,
-        "portMappings": [
-            {
-                "name": "mealplanner-api-8080-tcp",
-                "containerPort": 8080,
-                "hostPort": 8080,
-                "protocol": "tcp",
-                "appProtocol": "http"
-            }
-        ],
-        "essential": true,
-        "environment": [
-            {
-                "name": "admin.username",
-                "value": "${var.secret_admin_username}"
-            },
-            {
-                "name": "authentication.jwt.secretKey",
-                "value": "${var.secret_authSecretKey}"
-            },
-            {
-                "name": "admin.password",
-                "value": "${var.secret_admin_password}"
-            },
-            {
-                "name": "SPRING_PROFILES_ACTIVE",
-                "value": "${var.active_profile}"
-            }
-        ]
-    }
-  ])
+  container_definitions = data.template_file.api_task_definition.rendered
 }
 
 resource "aws_iam_role" "api-ecs-role" {
@@ -67,6 +38,24 @@ resource "aws_iam_role" "api-ecs-role" {
       }
     ]
   })
+}
+
+resource "aws_iam_policy" "ecs-task-policy" {
+  name        = "ecs-task-policy"
+  description = "Policy to allow ECS tasks to access ECR"
+  policy      = data.aws_iam_policy_document.ecs-task-policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs-task-policy-attachment" {
+  policy_arn = aws_iam_policy.ecs-task-policy.arn
+  role       = aws_iam_role.api-ecs-role.name
+}
+
+data "aws_iam_policy_document" "ecs-task-policy" {
+  statement {
+    actions   = ["ecr:GetAuthorizationToken", "ecr:BatchCheckLayerAvailability", "ecr:GetDownloadUrlForLayer", "ecr:GetRepositoryPolicy", "ecr:DescribeRepositories", "ecr:ListImages", "ecr:GetLifecyclePolicy", "ecr:GetLifecyclePolicyPreview", "ecr:GetImageScanFindings", "ecr:BatchGetImage"]
+    resources = ["*"]
+  }
 }
 
 resource "aws_ecs_service" "api-service" {
@@ -102,6 +91,7 @@ resource "aws_launch_template" "ecs_launch_template" {
   key_name = aws_key_pair.ec2key.key_name
   iam_instance_profile {
     arn = aws_iam_instance_profile.ec2_instance_role_profile.arn
+
   }
 
   vpc_security_group_ids = [aws_security_group.test_security_group.id]
@@ -122,12 +112,7 @@ resource "aws_launch_template" "ecs_launch_template" {
    }
  }
 
-  user_data = base64encode(
-    <<-EOF
-    #!/bin/bash
-    echo ECS_CLUSTER=api >> /etc/ecs/ecs.config; echo ECS_BACKEND_HOST= >> /etc/ecs/ecs.config;
-    EOF
-  )
+  user_data = filebase64("${path.module}/templates/launch_template_user_data.sh")
 }
 
 resource "aws_iam_role" "ec2_instance_role" {
@@ -285,6 +270,16 @@ resource "aws_security_group" "test_security_group" {
    self        = "false"
    cidr_blocks = ["0.0.0.0/0"]
    description = "any"
+ }
+
+# ssh
+  ingress {
+   from_port   = 22
+   to_port     = 22
+   protocol    = "tcp"
+#    self        = "false"
+   cidr_blocks = ["0.0.0.0/0"]
+#    description = "any"
  }
 
  egress {
