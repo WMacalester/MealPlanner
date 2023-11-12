@@ -66,16 +66,16 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     ssl_support_method = "sni-only"
   }
 
-  # logging_config {
-  #   bucket = aws_s3_bucket.cloudfront_logs.bucket_domain_name
-  #   include_cookies = false
-  #   prefix = "cloudfront-logs/"
-  # }
 
   # For correct behaviour with react-router
   custom_error_response {
     error_code = 403
-    response_code = 200
+    response_code = 403
+    response_page_path = "/index.html"
+  }
+    custom_error_response {
+    error_code = 404
+    response_code = 404
     response_page_path = "/index.html"
   }
 }
@@ -129,24 +129,3 @@ resource "aws_cloudfront_cache_policy" "caching_disabled_policy" {
     }
   }
 }
-
-# ------
-# For logging:
-
-# resource "aws_s3_bucket" "cloudfront_logs" {
-#   bucket = "wmacalester-mealplanner-cloudfront-logs"
-# }
-
-# resource "aws_s3_bucket_ownership_controls" "cloudfront_logs_ownership_controls" {
-#   bucket = aws_s3_bucket.cloudfront_logs.id
-#   rule {
-#     object_ownership = "BucketOwnerPreferred"
-#   }
-# }
-
-# resource "aws_s3_bucket_acl" "ui_bucket_acl" {
-#   depends_on = [aws_s3_bucket_ownership_controls.cloudfront_logs_ownership_controls]
-
-#   bucket = aws_s3_bucket.cloudfront_logs.id
-#   acl    = "log-delivery-write"
-# }
