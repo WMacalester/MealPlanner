@@ -46,16 +46,6 @@ resource "aws_security_group_rule" "allow_alb_https_inbound" {
   cidr_blocks = ["0.0.0.0/0"]
 }
 
-# resource "aws_security_group_rule" "allow_alb_http_outbound" {
-#   type = "egress"
-#   security_group_id = aws_security_group.alb.id
-
-#   from_port = 0
-#   to_port = 0
-#   protocol = "-1"
-#   cidr_blocks = ["0.0.0.0/0"]
-# }
-
 resource "aws_security_group" "ecs_security_group" {
  name   = "ecs-security-group"
  vpc_id = data.aws_vpc.default_vpc.id
