@@ -23,6 +23,16 @@ resource "aws_ecs_task_definition" "api-task" {
   container_definitions = data.template_file.api_task_definition.rendered
 }
 
+# data "template_file" "ecs_role" {
+#   template = file("${path.module}/templates/ecs_role.tpl")
+# }
+
+# resource "aws_iam_role" "api-ecs-role" {
+#   name = "api-ecs-role"
+
+#   assume_role_policy = data.template_file.ecs_role.rendered
+# }
+
 resource "aws_ecs_service" "api-service" {
   name            = "api-service"
   cluster         = aws_ecs_cluster.api-cluster.id
@@ -47,7 +57,7 @@ resource "aws_launch_template" "ecs_launch_template" {
 
   }
 
-  vpc_security_group_ids = [aws_security_group.test_security_group.id]
+  vpc_security_group_ids = [aws_security_group.ecs_security_group.id]
 
   block_device_mappings {
     device_name = "/dev/xvda"
@@ -144,34 +154,5 @@ resource "aws_ecs_cluster_capacity_providers" "example" {
    base              = 1
    weight            = 100
    capacity_provider = aws_ecs_capacity_provider.api-cluster-capacity-provider.name
- }
-}
-
-resource "aws_security_group" "test_security_group" {
- name   = "ecs-test-security-group2"
- vpc_id = data.aws_vpc.default_vpc.id
-
- ingress {
-   from_port   = 0
-   to_port     = 0
-   protocol    = -1
-   self        = "false"
-   cidr_blocks = ["0.0.0.0/0"]
-   description = "any"
- }
-
-# ssh
-  ingress {
-   from_port   = 22
-   to_port     = 22
-   protocol    = "tcp"
-   cidr_blocks = ["0.0.0.0/0"]
- }
-
- egress {
-   from_port   = 0
-   to_port     = 0
-   protocol    = "-1"
-   cidr_blocks = ["0.0.0.0/0"]
  }
 }
