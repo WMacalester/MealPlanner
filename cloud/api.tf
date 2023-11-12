@@ -23,16 +23,6 @@ resource "aws_ecs_task_definition" "api-task" {
   container_definitions = data.template_file.api_task_definition.rendered
 }
 
-data "template_file" "ecs_role" {
-  template = file("${path.module}/templates/ecs_role.tpl")
-}
-
-resource "aws_iam_role" "api-ecs-role" {
-  name = "api-ecs-role"
-
-  assume_role_policy = data.template_file.ecs_role.rendered
-}
-
 resource "aws_ecs_service" "api-service" {
   name            = "api-service"
   cluster         = aws_ecs_cluster.api-cluster.id
@@ -117,20 +107,13 @@ resource "aws_autoscaling_group" "api_asg" {
     health_check_type         = "ELB"
 }
 
-data "aws_iam_policy_document" "ecs_agent" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
-  }
+data "template_file" "ecs_agent_policy" {
+  template = file("${path.module}/templates/ecs_agent_policy.tpl")
 }
 
 resource "aws_iam_role" "ecs_agent" {
   name               = "ecs-agent"
-  assume_role_policy = data.aws_iam_policy_document.ecs_agent.json
+  assume_role_policy = data.template_file.ecs_agent_policy.rendered
 }
 
 resource "aws_iam_instance_profile" "ecs_agent" {
