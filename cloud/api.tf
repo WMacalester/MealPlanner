@@ -16,72 +16,35 @@ data "template_file" "api_task_definition" {
 }
 
 resource "aws_ecs_task_definition" "api-task" {
-  family                   = "service"
+  family = "service"
   network_mode = "bridge"
   requires_compatibilities = ["EC2"] 
 
   container_definitions = data.template_file.api_task_definition.rendered
 }
 
+data "template_file" "ecs_role" {
+  template = file("${path.module}/templates/ecs_role.tpl")
+}
+
 resource "aws_iam_role" "api-ecs-role" {
   name = "api-ecs-role"
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action = "sts:AssumeRole",
-        Effect = "Allow",
-        Principal = {
-          Service = "ecs-tasks.amazonaws.com"
-        }
-      }
-    ]
-  })
+  assume_role_policy = data.template_file.ecs_role.rendered
 }
-
-# resource "aws_iam_policy" "ecs-task-policy" {
-#   name        = "ecs-task-policy"
-#   description = "Policy to allow ECS tasks to access ECR"
-#   policy      = data.aws_iam_policy_document.ecs-task-policy.json
-# }
-
-# resource "aws_iam_role_policy_attachment" "ecs-task-policy-attachment" {
-#   policy_arn = aws_iam_policy.ecs-task-policy.arn
-#   role       = aws_iam_role.api-ecs-role.name
-# }
-
-# data "aws_iam_policy_document" "ecs-task-policy" {
-#   statement {
-#     actions   = ["ecr:GetAuthorizationToken", "ecr:BatchCheckLayerAvailability", "ecr:GetDownloadUrlForLayer", "ecr:GetRepositoryPolicy", "ecr:DescribeRepositories", "ecr:ListImages", "ecr:GetLifecyclePolicy", "ecr:GetLifecyclePolicyPreview", "ecr:GetImageScanFindings", "ecr:BatchGetImage"]
-#     resources = ["*"]
-#   }
-# }
 
 resource "aws_ecs_service" "api-service" {
   name            = "api-service"
   cluster         = aws_ecs_cluster.api-cluster.id
   task_definition = aws_ecs_task_definition.api-task.arn
   desired_count   = 1
-#   iam_role = aws_iam_role.ecs_service_role.arn
   launch_type     = "EC2" 
 
-#   force_new_deployment = true
-#    capacity_provider_strategy {
-#    capacity_provider = aws_ecs_capacity_provider.api-cluster-capacity-provider.name
-#    weight            = 100
-#  }
   load_balancer {
    target_group_arn = aws_lb_target_group.api_target_group.arn
    container_name   = "mealplanner-api"
    container_port   = 8080
  }
-
-#  network_configuration {
-#    subnets         = data.aws_subnet_ids.default_subnet.ids
-#    security_groups = ["${aws_security_group.test_security_group.id}"]
-#  }
-
 }
 
 resource "aws_launch_template" "ecs_launch_template" {
@@ -149,52 +112,6 @@ data "aws_iam_policy_document" "ec2_instance_role_policy" {
     }
   }
 }
-
-
-# resource "aws_iam_role" "ecs_service_role" {
-#   name               = "ECS_ServiceRole"
-#   assume_role_policy = data.aws_iam_policy_document.ecs_service_policy.json
-# }
-
-# data "aws_iam_policy_document" "ecs_service_policy" {
-#   statement {
-#     actions = ["sts:AssumeRole"]
-#     effect  = "Allow"
-
-#     principals {
-#       type        = "Service"
-#       identifiers = ["ecs.amazonaws.com",]
-#     }
-#   }
-# }
-
-# resource "aws_iam_role_policy" "ecs_service_role_policy" {
-#   name   = "ECS_ServiceRolePolicy"
-#   policy = data.aws_iam_policy_document.ecs_service_role_policy.json
-#   role   = aws_iam_role.ecs_service_role.id
-# }
-
-# data "aws_iam_policy_document" "ecs_service_role_policy" {
-#   statement {
-#     effect  = "Allow"
-#     actions = [
-#       "ec2:AuthorizeSecurityGroupIngress",
-#       "ec2:Describe*",
-#       "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
-#       "elasticloadbalancing:DeregisterTargets",
-#       "elasticloadbalancing:Describe*",
-#       "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
-#       "elasticloadbalancing:RegisterTargets",
-#       "ec2:DescribeTags",
-#       "logs:CreateLogGroup",
-#       "logs:CreateLogStream",
-#       "logs:DescribeLogStreams",
-#       "logs:PutSubscriptionFilter",
-#       "logs:PutLogEvents"
-#     ]
-#     resources = ["*"]
-#   }
-# }
 
 resource "aws_autoscaling_group" "api_asg" {
     name                      = "api-asg"
@@ -276,9 +193,7 @@ resource "aws_security_group" "test_security_group" {
    from_port   = 22
    to_port     = 22
    protocol    = "tcp"
-#    self        = "false"
    cidr_blocks = ["0.0.0.0/0"]
-#    description = "any"
  }
 
  egress {
