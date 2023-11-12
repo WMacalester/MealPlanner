@@ -83,9 +83,13 @@ resource "aws_launch_template" "ecs_launch_template" {
   )
 }
 
+data "template_file" "ec2_instance_role_policy" {
+  template = file("${path.module}/templates/ec2_instance_role.tpl")
+}
+
 resource "aws_iam_role" "ec2_instance_role" {
   name               = "EC2_InstanceRole2"
-  assume_role_policy = data.aws_iam_policy_document.ec2_instance_role_policy.json
+  assume_role_policy = data.template_file.ec2_instance_role_policy.rendered
 }
 
 resource "aws_iam_role_policy_attachment" "ec2_instance_role_policy" {
@@ -96,21 +100,6 @@ resource "aws_iam_role_policy_attachment" "ec2_instance_role_policy" {
 resource "aws_iam_instance_profile" "ec2_instance_role_profile" {
   name  = "EC2_InstanceRoleProfile2"
   role  = aws_iam_role.ec2_instance_role.id
-}
-
-data "aws_iam_policy_document" "ec2_instance_role_policy" {
-  statement {
-    actions = ["sts:AssumeRole"]
-    effect  = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = [
-        "ec2.amazonaws.com",
-        "ecs.amazonaws.com"
-      ]
-    }
-  }
 }
 
 resource "aws_autoscaling_group" "api_asg" {
