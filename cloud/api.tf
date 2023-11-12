@@ -1,7 +1,3 @@
-resource "aws_ecs_cluster" "api-cluster" {
-  name = "api"
-}
-
 data "template_file" "api_task_definition" {
   template = file("${path.module}/templates/container_definition.tpl")
   vars = {
@@ -15,6 +11,14 @@ data "template_file" "api_task_definition" {
   }
 }
 
+data "template_file" "ec2_instance_role_policy" {
+  template = file("${path.module}/templates/ec2_instance_role.tpl")
+}
+
+resource "aws_ecs_cluster" "api-cluster" {
+  name = "api"
+}
+
 resource "aws_ecs_task_definition" "api-task" {
   family = "service"
   network_mode = "bridge"
@@ -22,16 +26,6 @@ resource "aws_ecs_task_definition" "api-task" {
 
   container_definitions = data.template_file.api_task_definition.rendered
 }
-
-# data "template_file" "ecs_role" {
-#   template = file("${path.module}/templates/ecs_role.tpl")
-# }
-
-# resource "aws_iam_role" "api-ecs-role" {
-#   name = "api-ecs-role"
-
-#   assume_role_policy = data.template_file.ecs_role.rendered
-# }
 
 resource "aws_ecs_service" "api-service" {
   name            = "api-service"
@@ -47,48 +41,10 @@ resource "aws_ecs_service" "api-service" {
  }
 }
 
-resource "aws_launch_template" "ecs_launch_template" {
-  name_prefix = "ecs-launch-template-"
-  image_id = "ami-0dd8b106eaa4021d7"
-  instance_type = "t2.micro"
-  key_name = aws_key_pair.ec2key.key_name
-  iam_instance_profile {
-    arn = aws_iam_instance_profile.ec2_instance_role_profile.arn
-
-  }
-
-  vpc_security_group_ids = [aws_security_group.ecs_security_group.id]
-
-  block_device_mappings {
-    device_name = "/dev/xvda"
-    ebs {
-      volume_size = 30
-      volume_type = "gp2"
-    }
-  }
-
-
- tag_specifications {
-   resource_type = "instance"
-   tags = {
-     Name = "ecs-instance"
-   }
- }
-
-  user_data = base64encode(
-    <<-EOF
-    #!/bin/bash
-    echo ECS_CLUSTER=${aws_ecs_cluster.api-cluster.name} >> /etc/ecs/ecs.config;
-    EOF
-  )
-}
-
-data "template_file" "ec2_instance_role_policy" {
-  template = file("${path.module}/templates/ec2_instance_role.tpl")
-}
+# IAM Roles
 
 resource "aws_iam_role" "ec2_instance_role" {
-  name               = "EC2_InstanceRole2"
+  name               = "EC2_InstanceRole"
   assume_role_policy = data.template_file.ec2_instance_role_policy.rendered
 }
 
@@ -102,6 +58,8 @@ resource "aws_iam_instance_profile" "ec2_instance_role_profile" {
   role  = aws_iam_role.ec2_instance_role.id
 }
 
+# Capacity Providers
+
 resource "aws_autoscaling_group" "api_asg" {
     name                      = "api-asg"
     vpc_zone_identifier       = data.aws_subnet_ids.default_subnet.ids
@@ -112,23 +70,9 @@ resource "aws_autoscaling_group" "api_asg" {
 
     desired_capacity          = 1
     min_size                  = 0
-    max_size                  = 1
+    max_size                  = 2
     health_check_grace_period = 300
     health_check_type         = "ELB"
-}
-
-data "template_file" "ecs_agent_policy" {
-  template = file("${path.module}/templates/ecs_agent_policy.tpl")
-}
-
-resource "aws_iam_role" "ecs_agent" {
-  name               = "ecs-agent"
-  assume_role_policy = data.template_file.ecs_agent_policy.rendered
-}
-
-resource "aws_iam_instance_profile" "ecs_agent" {
-  name = "ecs-agent"
-  role = aws_iam_role.ecs_agent.name
 }
 
 resource "aws_ecs_capacity_provider" "api-cluster-capacity-provider" {
@@ -146,7 +90,7 @@ resource "aws_ecs_capacity_provider" "api-cluster-capacity-provider" {
  }
 }
 
-resource "aws_ecs_cluster_capacity_providers" "example" {
+resource "aws_ecs_cluster_capacity_providers" "api_capacity_providers" {
  cluster_name = aws_ecs_cluster.api-cluster.name
  capacity_providers = [aws_ecs_capacity_provider.api-cluster-capacity-provider.name]
 
@@ -155,4 +99,40 @@ resource "aws_ecs_cluster_capacity_providers" "example" {
    weight            = 100
    capacity_provider = aws_ecs_capacity_provider.api-cluster-capacity-provider.name
  }
+}
+
+#  Launch Template
+
+resource "aws_launch_template" "ecs_launch_template" {
+  name_prefix = "ecs-launch-template-"
+  image_id = "ami-0dd8b106eaa4021d7"
+  instance_type = "t2.micro"
+  key_name = aws_key_pair.ec2key.key_name
+  iam_instance_profile {
+    arn = aws_iam_instance_profile.ec2_instance_role_profile.arn
+  }
+
+  vpc_security_group_ids = [aws_security_group.ecs_security_group.id]
+
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    ebs {
+      volume_size = 30
+      volume_type = "gp2"
+    }
+  }
+
+ tag_specifications {
+   resource_type = "instance"
+   tags = {
+     Name = "ecs-instance"
+   }
+ }
+
+  user_data = base64encode(
+    <<-EOF
+    #!/bin/bash
+    echo ECS_CLUSTER=${aws_ecs_cluster.api-cluster.name} >> /etc/ecs/ecs.config;
+    EOF
+  )
 }
