@@ -1,5 +1,14 @@
+# todo set bucket to private!
+
 resource "aws_s3_bucket" "ui_bucket" {
-  bucket = "wmacalester-mealplanner-ui-bucket"
+  bucket = "mealplanner-ui-bucket"
+}
+
+data "template_file" "ui_routing_rules" {
+  template = file("${path.module}/templates/ui_error_routing_rules.tpl")
+  vars = {
+    hostname = var.domain_alias
+  }
 }
 
 resource "aws_s3_bucket_website_configuration" "ui_website_config" {
@@ -12,6 +21,8 @@ resource "aws_s3_bucket_website_configuration" "ui_website_config" {
   error_document {
     key = "index.html"
   }
+
+  routing_rules = data.template_file.ui_routing_rules.rendered
 }
 
 resource "aws_s3_bucket_ownership_controls" "ui_ownership_controls" {
@@ -21,22 +32,15 @@ resource "aws_s3_bucket_ownership_controls" "ui_ownership_controls" {
   }
 }
 
+data "template_file" "ui_bucket_policy" {
+  template = file("${path.module}/templates/ui_bucket_policy.tpl")
+  vars = {
+    bucket_arn = aws_s3_bucket.ui_bucket.arn
+  }
+}
+
 resource "aws_s3_bucket_policy" "ui_bucket_policy" {
   bucket = aws_s3_bucket.ui_bucket.id
 
-  policy = jsonencode({
-  Version = "2012-10-17"
-  Statement = [
-    {
-    Sid       = "PublicReadGetObject"
-    Effect    = "Allow"
-    Principal = "*"
-    Action    = "s3:GetObject"
-    Resource = [
-      aws_s3_bucket.ui_bucket.arn,
-      "${aws_s3_bucket.ui_bucket.arn}/*",
-    ]
-    },
-  ]
-  })
+  policy = data.template_file.ui_bucket_policy.rendered
 }
